@@ -13,7 +13,7 @@
 	"dependencies": {
 		"@astrojs/cloudflare": "^12.6.12",
 		"@lucide/astro": "^0.563.0",
-		"@tailwindcss/vite": "^4.1.18",
+		"@tailwindcss/vite": "^4.2.1",
 		"astro": "^5.18.0",
 		"tailwindcss": "^4.1.13"
 	},
