@@ -9,6 +9,7 @@ updates:
         patterns:
           - "astro"
           - "@astrojs/*"
+          - "@lucide/astro"
       tailwind:
         patterns:
           - "tailwindcss"
