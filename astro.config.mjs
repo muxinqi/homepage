@@ -1,19 +1,9 @@
 // @ts-check
-import { defineConfig, sessionDrivers } from 'astro/config';
-import cloudflare from '@astrojs/cloudflare';
+import { defineConfig } from 'astro/config';
 import tailwindcss from '@tailwindcss/vite';
 
 // https://astro.build/config
 export default defineConfig({
-  adapter: cloudflare({
-    prerenderEnvironment: "node",
-    platformProxy: {
-      enabled: true
-    }
-  }),
-  session: {
-    driver: sessionDrivers.lruCache()
-  },
   vite: {
     plugins: [tailwindcss()]
   }
