@@ -1,5 +1,5 @@
 // @ts-check
-import { defineConfig } from 'astro/config';
+import { defineConfig, sessionDrivers } from 'astro/config';
 import cloudflare from '@astrojs/cloudflare';
 import tailwindcss from '@tailwindcss/vite';
 
@@ -11,6 +11,9 @@ export default defineConfig({
       enabled: true
     }
   }),
+  session: {
+    driver: sessionDrivers.lruCache()
+  },
   vite: {
     plugins: [tailwindcss()]
   }
