@@ -4,7 +4,7 @@
  */
 {
 	"$schema": "node_modules/wrangler/config-schema.json",
-	"name": "muxinqi-com",
+	"name": "homepage",
 	"compatibility_date": "2026-06-23",
 	"assets": {
 		"directory": "./dist"
