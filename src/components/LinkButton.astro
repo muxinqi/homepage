@@ -1,8 +1,9 @@
 ---
-import type { Icon as IconType } from "@lucide/astro";
+import type { AstroComponentFactory } from "astro/runtime/server/index.js";
+
 interface Props {
   href: string;
-  icon: typeof IconType;
+  icon: AstroComponentFactory;
   color?: "github" | "linkedin" | "blog";
   text: string;
 }
