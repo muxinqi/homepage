@@ -1,43 +1,96 @@
 ---
-import LinkButton from "@components/LinkButton.astro";
-import GithubIcon from "@components/icons/GithubIcon.astro";
-import LinkedinIcon from "@components/icons/LinkedinIcon.astro";
-import Layout from "@layouts/Layout.astro";
+import BaseLayout from "@layouts/BaseLayout.astro";
+import ProjectCard from "@components/ProjectCard.astro";
+import PostRow from "@components/PostRow.astro";
+import { getNow, getPosts, getProjects } from "@lib/content";
+import { formatMonth } from "@lib/date";
 
-const name = "Xinqi Mu";
-const description = "";
+const allProjects = await getProjects();
+const featured = allProjects.filter((p) => p.data.featured);
+const projects = (featured.length > 0 ? featured : allProjects).slice(0, 3);
+
+const posts = (await getPosts()).slice(0, 3);
+const now = await getNow();
+
+const description =
+  "Xinqi Mu builds useful software for the web, mobile, and the occasional thing he wanted to make simpler.";
 ---
 
-<Layout>
-  <main class="bg-gray-100 flex items-center justify-center min-h-screen">
-    <div class="bg-white p-6 rounded-2xl shadow-lg w-full max-w-sm text-center">
-      <img
-        src="https://github.com/muxinqi.png"
-        alt="Xinqi Mu's Avatar"
-        class="w-24 h-24 rounded-full mx-auto mb-4"
-      />
-      <h1 class="text-2xl font-bold mb-2">{name}</h1>
-      <p class="text-gray-600 mb-6">{description}</p>
-
-      <div class="flex flex-col gap-4">
-        <LinkButton
-          href="https://github.com/muxinqi"
-          icon={GithubIcon}
-          color="github"
-          text="GitHub"
-        />
-
-        <LinkButton
-          href="https://linkedin.com/in/muxinqi"
-          icon={LinkedinIcon}
-          color="linkedin"
-          text="LinkedIn"
-        />
-
-        <!-- <LinkButton href="https://blog.muxinqi.com" icon={GlobeIcon} color="blog" text="My Blog" /> -->
-      </div>
-
-      <footer class="mt-6 text-xs text-gray-400">© 2025 Xinqi Mu. All rights reserved.</footer>
+<BaseLayout description={description}>
+  <section class="flex flex-col items-start gap-5">
+    <img
+      src="/images/avatar.jpg"
+      alt=""
+      width="96"
+      height="96"
+      class="h-24 w-24 rounded-full border border-line"
+    />
+    <div class="flex flex-col gap-3">
+      <h1 class="text-3xl font-semibold tracking-tight">Xinqi Mu</h1>
+      <p class="max-w-xl text-lg leading-relaxed text-muted">
+        I build useful software for the web, mobile, and the occasional thing I wanted to make
+        simpler.
+      </p>
+      <p class="max-w-xl leading-relaxed text-faint">
+        I like tools that feel obvious after you use them.
+      </p>
     </div>
-  </main>
-</Layout>
+  </section>
+
+  {
+    now && (
+      <section class="mt-14">
+        <div class="flex items-baseline justify-between gap-4 border-b border-line pb-2">
+          <h2 class="font-mono text-sm font-medium tracking-widest text-muted uppercase">Now</h2>
+          <p class="font-mono text-xs text-faint">更新于 {formatMonth(now.data.updated)}</p>
+        </div>
+        <dl class="mt-4 flex flex-col gap-2">
+          {now.data.items.map((item) => (
+            <div class="flex flex-wrap gap-x-3">
+              <dt class="w-16 shrink-0 font-mono text-sm text-faint">{item.label}</dt>
+              <dd class="flex-1 text-muted">{item.text}</dd>
+            </div>
+          ))}
+        </dl>
+      </section>
+    )
+  }
+
+  {
+    projects.length > 0 && (
+      <section class="mt-14">
+        <div class="flex items-baseline justify-between gap-4 border-b border-line pb-2">
+          <h2 class="font-mono text-sm font-medium tracking-widest text-muted uppercase">
+            Projects
+          </h2>
+          <a href="/projects/" class="text-sm text-muted hover:text-accent">
+            全部 →
+          </a>
+        </div>
+        <div class="mt-4 grid gap-4 sm:grid-cols-2">
+          {projects.map((project) => (
+            <ProjectCard project={project} />
+          ))}
+        </div>
+      </section>
+    )
+  }
+
+  {
+    posts.length > 0 && (
+      <section class="mt-14">
+        <div class="flex items-baseline justify-between gap-4 border-b border-line pb-2">
+          <h2 class="font-mono text-sm font-medium tracking-widest text-muted uppercase">Posts</h2>
+          <a href="/posts/" class="text-sm text-muted hover:text-accent">
+            全部 →
+          </a>
+        </div>
+        <div class="mt-4 flex flex-col gap-3">
+          {posts.map((post) => (
+            <PostRow post={post} />
+          ))}
+        </div>
+      </section>
+    )
+  }
+</BaseLayout>

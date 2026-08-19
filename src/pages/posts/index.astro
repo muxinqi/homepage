@@ -1,0 +1,31 @@
+---
+import BaseLayout from "@layouts/BaseLayout.astro";
+import PostRow from "@components/PostRow.astro";
+import EmptyState from "@components/EmptyState.astro";
+import { getPosts } from "@lib/content";
+
+const posts = await getPosts();
+---
+
+<BaseLayout title="Posts" description="Xinqi Mu 写下的一些心得、踩过的坑，和想记住的结论。">
+  <h1 class="text-2xl font-semibold tracking-tight">Posts</h1>
+  <p class="mt-3 max-w-xl leading-relaxed text-muted">
+    一些心得、踩过的坑，和我以后还想再找回来的结论。想写的时候才写。
+  </p>
+
+  <div class="mt-10">
+    {
+      posts.length > 0 ? (
+        <div class="flex flex-col gap-6">
+          {posts.map((post) => (
+            <PostRow post={post} showSummary />
+          ))}
+        </div>
+      ) : (
+        <EmptyState title="还没有第一篇">
+          第一篇写完会出现在这里，也会进 <a class="underline underline-offset-2" href="/rss.xml">RSS</a>。
+        </EmptyState>
+      )
+    }
+  </div>
+</BaseLayout>

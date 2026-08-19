@@ -1,0 +1,29 @@
+---
+import type { CollectionEntry } from "astro:content";
+import StatusBadge from "@components/StatusBadge.astro";
+import { formatMonth } from "@lib/date";
+
+interface Props {
+  project: CollectionEntry<"projects">;
+}
+
+const { project } = Astro.props;
+const { title, summary, status, updated, created, draft } = project.data;
+const stamp = updated ?? created;
+---
+
+<article class="rounded-lg border border-line bg-surface p-5">
+  <div class="flex flex-wrap items-baseline gap-x-3 gap-y-2">
+    <h3 class="text-base font-semibold tracking-tight">
+      <a href={`/projects/${project.id}/`} class="hover:text-accent">{title}</a>
+    </h3>
+    <StatusBadge status={status} />
+    {draft && <span class="font-mono text-xs text-faint">草稿 · 不会进生产构建</span>}
+  </div>
+
+  <p class="mt-2 text-sm leading-relaxed text-muted">{summary}</p>
+
+  <p class="mt-3 font-mono text-xs text-faint">
+    <span class="sr-only">最后更新</span>{formatMonth(stamp)}
+  </p>
+</article>

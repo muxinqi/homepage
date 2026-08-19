@@ -1,0 +1,13 @@
+---
+interface Props {
+  /** 说清楚这里将来放什么，以及现在为什么是空的。不放假内容。 */
+  title: string;
+}
+
+const { title } = Astro.props;
+---
+
+<div class="rounded-lg border border-dashed border-line p-8 text-center">
+  <p class="font-medium">{title}</p>
+  <p class="mx-auto mt-2 max-w-md text-sm leading-relaxed text-muted"><slot /></p>
+</div>

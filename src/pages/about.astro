@@ -1,0 +1,27 @@
+---
+import BaseLayout from "@layouts/BaseLayout.astro";
+
+const description = "关于 Xinqi Mu：我做什么样的软件，以及为什么有这个网站。";
+---
+
+<BaseLayout title="About" description={description}>
+  <h1 class="text-2xl font-semibold tracking-tight">About</h1>
+
+  <div class="prose mt-8 max-w-xl">
+    <p>
+      I build useful software for the web, mobile, and the occasional thing I wanted to make
+      simpler. I like tools that feel obvious after you use them.
+    </p>
+
+
+    <h2>这个网站</h2>
+    <p>
+      这里放我做过的东西和想记住的结论。它主要是写给以后的我自己看的——如果没什么人来，它对我依然有用。
+    </p>
+    <p>
+      源码在 <a href="https://github.com/muxinqi/homepage" target="_blank" rel="noopener noreferrer"
+        >GitHub</a
+      >。
+    </p>
+  </div>
+</BaseLayout>

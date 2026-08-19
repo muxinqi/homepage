@@ -1,0 +1,127 @@
+---
+import "@styles/global.css";
+import UmamiAnalytics from "@components/UmamiAnalytics.astro";
+import GithubIcon from "@components/icons/GithubIcon.astro";
+import LinkedinIcon from "@components/icons/LinkedinIcon.astro";
+
+interface Props {
+  /** 页面标题。首页留空则只显示站点名。 */
+  title?: string;
+  description: string;
+  /** 文章和项目详情页传 "article"。 */
+  ogType?: "website" | "article";
+}
+
+const { title, description, ogType = "website" } = Astro.props;
+
+const siteName = "Xinqi Mu";
+const pageTitle = title ? `${title} — ${siteName}` : siteName;
+const canonical = new URL(Astro.url.pathname, Astro.site).href;
+const ogImage = new URL("/images/avatar.jpg", Astro.site).href;
+
+const nav = [
+  { href: "/projects/", label: "Projects" },
+  { href: "/posts/", label: "Posts" },
+  { href: "/about/", label: "About" },
+];
+
+const path = Astro.url.pathname;
+const year = new Date().getFullYear();
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="generator" content={Astro.generator} />
+
+    <title>{pageTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+
+    <meta property="og:type" content={ogType} />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:site_name" content={siteName} />
+    <meta property="og:image" content={ogImage} />
+    <meta name="twitter:card" content="summary" />
+
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+    <link rel="alternate" type="application/rss+xml" title={`${siteName} — Posts`} href="/rss.xml" />
+
+    <UmamiAnalytics />
+  </head>
+
+  <body class="min-h-screen flex flex-col">
+    <a
+      href="#main"
+      class="sr-only focus:not-sr-only focus:absolute focus:top-3 focus:left-3 focus:z-10 focus:rounded-md focus:bg-accent focus:px-3 focus:py-2 focus:text-accent-ink"
+    >
+      跳到正文
+    </a>
+
+    <header class="border-b border-line">
+      <div class="mx-auto flex w-full max-w-3xl flex-wrap items-baseline justify-between gap-x-6 gap-y-2 px-5 py-5">
+        <a href="/" class="text-base font-semibold tracking-tight hover:text-accent">{siteName}</a>
+        <nav aria-label="主导航">
+          <ul class="flex gap-5 text-sm">
+            {
+              nav.map(({ href, label }) => (
+                <li>
+                  <a
+                    href={href}
+                    aria-current={path.startsWith(href) ? "page" : undefined}
+                    class:list={[
+                      "hover:text-accent",
+                      path.startsWith(href) ? "text-accent font-medium" : "text-muted",
+                    ]}
+                  >
+                    {label}
+                  </a>
+                </li>
+              ))
+            }
+          </ul>
+        </nav>
+      </div>
+    </header>
+
+    <main id="main" class="mx-auto w-full max-w-3xl flex-1 px-5 py-12">
+      <slot />
+    </main>
+
+    <footer class="border-t border-line">
+      <div
+        class="mx-auto flex w-full max-w-3xl flex-wrap items-center justify-between gap-x-6 gap-y-3 px-5 py-6 text-sm text-muted"
+      >
+        <p>© {year} Xinqi Mu</p>
+        <ul class="flex items-center gap-5">
+          <li>
+            <a
+              href="https://github.com/muxinqi"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="inline-flex items-center gap-1.5 hover:text-accent"
+            >
+              <GithubIcon class="h-4 w-4" />GitHub
+            </a>
+          </li>
+          <li>
+            <a
+              href="https://linkedin.com/in/muxinqi"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="inline-flex items-center gap-1.5 hover:text-accent"
+            >
+              <LinkedinIcon class="h-4 w-4" />LinkedIn
+            </a>
+          </li>
+          <li><a href="/rss.xml" class="hover:text-accent">RSS</a></li>
+        </ul>
+      </div>
+    </footer>
+  </body>
+</html>

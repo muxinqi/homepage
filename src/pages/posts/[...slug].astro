@@ -1,0 +1,68 @@
+---
+import type { GetStaticPaths } from "astro";
+import { render, type CollectionEntry } from "astro:content";
+import BaseLayout from "@layouts/BaseLayout.astro";
+import { getPosts } from "@lib/content";
+import { formatDate, isoDate } from "@lib/date";
+
+export const getStaticPaths: GetStaticPaths = async () => {
+  const posts = await getPosts();
+  return posts.map((post) => ({
+    params: { slug: post.id },
+    props: { post },
+  }));
+};
+
+interface Props {
+  post: CollectionEntry<"posts">;
+}
+
+const { post } = Astro.props;
+const { title, summary, created, updated, tags } = post.data;
+const { Content } = await render(post);
+---
+
+<BaseLayout title={title} description={summary} ogType="article">
+  <article>
+    <header class="flex flex-col gap-4 border-b border-line pb-6">
+      <h1 class="text-2xl font-semibold tracking-tight">{title}</h1>
+
+      <dl class="flex flex-wrap gap-x-6 gap-y-1 font-mono text-xs text-faint">
+        <div class="flex gap-2">
+          <dt>写于</dt>
+          <dd><time datetime={isoDate(created)}>{formatDate(created)}</time></dd>
+        </div>
+        {
+          updated && (
+            <div class="flex gap-2">
+              <dt>改于</dt>
+              <dd>
+                <time datetime={isoDate(updated)}>{formatDate(updated)}</time>
+              </dd>
+            </div>
+          )
+        }
+      </dl>
+
+      {
+        tags.length > 0 && (
+          <ul class="flex flex-wrap gap-2">
+            {tags.map((tag) => (
+              <li class="rounded border border-line px-1.5 py-0.5 font-mono text-xs text-faint">
+                {tag}
+              </li>
+            ))}
+          </ul>
+        )
+      }
+    </header>
+
+    <div class="prose mt-8">
+      <Content />
+    </div>
+  </article>
+
+  <p class="mt-12 text-sm">
+    <a href="/posts/" class="text-muted hover:text-accent">← 全部文章</a>
+  </p>
+</BaseLayout>

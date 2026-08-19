@@ -1,0 +1,93 @@
+---
+import type { GetStaticPaths } from "astro";
+import { render, type CollectionEntry } from "astro:content";
+import BaseLayout from "@layouts/BaseLayout.astro";
+import StatusBadge from "@components/StatusBadge.astro";
+import { getProjects } from "@lib/content";
+import { formatDate, isoDate } from "@lib/date";
+
+export const getStaticPaths: GetStaticPaths = async () => {
+  const projects = await getProjects();
+  return projects.map((project) => ({
+    params: { slug: project.id },
+    props: { project },
+  }));
+};
+
+interface Props {
+  project: CollectionEntry<"projects">;
+}
+
+const { project } = Astro.props;
+const { title, summary, status, created, updated, url, repo } = project.data;
+const { Content } = await render(project);
+---
+
+<BaseLayout title={title} description={summary} ogType="article">
+  <article>
+    <header class="flex flex-col gap-4 border-b border-line pb-6">
+      <div class="flex flex-wrap items-center gap-3">
+        <h1 class="text-2xl font-semibold tracking-tight">{title}</h1>
+        <StatusBadge status={status} />
+      </div>
+
+      <p class="max-w-xl leading-relaxed text-muted">{summary}</p>
+
+      <dl class="flex flex-wrap gap-x-6 gap-y-1 font-mono text-xs text-faint">
+        <div class="flex gap-2">
+          <dt>开始</dt>
+          <dd><time datetime={isoDate(created)}>{formatDate(created)}</time></dd>
+        </div>
+        {
+          updated && (
+            <div class="flex gap-2">
+              <dt>最后更新</dt>
+              <dd>
+                <time datetime={isoDate(updated)}>{formatDate(updated)}</time>
+              </dd>
+            </div>
+          )
+        }
+      </dl>
+
+      {
+        (url || repo) && (
+          <ul class="flex flex-wrap gap-4 text-sm">
+            {url && (
+              <li>
+                <a
+                  href={url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="text-accent underline underline-offset-2"
+                >
+                  线上地址
+                </a>
+              </li>
+            )}
+            {repo && (
+              <li>
+                <a
+                  href={repo}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="text-accent underline underline-offset-2"
+                >
+                  源码
+                </a>
+              </li>
+            )}
+          </ul>
+        )
+      }
+    </header>
+
+    <div class="prose mt-8">
+      <Content />
+    </div>
+  </article>
+
+  <p class="mt-12 text-sm">
+    <a href="/projects/" class="text-muted hover:text-accent">← 全部项目</a>
+  </p>
+</BaseLayout>
