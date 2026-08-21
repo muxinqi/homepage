@@ -77,28 +77,10 @@
 :root.light { color-scheme: light; }
 :root.dark  { color-scheme: dark; }
 
-/* Fallback for browsers older than light-dark() (Baseline since May 2024).
-   A custom property holding `light-dark(…)` parses fine there — it only fails
-   later, when var() is substituted into a real property — so the cascade does
-   not skip it on its own and these must come after, not before.
-   Without this the site degrades to unstyled black on white with every hairline
-   invisible. With it, those browsers get the light theme, fixed. The toggle is
-   hidden because it would have nothing left to switch. */
-@supports not (color: light-dark(#000, #fff)) {
-  :root {
-    --ground:       #FBFBFC;
-    --surface-sunk: #F1F2F4;
-    --line:         #E1E3E6;
-    --line-strong:  #D5D8DC;
-    --ink:          #16181A;
-    --ink-soft:     #2E3134;
-    --ink-dim:      #35383C;
-    --ink-muted:    #53575D;
-    --ink-faint:    #8A9098;
-    --accent:       #274690;
-  }
-  [data-theme-toggle] { display: none; }
-}
+/* No hand-written fallback for browsers older than light-dark(). Lightning CSS
+   lowers it during the build, from the browser targets in astro.config.mjs — and
+   it reads the two rules above, so the manual toggle keeps working there too.
+   See the note in that file. */
 
 body {
   background: var(--ground);

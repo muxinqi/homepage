@@ -77,11 +77,12 @@ A few things worth knowing before changing anything:
   thickens, an image that swaps — add `@custom-variant dark` back; the two
   approaches sit at different layers and coexist fine.
 
-  An `@supports not (color: light-dark(…))` block after `:root` gives browsers
-  older than May 2024 the light palette, fixed, and hides the toggle. It has to
-  come after: a custom property holding `light-dark(…)` parses fine everywhere
-  and only fails later at `var()` substitution, so the cascade will not skip it
-  on its own.
+  Nothing in the source worries about `light-dark()` being Baseline only since
+  May 2024. Lightning CSS — already in the pipeline, since Tailwind v4 uses it —
+  lowers it during the build, driven by the browser targets in
+  `astro.config.mjs`. It reads the `:root.light` / `:root.dark` rules and the
+  `@media print` block too, so older browsers keep the system preference, the
+  manual toggle, and the forced-light printing. Change a colour in one place.
 - **Layout is flex for collapse, grid + subgrid for alignment.** The two
   breakpoints (`sm`, `md`) handle sticky year labels, a type floor, and nav
   shape — they do not define layout tracks. The rail wraps on its own at 472px,

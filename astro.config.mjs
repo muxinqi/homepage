@@ -40,5 +40,21 @@ export default defineConfig({
     },
   ],
 
-  vite: { plugins: [tailwindcss()] },
+  vite: {
+    plugins: [tailwindcss()],
+    css: {
+      transformer: 'lightningcss',
+      lightningcss: {
+        // Packed as major << 16 | minor << 8. These match Tailwind v4's own
+        // floor — below it the utilities do not work anyway, so supporting
+        // anything older would be pretending.
+        targets: {
+          chrome: 111 << 16,
+          safari: (16 << 16) | (4 << 8),
+          firefox: 128 << 16,
+        },
+      },
+    },
+    build: { cssMinify: 'lightningcss' },
+  },
 });
