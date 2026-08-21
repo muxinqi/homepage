@@ -68,7 +68,20 @@ A few things worth knowing before changing anything:
 - **Colours are `light-dark()` pairs on `:root`.** Light and dark are two values
   on one line, picked by `color-scheme`. The footer toggle cycles
   System → Light → Dark and only sets a class; a synchronous script in `<head>`
-  reads the same key before first paint.
+  reads the same key before first paint. Because `color-scheme` does the work,
+  "System" needs no JavaScript at all — removing the class is the whole
+  mechanism, and scrollbars and form controls follow along for free.
+
+  There is no `dark:` utility variant, because nothing but colour differs
+  between the two themes. The moment something non-colour does — a border that
+  thickens, an image that swaps — add `@custom-variant dark` back; the two
+  approaches sit at different layers and coexist fine.
+
+  An `@supports not (color: light-dark(…))` block after `:root` gives browsers
+  older than May 2024 the light palette, fixed, and hides the toggle. It has to
+  come after: a custom property holding `light-dark(…)` parses fine everywhere
+  and only fails later at `var()` substitution, so the cascade will not skip it
+  on its own.
 - **Layout is flex for collapse, grid + subgrid for alignment.** The two
   breakpoints (`sm`, `md`) handle sticky year labels, a type floor, and nav
   shape — they do not define layout tracks. The rail wraps on its own at 472px,
