@@ -7,18 +7,30 @@ const links = [
 
 const path = Astro.url.pathname;
 const isCurrent = (href: string) => path === href || path.startsWith(href);
+const isHome = path === "/";
 
-// Wordmark left, nav right. The wordmark is also the only way home — without it
-// the header offers no route back, which the nav-only version did not solve.
+// The wordmark is a home link, so the homepage does not carry one: an active
+// link to the page you are already on is noise, and the 42px name sits right
+// below it anyway. The nav is right-aligned either way, so nothing moves when
+// you navigate home — only the left slot empties.
 //
 // The bottom rule is drawn in --ink. It is the only ink-weight line on the site,
 // and it is what makes the header read as the top edge of the page.
 ---
 
 <header
-  class="flex flex-wrap items-baseline justify-between gap-x-8 gap-y-3 border-b border-ink pb-[13px]"
+  class:list={[
+    "flex flex-wrap items-baseline gap-x-8 gap-y-3 border-b border-ink pb-[13px]",
+    isHome ? "justify-end" : "justify-between",
+  ]}
 >
-  <a href="/" class="font-display text-[0.9375rem] text-ink" aria-label="Home">Xinqi&nbsp;Mu</a>
+  {
+    !isHome && (
+      <a href="/" class="font-display text-[0.9375rem] text-ink" aria-label="Xinqi Mu, home">
+        Xinqi&nbsp;Mu
+      </a>
+    )
+  }
 
   <nav aria-label="Main">
     <ul class="flex flex-wrap items-baseline gap-x-5 gap-y-2 font-mono text-meta tracking-[0.12em] uppercase">
