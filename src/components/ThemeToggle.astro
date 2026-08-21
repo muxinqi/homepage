@@ -1,8 +1,17 @@
 ---
+import Monitor from "@assets/icons/monitor.svg";
+import Sun from "@assets/icons/sun.svg";
+import Moon from "@assets/icons/moon.svg";
+
 // Three states, not two: System → Light → Dark. With only two, a reader who
 // clicks once can never get back to following the OS. Returning to System is
 // `localStorage.removeItem`, and the anti-flash script in <head> reads the same
 // key synchronously.
+//
+// All three icons are rendered and CSS shows the one matching `data-theme`, so
+// switching never touches innerHTML. The visible word is the current *value*;
+// the control's own name lives in the screen-reader-only "Theme:" prefix and in
+// the tooltip, because "System" on its own says nothing about what it controls.
 ---
 
 <noscript><style>[data-theme-toggle] { display: none; }</style></noscript>
@@ -10,9 +19,14 @@
 <button
   type="button"
   data-theme-toggle
-  class="meta-link cursor-pointer uppercase hover:text-ink"
-  aria-label="Colour theme"
+  data-theme="system"
+  title="Switch colour theme — System, Light, Dark"
+  class="meta-link inline-flex cursor-pointer items-center gap-1.5 uppercase hover:text-ink"
 >
+  <span data-icon="system" aria-hidden="true"><Monitor width="12" height="12" /></span>
+  <span data-icon="light" aria-hidden="true"><Sun width="12" height="12" /></span>
+  <span data-icon="dark" aria-hidden="true"><Moon width="12" height="12" /></span>
+  <span class="sr-only">Theme:</span>
   <span data-theme-label>System</span>
 </button>
 
@@ -38,8 +52,8 @@
   function apply(theme: Theme) {
     root.classList.remove("light", "dark");
     if (theme !== "system") root.classList.add(theme);
+    if (button) button.dataset.theme = theme;
     if (label) label.textContent = theme[0].toUpperCase() + theme.slice(1);
-    button?.setAttribute("aria-label", `Colour theme: ${theme}`);
   }
 
   function store(theme: Theme) {

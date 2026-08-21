@@ -153,6 +153,13 @@ html { scroll-behavior: smooth; }
   .meta-link { padding-block: 0.5rem; margin-block: -0.5rem; }
 }
 
+/* The theme button renders all three icons and shows the one matching its
+   current state, so switching never rewrites markup. */
+[data-theme-toggle] [data-icon] { display: none; }
+[data-theme-toggle][data-theme="system"] [data-icon="system"],
+[data-theme-toggle][data-theme="light"] [data-icon="light"],
+[data-theme-toggle][data-theme="dark"] [data-icon="dark"] { display: inline-flex; }
+
 @media (prefers-contrast: more) {
   :root { --line: var(--ink-muted); --line-strong: var(--ink); }
 }
