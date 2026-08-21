@@ -30,12 +30,14 @@ const ogImage = new URL("/og.png", Astro.site).href;
     <meta name="theme-color" media="(prefers-color-scheme: light)" content="#FBFBFC" />
     <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#101214" />
 
-    {/* Synchronous, and before the stylesheet, so the theme never flashes. */}
+    {/* Synchronous, and before the stylesheet, so the theme never flashes.
+        Setting the attribute is also what reveals the toggle. */}
     <script is:inline>
       try {
         var t = localStorage.getItem("theme");
-        if (t === "dark" || t === "light") document.documentElement.classList.add(t);
       } catch (e) {}
+      document.documentElement.dataset.theme =
+        t === "light" || t === "dark" ? t : "system";
     </script>
 
     <title>{pageTitle}</title>

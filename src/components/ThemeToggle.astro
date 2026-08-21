@@ -5,23 +5,19 @@ import Moon from "@assets/icons/moon.svg";
 
 // Three states, not two: System → Light → Dark. With only two, a reader who
 // clicks once can never get back to following the OS. Returning to System is
-// `localStorage.removeItem`, and the anti-flash script in <head> reads the same
-// key synchronously.
+// `localStorage.removeItem`.
 //
-// All three icons are rendered and CSS shows the one matching `data-theme`, so
-// switching never touches innerHTML. The visible word is the current *value*;
-// the control's own name lives in the screen-reader-only "Theme:" prefix and in
-// the tooltip, because "System" on its own says nothing about what it controls.
+// The state lives in one place — data-theme on <html>, written by the script in
+// <head> before first paint. CSS derives everything else from it: the colour
+// scheme, which of the three icons shows, and whether this button is visible at
+// all. So the only thing left for this script is the word.
 ---
-
-<noscript><style>[data-theme-toggle] { display: none; }</style></noscript>
 
 <button
   type="button"
   data-theme-toggle
-  data-theme="system"
   title="Switch colour theme — System, Light, Dark"
-  class="meta-link inline-flex cursor-pointer items-center gap-1.5 uppercase hover:text-ink"
+  class="meta-link cursor-pointer items-center gap-1.5 uppercase hover:text-ink"
 >
   <span data-icon="system" aria-hidden="true"><Monitor width="12" height="12" /></span>
   <span data-icon="light" aria-hidden="true"><Sun width="12" height="12" /></span>
@@ -31,45 +27,30 @@ import Moon from "@assets/icons/moon.svg";
 </button>
 
 <script>
-  const ORDER = ["system", "light", "dark"] as const;
-  type Theme = (typeof ORDER)[number];
+  const NEXT = { system: "light", light: "dark", dark: "system" } as const;
+  type Theme = keyof typeof NEXT;
 
   const root = document.documentElement;
-  const button = document.querySelector<HTMLButtonElement>("[data-theme-toggle]");
   const label = document.querySelector<HTMLElement>("[data-theme-label]");
+  const current = () => (root.dataset.theme ?? "system") as Theme;
 
-  function read(): Theme {
-    try {
-      const stored = localStorage.getItem("theme");
-      if (stored === "light" || stored === "dark") return stored;
-    } catch {
-      // Private mode, or site data blocked. Following the system is the right
-      // answer in both cases.
-    }
-    return "system";
-  }
-
-  function apply(theme: Theme) {
-    root.classList.remove("light", "dark");
-    if (theme !== "system") root.classList.add(theme);
-    if (button) button.dataset.theme = theme;
+  function render() {
+    const theme = current();
     if (label) label.textContent = theme[0].toUpperCase() + theme.slice(1);
   }
 
-  function store(theme: Theme) {
+  render();
+
+  document.querySelector("[data-theme-toggle]")?.addEventListener("click", () => {
+    const next = NEXT[current()] ?? "system";
+    root.dataset.theme = next;
     try {
-      if (theme === "system") localStorage.removeItem("theme");
-      else localStorage.setItem("theme", theme);
+      if (next === "system") localStorage.removeItem("theme");
+      else localStorage.setItem("theme", next);
     } catch {
-      // Preference simply does not persist. The page still renders correctly.
+      // Private mode, or site data blocked. The choice holds for this page view
+      // and simply does not persist.
     }
-  }
-
-  apply(read());
-
-  button?.addEventListener("click", () => {
-    const next = ORDER[(ORDER.indexOf(read()) + 1) % ORDER.length];
-    store(next);
-    apply(next);
+    render();
   });
 </script>

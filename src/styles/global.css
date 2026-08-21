@@ -74,8 +74,11 @@
   --accent:       light-dark(#274690, #86ABEE);
   text-autospace: normal;
 }
-:root.light { color-scheme: light; }
-:root.dark  { color-scheme: dark; }
+/* One state bit for the whole feature: data-theme on <html>. It selects the
+   colour scheme, picks the toggle's icon, and — by existing at all — is what
+   reveals the toggle, since only the script sets it. */
+:root[data-theme="light"] { color-scheme: light; }
+:root[data-theme="dark"]  { color-scheme: dark; }
 
 /* No hand-written fallback for browsers older than light-dark(). Lightning CSS
    lowers it during the build, from the browser targets in astro.config.mjs — and
@@ -153,12 +156,17 @@ html {
   .meta-link { padding-block: 0.5rem; margin-block: -0.5rem; }
 }
 
-/* The theme button renders all three icons and shows the one matching its
-   current state, so switching never rewrites markup. */
+/* Hidden until the script that drives it has run — which covers JavaScript being
+   off, blocked, or broken, not just the first of those. */
+[data-theme-toggle] { display: none; }
+:root[data-theme] [data-theme-toggle] { display: inline-flex; }
+
+/* All three icons are in the markup; the state bit reveals one. Switching never
+   rewrites the DOM. */
 [data-theme-toggle] [data-icon] { display: none; }
-[data-theme-toggle][data-theme="system"] [data-icon="system"],
-[data-theme-toggle][data-theme="light"] [data-icon="light"],
-[data-theme-toggle][data-theme="dark"] [data-icon="dark"] { display: inline-flex; }
+:root[data-theme="system"] [data-icon="system"],
+:root[data-theme="light"]  [data-icon="light"],
+:root[data-theme="dark"]   [data-icon="dark"] { display: inline-flex; }
 
 @media (prefers-contrast: more) {
   :root { --line: var(--ink-muted); --line-strong: var(--ink); }
