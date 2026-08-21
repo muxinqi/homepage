@@ -1,0 +1,18 @@
+# Parsed by Cloudflare Workers static assets; the file itself is never served.
+# It only applies to static asset responses, which is all this site has — there
+# is no Worker script in front of them.
+
+/*
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  X-Frame-Options: DENY
+  Permissions-Policy: geolocation=(), camera=(), microphone=(), payment=(), interest-cohort=()
+
+# Filenames here carry a content hash, so a change is a new URL and the old one
+# can be cached indefinitely.
+/_astro/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# Feed readers poll this; let them revalidate rather than serve a stale copy.
+/notes/feed.xml
+  Cache-Control: public, max-age=0, must-revalidate

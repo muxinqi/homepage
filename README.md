@@ -37,6 +37,19 @@ src/
   styles/global.css     every design token, in one file
 ```
 
+## What the build emits besides pages
+
+- `sitemap-index.xml` + `sitemap-0.xml` — six URLs, absolute and https, `/404`
+  excluded. `lastmod` is deliberately absent: a build-date stamp on every URL is
+  worse than none, and per-page dates would mean hand-rolling the sitemap.
+- `robots.txt` — points at the sitemap.
+- `_headers` — parsed by Cloudflare Workers static assets. Security headers plus
+  immutable caching for the content-hashed files in `/_astro/`. It only applies
+  to static asset responses, which is all this site serves.
+- A `<meta http-equiv="content-security-policy">` on every page, from
+  `security.csp` in the Astro config. Astro hashes its own inline script and
+  styles into it, so there is no `'unsafe-inline'` anywhere.
+
 ## Design
 
 The visual system is specified in a Claude Design document — ten colour tokens,

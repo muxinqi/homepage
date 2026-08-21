@@ -5,6 +5,16 @@ import sitemap from '@astrojs/sitemap';
 
 export default defineConfig({
   site: 'https://muxinqi.com',
+
+  // Every internal link and every built path already ends in a slash. Saying so
+  // explicitly keeps dev identical to production and stops a stray link without
+  // one from becoming a second URL for the same page.
+  trailingSlash: 'always',
+
+  // Astro hashes its own inline scripts and styles into the policy, so the site
+  // gets a real CSP rather than one softened with 'unsafe-inline'.
+  security: { csp: true },
+
   integrations: [sitemap()],
 
   // Self-hosted from Google's catalogue: latin subset only, emitted into dist as

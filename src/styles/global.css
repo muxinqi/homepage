@@ -146,7 +146,15 @@ body {
 }
 :target { scroll-margin-top: 3.5rem; }
 :lang(zh) { line-break: strict; }
-html { scroll-behavior: smooth; }
+
+html {
+  scroll-behavior: smooth;
+  /* Reserve the scrollbar's width whether or not the page scrolls. Without it a
+     short page is 15px wider than a long one on classic-scrollbar platforms, and
+     the whole centred frame jumps sideways on every navigation. No effect where
+     scrollbars are overlays. */
+  scrollbar-gutter: stable;
+}
 
 /* Small monospace links get a 44px hit area on touch, without moving anything. */
 @media (pointer: coarse) {

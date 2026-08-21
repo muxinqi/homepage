@@ -2,6 +2,7 @@
 import { Font } from "astro:assets";
 import SiteHeader from "@components/SiteHeader.astro";
 import SiteFooter from "@components/SiteFooter.astro";
+import avatar from "@assets/avatar.jpg";
 import "@styles/global.css";
 
 interface Props {
@@ -17,7 +18,7 @@ const { title, description, ogType = "website", lang = "en" } = Astro.props;
 
 const pageTitle = title ? `${title} — Xinqi Mu` : "Xinqi Mu";
 const canonical = new URL(Astro.url.pathname, Astro.site).href;
-const ogImage = new URL("/images/avatar.jpg", Astro.site).href;
+const ogImage = new URL(avatar.src, Astro.site).href;
 ---
 
 <!doctype html>
@@ -25,6 +26,10 @@ const ogImage = new URL("/images/avatar.jpg", Astro.site).href;
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    {/* Paints the mobile browser chrome to match --ground in each theme. */}
+    <meta name="theme-color" media="(prefers-color-scheme: light)" content="#FBFBFC" />
+    <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#101214" />
 
     {/* Synchronous, and before the stylesheet, so the theme never flashes. */}
     <script is:inline>
