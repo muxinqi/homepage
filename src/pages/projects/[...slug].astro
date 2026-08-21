@@ -39,13 +39,17 @@ const links = [
 const rows: MetaRow[] = [
   { label: "Status", value: `${statusLabels[status]} — ${statusMeaning[status]}` },
   { label: "Built", value: built },
-  ...(closed ? [{ label: "Closed", value: monthYear(closed) }] : []),
+  // Only meaningful for an offline project; the list row already gates on the
+  // same pair, and without this an Active badge could sit above a Closed date.
+  ...(status === "offline" && closed
+    ? [{ label: "Closed", value: monthYear(closed) }]
+    : []),
   ...(stack ? [{ label: "Stack", value: stack }] : []),
   ...(links.length > 0 ? [{ label: "Links", links }] : []),
 ];
 ---
 
-<BaseLayout title={title} description={summary} ogType="article">
+<BaseLayout title={title} description={summary} ogType="article" {lang}>
   <div class="rail-row pt-[clamp(2rem,9vw,3.25rem)]">
     <div class="rail"><StatusMark {status} alignToTitle /></div>
 

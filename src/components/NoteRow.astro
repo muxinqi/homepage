@@ -26,7 +26,9 @@ const { title, summary, created, lang } = note.data;
   >
 
   <div class="min-w-0">
-    <a href={`/notes/${note.id}/`} class="text-item text-ink" lang={lang}>{title}</a>
+    <a href={`/notes/${note.id}/`} class="text-item text-ink wrap-anywhere" lang={lang}
+      >{title}</a
+    >
     {
       summary && (
         <p class="mt-0.5 max-w-[50ch] text-sum text-ink-muted text-pretty" lang={lang}>

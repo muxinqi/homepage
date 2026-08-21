@@ -14,8 +14,6 @@ const { title, detail } = Astro.props;
 <div
   class="border border-dashed border-line-strong bg-[repeating-linear-gradient(135deg,color-mix(in_srgb,var(--ink)_2.2%,transparent)_0_6px,transparent_6px_12px)] px-[18px] py-4"
 >
-  {/* --ink-faint, which the mockup used here, is 3.11:1 — fine for a decorative
-      mark, short of AA for a 10.5px label. --ink-muted is the same role at 7:1. */}
   <p class="font-mono text-rail text-ink-muted uppercase">Empty</p>
   <p class="mt-[7px] text-item text-ink">{title}</p>
   {detail && <p class="text-sum text-ink-muted">{detail}</p>}

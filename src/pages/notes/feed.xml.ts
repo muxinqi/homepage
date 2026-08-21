@@ -53,9 +53,17 @@ export const GET: APIRoute = async (context) => {
     }),
   );
 
-  // An empty feed is still a valid feed. Readers that already subscribed keep
-  // working, and the first note appears without anyone re-subscribing.
-  const updated = notes.length > 0 ? notes[0].data.created : new Date(0);
+  // The last time anything here changed — not the newest note's creation date.
+  // A revision to an old note has to move this, or readers have no reason to
+  // refetch. An empty feed is still a valid feed: subscribers keep working and
+  // the first note appears without anyone re-subscribing.
+  const updated = notes.reduce(
+    (latest, note) => {
+      const touched = note.data.updated ?? note.data.created;
+      return touched > latest ? touched : latest;
+    },
+    new Date(0),
+  );
 
   const feed = `<?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en">
@@ -70,6 +78,9 @@ ${entries.join("\n")}
 </feed>
 `;
 
+  // A static build writes only the body to dist/, so these headers apply in
+  // `astro dev` and nowhere else. What production actually sends is set in
+  // public/_headers — change both together.
   return new Response(feed, {
     headers: { "Content-Type": "application/atom+xml; charset=utf-8" },
   });

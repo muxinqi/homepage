@@ -66,9 +66,12 @@ export const statusLabels = {
   offline: "Offline",
 } as const;
 
-/** What each badge actually promises the reader, for the `title` attribute. */
+/**
+ * What each badge actually promises the reader. Rendered after the label as
+ * `Live — usable, …`, so no entry may contain a dash of its own.
+ */
 export const statusMeaning = {
-  active: "Usable, and I'm still adding to it",
-  live: "Usable, but I've stopped changing it",
-  offline: "No longer usable — the page stays as a record",
+  active: "usable, and I'm still adding to it",
+  live: "usable, but I've stopped changing it",
+  offline: "no longer usable; the page stays as a record",
 } as const;

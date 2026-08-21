@@ -22,7 +22,10 @@ const { title, summary, status, created, updated, closed, url, repo, lang } =
 const offline = status === "offline";
 // An offline row drops title and summary to muted so a glance separates history
 // from what still works. Its links stay accent — they remain clickable.
-const dim = offline ? "text-ink-muted" : "";
+//
+// One class, not two: emitting `text-ink text-ink-muted` and letting them fight
+// would resolve by stylesheet order, which this component does not control.
+const titleTone = offline ? "text-ink-muted" : "text-ink";
 
 const touched = updated ?? created;
 const stamp = offline && closed ? closed : dateFormat === "updated" ? touched : created;
@@ -45,7 +48,7 @@ const whenTitle = offline && closed
     <div class="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-0.5">
       <a
         href={`/projects/${project.id}/`}
-        class:list={["font-display text-row font-medium text-ink", dim]}
+        class:list={["font-display text-row font-medium wrap-anywhere", titleTone]}
         lang={lang}>{title}</a
       >
       <time
@@ -56,7 +59,7 @@ const whenTitle = offline && closed
     </div>
 
     <p
-      class:list={["mt-1 max-w-[54ch] text-sum text-ink-muted text-pretty", dim]}
+      class="mt-1 max-w-[54ch] text-sum text-ink-muted text-pretty"
       lang={lang}
     >
       {summary}

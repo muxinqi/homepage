@@ -5,12 +5,22 @@ interface Props {
   /** Second line in the rail: the section's exit, or a timestamp. */
   note?: string;
   noteHref?: string;
+  /** Every section's exit reads "All →"; this is what tells them apart in a
+      screen reader's list of links. */
+  noteLabel?: string;
   /** Rows sitting under a top border need the label pushed down to meet them. */
   alignToList?: boolean;
   class?: string;
 }
 
-const { label, note, noteHref, alignToList = true, class: className } = Astro.props;
+const {
+  label,
+  note,
+  noteHref,
+  noteLabel,
+  alignToList = true,
+  class: className,
+} = Astro.props;
 const headingId = `section-${label.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`;
 ---
 
@@ -27,6 +37,7 @@ const headingId = `section-${label.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`;
         (noteHref ? (
           <a
             href={noteHref}
+            aria-label={noteLabel}
             class="meta-link inline-block tracking-[0.02em] text-accent"
           >
             {note}

@@ -34,7 +34,7 @@ const { Content } = await render(note);
         updated && monthYear(updated) !== monthYear(created) && (
           <time
             datetime={isoDate(updated)}
-            class="block font-mono text-rail tracking-[0.02em] text-ink-faint"
+            class="block font-mono text-rail tracking-[0.02em] text-ink-muted"
           >
             rev. {monthYear(updated)}
           </time>

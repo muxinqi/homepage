@@ -6,8 +6,13 @@ const links = [
 ];
 
 const path = Astro.url.pathname;
-const isCurrent = (href: string) => path === href || path.startsWith(href);
 const isHome = path === "/";
+
+// `page` only for the page you are actually on. A section link is highlighted on
+// its detail pages too, but announcing "current page" there would be a lie —
+// `true` is the value for an ancestor.
+const currentState = (href: string) =>
+  path === href ? "page" : path.startsWith(href) ? "true" : undefined;
 
 // The space is escaped and non-breaking on purpose: if the name wrapped to two
 // lines the header would grow, which is the very thing this component guards.
@@ -53,9 +58,9 @@ const wordmarkType = "font-display text-[0.9375rem]";
               href={href}
               class:list={[
                 "meta-link",
-                isCurrent(href) ? "text-ink" : "text-ink-muted hover:text-ink",
+                currentState(href) ? "text-ink" : "text-ink-muted hover:text-ink",
               ]}
-              aria-current={isCurrent(href) ? "page" : undefined}
+              aria-current={currentState(href)}
             >
               {label}
             </a>

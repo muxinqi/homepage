@@ -13,8 +13,10 @@
   --spacing-gutter: 1.25rem; /* 20  — the only gutter in the system */
   --container-frame: 55rem;  /* 880 — content frame */
 
-  --breakpoint-sm: 30rem;    /* 480 — year stickiness, type floor */
-  --breakpoint-md: 48rem;    /* 768 — reserved for a fourth nav item */
+  /* 528 — where the rail actually wraps, so the sticky year turns on exactly
+     when it stacks. The frame's padding is 5vw a side in this range, leaving
+     0.9 × viewport, and the rail needs 472 (112 + 20 + 340): 472 / 0.9 ≈ 524. */
+  --breakpoint-sm: 33rem;
   --breakpoint-lg: initial;
   --breakpoint-xl: initial;
   --breakpoint-2xl: initial;
@@ -56,7 +58,6 @@
   --color-ink-soft: var(--ink-soft);
   --color-ink-dim: var(--ink-dim);
   --color-ink-muted: var(--ink-muted);
-  --color-ink-faint: var(--ink-faint);
   --color-accent: var(--accent);
 }
 
@@ -70,7 +71,6 @@
   --ink-soft:     light-dark(#2E3134, #C8CCD1);
   --ink-dim:      light-dark(#35383C, #C0C4C9);
   --ink-muted:    light-dark(#53575D, #999FA6);
-  --ink-faint:    light-dark(#8A9098, #6E747B);
   --accent:       light-dark(#274690, #86ABEE);
   text-autospace: normal;
 }
@@ -107,6 +107,21 @@ body {
 @utility column {
   flex: 1 1 21.25rem;
   min-width: 0;
+}
+
+/* The year label on a grouped list. Once the rail has wrapped above its rows, a
+   sticky element still 112px wide masks only the left edge and the rows scroll
+   past it in the open — so it spans the full width there. Both cases live in one
+   utility so the override cannot lose to stylesheet ordering. */
+@utility rail-year {
+  flex: 0 0 var(--spacing-rail);
+  @media (width < 33rem) {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    flex: 0 0 100%;
+    background: var(--ground);
+  }
 }
 @utility row-list {
   display: grid;
@@ -172,11 +187,19 @@ html {
   :root { --line: var(--ink-muted); --line-strong: var(--ink); }
 }
 
+/* Anything that can contain an unbroken token long enough to push the page
+   sideways. A row's max-width constrains the box, not the text inside it, so
+   without this one long word in a title scrolls the whole document at 360px. */
 .meta-table a,
-.prose a { overflow-wrap: anywhere; }
+.prose a,
+.prose code { overflow-wrap: anywhere; }
 
 @media print {
-  :root { color-scheme: light; }
+  /* `:root[data-theme]` must be matched here, not just `:root`. A media query
+     adds no specificity, so a bare `:root` (0,1,0) loses to the attribute rule
+     (0,2,0) that the toggle writes — and a reader who had chosen Dark printed a
+     page of white text on white paper. */
+  :root, :root[data-theme] { color-scheme: light; }
   a { color: inherit; text-decoration: underline; }
   header nav, footer, .skip-link { display: none; }
   .row { break-inside: avoid; }

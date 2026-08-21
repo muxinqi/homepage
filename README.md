@@ -39,13 +39,15 @@ src/
 
 ## What the build emits besides pages
 
-- `sitemap-index.xml` + `sitemap-0.xml` — six URLs, absolute and https, `/404`
-  excluded. `lastmod` is deliberately absent: a build-date stamp on every URL is
-  worse than none, and per-page dates would mean hand-rolling the sitemap.
+- `sitemap-index.xml` + `sitemap-0.xml` — every built page, absolute and https,
+  `/404` excluded. `lastmod` is deliberately absent: a build-date stamp on every
+  URL is worse than none, and per-page dates would mean hand-rolling the sitemap.
 - `robots.txt` — points at the sitemap.
-- `_headers` — parsed by Cloudflare Workers static assets. Security headers plus
-  immutable caching for the content-hashed files in `/_astro/`. It only applies
-  to static asset responses, which is all this site serves.
+- `_headers` — parsed by Cloudflare Workers static assets. Security headers,
+  immutable caching for the content-hashed files in `/_astro/`, and the feed's
+  content type. That last one lives here because a static build writes only the
+  body to `dist/` and drops the `Response` headers the route sets, so without it
+  the feed goes out as `application/xml`.
 - `og.png` — the 1200×630 social card in `public/`. It was rendered by loading a
   card built from the site's own tokens and webfonts in headless Chrome at
   exactly that size. Regenerate the same way if the name or the one-liner
@@ -66,11 +68,19 @@ implementation follows it; `src/styles/global.css` is where it lands.
 A few things worth knowing before changing anything:
 
 - **Colours are `light-dark()` pairs on `:root`.** Light and dark are two values
-  on one line, picked by `color-scheme`. The footer toggle cycles
-  System → Light → Dark and only sets a class; a synchronous script in `<head>`
-  reads the same key before first paint. Because `color-scheme` does the work,
-  "System" needs no JavaScript at all — removing the class is the whole
-  mechanism, and scrollbars and form controls follow along for free.
+  on one line, picked by `color-scheme`.
+
+  The whole theme feature is one state bit: `data-theme` on `<html>`, set by a
+  synchronous script in `<head>` before first paint. CSS derives everything from
+  it — the colour scheme, which of the toggle's three icons shows, and whether
+  the toggle is visible at all (it only exists once the script has run, which
+  covers JavaScript being blocked or broken, not just switched off). Because
+  `color-scheme` does the work, "System" needs no JavaScript: the attribute says
+  `system` and the OS decides, with scrollbars and form controls following free.
+
+  Anything overriding `color-scheme` has to match `:root[data-theme]`, not bare
+  `:root` — a media query adds no specificity, so `@media print { :root … }`
+  loses to the attribute the toggle writes. See the note on the print block.
 
   There is no `dark:` utility variant, because nothing but colour differs
   between the two themes. The moment something non-colour does — a border that
@@ -80,13 +90,14 @@ A few things worth knowing before changing anything:
   Nothing in the source worries about `light-dark()` being Baseline only since
   May 2024. Lightning CSS — already in the pipeline, since Tailwind v4 uses it —
   lowers it during the build, driven by the browser targets in
-  `astro.config.mjs`. It reads the `:root.light` / `:root.dark` rules and the
-  `@media print` block too, so older browsers keep the system preference, the
-  manual toggle, and the forced-light printing. Change a colour in one place.
-- **Layout is flex for collapse, grid + subgrid for alignment.** The two
-  breakpoints (`sm`, `md`) handle sticky year labels, a type floor, and nav
-  shape — they do not define layout tracks. The rail wraps on its own at 472px,
-  which is `112 + 20 + 340` rather than a written-down number.
+  `astro.config.mjs`. It reads the `data-theme` rules and the `@media print`
+  block too, so older browsers keep the system preference, the manual toggle and
+  forced-light printing. Change a colour in one place.
+- **Layout is flex for collapse, grid + subgrid for alignment.** The rail wraps
+  on its own at 472px of content width — `112 + 20 + 340`, not a written-down
+  number. `--breakpoint-sm` is the one breakpoint, and it exists to turn the
+  sticky year label on at exactly that moment: 472 content px is about 528
+  viewport px once the frame's 5vw padding is counted, so the two agree.
 - **Fonts are self-hosted.** Astro's font pipeline pulls the latin subsets of
   Newsreader, IBM Plex Sans and IBM Plex Mono into `dist/_astro/fonts/` with
   preload links. Chinese never downloads a webfont — it falls through to
