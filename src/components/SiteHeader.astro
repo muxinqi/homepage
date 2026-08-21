@@ -1,0 +1,38 @@
+---
+const links = [
+  { href: "/projects/", label: "Projects" },
+  { href: "/notes/", label: "Notes" },
+  { href: "/about/", label: "About" },
+];
+
+const path = Astro.url.pathname;
+const isCurrent = (href: string) => path === href || path.startsWith(href);
+
+// The bottom rule is drawn in --ink. It is the only ink-weight line on the site,
+// which is what makes the header read as the top edge of the page.
+---
+
+<header
+  class="flex flex-wrap items-baseline justify-between gap-x-5 gap-y-3 border-b border-ink pb-[13px]"
+>
+  <nav aria-label="Main">
+    <ul class="flex flex-wrap gap-x-5 gap-y-2 font-mono text-meta uppercase">
+      {
+        links.map(({ href, label }) => (
+          <li>
+            <a
+              href={href}
+              class:list={[
+                "meta-link",
+                isCurrent(href) ? "text-ink" : "text-ink-muted hover:text-ink",
+              ]}
+              aria-current={isCurrent(href) ? "page" : undefined}
+            >
+              {label}
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </nav>
+</header>

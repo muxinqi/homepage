@@ -1,0 +1,45 @@
+---
+export interface MetaRow {
+  label: string;
+  /** Plain text value. Omit when passing `links` instead. */
+  value?: string;
+  /** One or more outbound links, separated by a middot. */
+  links?: { label: string; href: string; external?: boolean }[];
+}
+
+interface Props {
+  rows: MetaRow[];
+  class?: string;
+}
+
+const { rows, class: className } = Astro.props;
+---
+
+<dl class:list={["meta-table row-list max-w-[62ch] border-t border-line", className]}>
+  {
+    rows.map((row) => (
+      <div class="row border-b border-line py-[9px]">
+        <dt class="pt-0.5 font-mono text-rail tracking-[0.1em] text-ink-muted uppercase">
+          {row.label}
+        </dt>
+        <dd class="min-w-0 text-sum leading-[1.7] text-ink">
+          {row.value}
+          {row.links?.map((link, i) => (
+            <>
+              {i > 0 && <span class="text-ink-muted"> · </span>}
+              <a
+                href={link.href}
+                class="text-accent"
+                rel={link.external ? "noopener noreferrer" : undefined}
+                target={link.external ? "_blank" : undefined}
+              >
+                {link.label}
+                {link.external && " ↗"}
+              </a>
+            </>
+          ))}
+        </dd>
+      </div>
+    ))
+  }
+</dl>

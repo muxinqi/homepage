@@ -7,7 +7,10 @@
 	"name": "homepage",
 	"compatibility_date": "2026-06-23",
 	"assets": {
-		"directory": "./dist"
+		"directory": "./dist",
+		// Without this, an unknown path returns a bare 404 and the designed
+		// 404 page is never reached.
+		"not_found_handling": "404-page"
 	},
 	"observability": {
 		"enabled": true

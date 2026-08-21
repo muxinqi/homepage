@@ -1,93 +1,67 @@
 ---
 import type { GetStaticPaths } from "astro";
-import { render, type CollectionEntry } from "astro:content";
+import { render } from "astro:content";
 import BaseLayout from "@layouts/BaseLayout.astro";
-import StatusBadge from "@components/StatusBadge.astro";
-import { getProjects } from "@lib/content";
-import { formatDate, isoDate } from "@lib/date";
+import StatusMark from "@components/StatusMark.astro";
+import MetaTable, { type MetaRow } from "@components/MetaTable.astro";
+import { getProjects, statusLabels, statusMeaning, type Project } from "@lib/content";
+import { monthYear } from "@lib/date";
 
 export const getStaticPaths: GetStaticPaths = async () => {
   const projects = await getProjects();
-  return projects.map((project) => ({
-    params: { slug: project.id },
-    props: { project },
-  }));
+  return projects.map((project) => ({ params: { slug: project.id }, props: { project } }));
 };
 
 interface Props {
-  project: CollectionEntry<"projects">;
+  project: Project;
 }
 
 const { project } = Astro.props;
-const { title, summary, status, created, updated, url, repo } = project.data;
+const { title, summary, status, created, updated, closed, url, repo, stack, lang } =
+  project.data;
 const { Content } = await render(project);
+// A project with only a summary and a metadata table is a complete page. Better
+// an honest short one than a padded long one.
+const hasBody = Boolean(project.body?.trim());
+
+const built =
+  updated && monthYear(updated) !== monthYear(created)
+    ? `${monthYear(created)} – ${monthYear(updated)}`
+    : monthYear(created);
+
+const links = [
+  url && { label: new URL(url).host, href: url, external: true },
+  repo && { label: "Source", href: repo, external: true },
+].filter((link): link is { label: string; href: string; external: boolean } =>
+  Boolean(link),
+);
+
+const rows: MetaRow[] = [
+  { label: "Status", value: `${statusLabels[status]} — ${statusMeaning[status]}` },
+  { label: "Built", value: built },
+  ...(closed ? [{ label: "Closed", value: monthYear(closed) }] : []),
+  ...(stack ? [{ label: "Stack", value: stack }] : []),
+  ...(links.length > 0 ? [{ label: "Links", links }] : []),
+];
 ---
 
 <BaseLayout title={title} description={summary} ogType="article">
-  <article>
-    <header class="flex flex-col gap-4 border-b border-line pb-6">
-      <div class="flex flex-wrap items-center gap-3">
-        <h1 class="text-2xl font-semibold tracking-tight">{title}</h1>
-        <StatusBadge status={status} />
+  <div class="rail-row pt-[clamp(2rem,9vw,3.25rem)]">
+    <div class="rail"><StatusMark {status} alignToTitle /></div>
+
+    <div class="column">
+      <h1 class="font-display text-h1 text-ink" {lang}>{title}</h1>
+      <p class="mt-[9px] max-w-[48ch] text-intro text-ink-soft text-pretty" {lang}>
+        {summary}
+      </p>
+
+      <MetaTable {rows} class="mt-[22px]" />
+
+      {hasBody && <div class="prose mt-[26px]" {lang}><Content /></div>}
+
+      <div class="mt-[26px] border-t border-line pt-[13px] font-mono text-meta text-accent">
+        <a href="/projects/" class="meta-link">← Projects</a>
       </div>
-
-      <p class="max-w-xl leading-relaxed text-muted">{summary}</p>
-
-      <dl class="flex flex-wrap gap-x-6 gap-y-1 font-mono text-xs text-faint">
-        <div class="flex gap-2">
-          <dt>开始</dt>
-          <dd><time datetime={isoDate(created)}>{formatDate(created)}</time></dd>
-        </div>
-        {
-          updated && (
-            <div class="flex gap-2">
-              <dt>最后更新</dt>
-              <dd>
-                <time datetime={isoDate(updated)}>{formatDate(updated)}</time>
-              </dd>
-            </div>
-          )
-        }
-      </dl>
-
-      {
-        (url || repo) && (
-          <ul class="flex flex-wrap gap-4 text-sm">
-            {url && (
-              <li>
-                <a
-                  href={url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  class="text-accent underline underline-offset-2"
-                >
-                  线上地址
-                </a>
-              </li>
-            )}
-            {repo && (
-              <li>
-                <a
-                  href={repo}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  class="text-accent underline underline-offset-2"
-                >
-                  源码
-                </a>
-              </li>
-            )}
-          </ul>
-        )
-      }
-    </header>
-
-    <div class="prose mt-8">
-      <Content />
     </div>
-  </article>
-
-  <p class="mt-12 text-sm">
-    <a href="/projects/" class="text-muted hover:text-accent">← 全部项目</a>
-  </p>
+  </div>
 </BaseLayout>

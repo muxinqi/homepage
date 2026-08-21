@@ -1,46 +1,62 @@
 # muxinqi.com
 
-个人网站的源码。Astro + Tailwind CSS，构建成静态资源，由 Cloudflare Workers 托管。
+Personal site — projects, notes, and a short Now block. Astro 7, static output,
+served from Cloudflare Workers static assets.
 
-规范域名是 `https://muxinqi.com`（写在 `astro.config.mjs` 的 `site` 里，canonical、sitemap
-和 RSS 的绝对地址都从这里来）。
+> **A push to `main` deploys.** Cloudflare Workers Builds is wired to this
+> repository from the dashboard, not from a file in the repo, so nothing here
+> would otherwise tell you that. Work on a branch.
 
-> **main 分支 push 之后会自动构建并部署到生产环境**，提交即发布。
-> 改动先在分支上做。
+## Commands
 
-## 命令
+| Command         | What it does                                    |
+| --------------- | ----------------------------------------------- |
+| `npm run dev`   | Dev server at `localhost:4321`, drafts visible   |
+| `npm run build` | Static build into `dist/`                        |
+| `npm run check` | `astro check` — types and template diagnostics   |
+| `npm run preview` | Build, then serve through `wrangler dev`       |
+| `npm run deploy`  | Build and `wrangler deploy` — publishes         |
 
-| 命令              | 作用                                     |
-| ----------------- | ---------------------------------------- |
-| `npm install`     | 安装依赖                                 |
-| `npm run dev`     | 本地开发服务器（**草稿内容在这里可见**） |
-| `npm run check`   | 类型检查（`astro check`）                |
-| `npm run build`   | 生产构建到 `dist/`（草稿会被排除）       |
-| `npm run preview` | 构建后用 `wrangler dev` 本地跑一遍       |
-| `npm run deploy`  | 手动构建并部署（平时不需要，push 即部署）|
+## Content
 
-## 写内容
+All of it lives in `src/content/`, as Markdown. See
+[`src/content/README.md`](src/content/README.md) for how to add a note or a
+project, what the three project statuses mean, and what is still missing.
 
-所有内容是 `src/content/` 下的 Markdown。怎么加文章、加项目、改首页的 Now 区块，
-以及还有哪些地方等着填，见 [`src/content/README.md`](src/content/README.md)。
-
-`draft: true` 的条目只在 `npm run dev` 里可见，永远不会进生产构建。
-
-## 结构
+## Structure
 
 ```
 src/
-  content.config.ts        内容集合的 schema
-  content/
-    projects/              项目
-    posts/                 文章
-    now/                   首页 Now 区块
-  lib/                     取内容和格式化日期的辅助函数
-  layouts/BaseLayout.astro 文档外壳：metadata、导航、页脚
-  components/              跨页面复用的组件
-  pages/                   路由
-  styles/global.css        design tokens（换视觉只改这里）+ 基础排版
+  content.config.ts     collection schemas (projects, notes, now)
+  content/              the Markdown itself
+  lib/content.ts        collection queries, draft filtering, year grouping
+  lib/date.ts           the one date dialect — Jul 2026, 2026, closed Feb 2024
+  layouts/BaseLayout.astro
+  components/           header, footer, theme toggle, rows, empty state
+  pages/                /, /projects, /notes, /about, /404, /notes/feed.xml
+  styles/global.css     every design token, in one file
 ```
 
-视觉方向还没定。颜色和字体全部是 `global.css` 顶部的 CSS 变量，
-换皮时不需要动页面结构。
+## Design
+
+The visual system is specified in a Claude Design document — ten colour tokens,
+three typefaces, a two-track rail grid, and one collapse point at 472px. The
+implementation follows it; `src/styles/global.css` is where it lands.
+
+A few things worth knowing before changing anything:
+
+- **Colours are `light-dark()` pairs on `:root`.** Light and dark are two values
+  on one line, picked by `color-scheme`. The footer toggle cycles
+  System → Light → Dark and only sets a class; a synchronous script in `<head>`
+  reads the same key before first paint.
+- **Layout is flex for collapse, grid + subgrid for alignment.** The two
+  breakpoints (`sm`, `md`) handle sticky year labels, a type floor, and nav
+  shape — they do not define layout tracks. The rail wraps on its own at 472px,
+  which is `112 + 20 + 340` rather than a written-down number.
+- **Fonts are self-hosted.** Astro's font pipeline pulls the latin subsets of
+  Newsreader, IBM Plex Sans and IBM Plex Mono into `dist/_astro/fonts/` with
+  preload links. Chinese never downloads a webfont — it falls through to
+  PingFang SC and friends.
+- **`border-radius: 0` everywhere** except the avatar. No shadows. The only
+  motion is a 1px underline on link hover, which `prefers-reduced-motion`
+  removes.

@@ -1,20 +1,10 @@
 ---
 title: 拿手好菜 Menu
-summary: 一份中英双语的个人菜单，记录我常做的菜。
+summary: A bilingual menu of the dishes I actually cook, kept where I can find it again.
 status: active
-# TODO(Xinqi)：把下面两个日期换成真实的。
-created: 2026-01-01
-updated: 2026-08-18
+created: 2026-03-18
+updated: 2026-07-01
 url: https://menu.xinqi.mu
 featured: true
-lang: zh
-draft: true
+lang: en
 ---
-
-## 这是什么
-
-一份中英双语的个人菜单，记录我常做的菜。
-
-## 为什么做
-
-TODO

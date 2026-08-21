@@ -1,0 +1,61 @@
+---
+// Three states, not two: System → Light → Dark. With only two, a reader who
+// clicks once can never get back to following the OS. Returning to System is
+// `localStorage.removeItem`, and the anti-flash script in <head> reads the same
+// key synchronously.
+---
+
+<noscript><style>[data-theme-toggle] { display: none; }</style></noscript>
+
+<button
+  type="button"
+  data-theme-toggle
+  class="meta-link cursor-pointer uppercase hover:text-ink"
+  aria-label="Colour theme"
+>
+  <span data-theme-label>System</span>
+</button>
+
+<script>
+  const ORDER = ["system", "light", "dark"] as const;
+  type Theme = (typeof ORDER)[number];
+
+  const root = document.documentElement;
+  const button = document.querySelector<HTMLButtonElement>("[data-theme-toggle]");
+  const label = document.querySelector<HTMLElement>("[data-theme-label]");
+
+  function read(): Theme {
+    try {
+      const stored = localStorage.getItem("theme");
+      if (stored === "light" || stored === "dark") return stored;
+    } catch {
+      // Private mode, or site data blocked. Following the system is the right
+      // answer in both cases.
+    }
+    return "system";
+  }
+
+  function apply(theme: Theme) {
+    root.classList.remove("light", "dark");
+    if (theme !== "system") root.classList.add(theme);
+    if (label) label.textContent = theme[0].toUpperCase() + theme.slice(1);
+    button?.setAttribute("aria-label", `Colour theme: ${theme}`);
+  }
+
+  function store(theme: Theme) {
+    try {
+      if (theme === "system") localStorage.removeItem("theme");
+      else localStorage.setItem("theme", theme);
+    } catch {
+      // Preference simply does not persist. The page still renders correctly.
+    }
+  }
+
+  apply(read());
+
+  button?.addEventListener("click", () => {
+    const next = ORDER[(ORDER.indexOf(read()) + 1) % ORDER.length];
+    store(next);
+    apply(next);
+  });
+</script>

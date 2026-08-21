@@ -1,26 +1,30 @@
 ---
 import BaseLayout from "@layouts/BaseLayout.astro";
+
+const description = "That page doesn't exist.";
 ---
 
-<BaseLayout title="页面不存在" description="这个地址上没有东西。">
-  <div class="flex flex-col items-start gap-6 py-8">
-    <img
-      src="/images/avatar.jpg"
-      alt=""
-      width="96"
-      height="96"
-      class="h-24 w-24 rounded-full border border-line"
-    />
-    <div class="flex flex-col gap-3">
-      <h1 class="text-2xl font-semibold tracking-tight">这里没有东西</h1>
-      <p class="max-w-md leading-relaxed text-muted">
-        这个地址上没有页面。可能是我把它挪走了，也可能它从来就不存在。
-      </p>
+<BaseLayout title="Not here" {description}>
+  <div class="rail-row pt-[clamp(2rem,9vw,3.25rem)]">
+    <div class="rail pt-[9px] font-mono text-rail tracking-[0.1em] text-ink-muted uppercase">
+      404
     </div>
-    <ul class="flex flex-wrap gap-5 text-sm">
-      <li><a href="/" class="text-accent underline underline-offset-2">回首页</a></li>
-      <li><a href="/projects/" class="text-accent underline underline-offset-2">看项目</a></li>
-      <li><a href="/posts/" class="text-accent underline underline-offset-2">看文章</a></li>
-    </ul>
+
+    <div class="column">
+      <h1 class="font-display text-h1 text-ink">Not here</h1>
+      <p class="mt-[9px] max-w-[48ch] text-intro text-ink-soft text-pretty">
+        This URL doesn't exist, or it did and I moved it without leaving a redirect. Both
+        are my fault.
+      </p>
+
+      <nav
+        aria-label="Ways out"
+        class="mt-[22px] flex flex-wrap gap-x-4 gap-y-2 font-mono text-meta text-accent uppercase"
+      >
+        <a href="/projects/" class="meta-link">Projects →</a>
+        <a href="/notes/" class="meta-link">Notes →</a>
+        <a href="/" class="meta-link">Home →</a>
+      </nav>
+    </div>
   </div>
 </BaseLayout>

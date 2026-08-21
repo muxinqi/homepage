@@ -1,74 +1,127 @@
-# 怎么往站点里加内容
+# Writing content
 
-所有内容都是这个目录下的 Markdown 文件。文件名就是 URL：
-`projects/cosplit.md` → `/projects/cosplit/`。
+Everything on the site comes from the Markdown files in this folder. There is no
+CMS and no database — you edit a file, commit, and push.
 
-## draft 开关
+> **A push to `main` deploys.** Cloudflare Workers Builds is connected to this
+> repository from the dashboard side, so there is no CI file in the repo that
+> would tell you this. Anything merged to `main` is public within a minute.
 
-每个文件的 frontmatter 里都有 `draft`：
+`draft: true` is the safety net: a draft is visible in `npm run dev` and is
+dropped from every production build. Remove the line when the piece is ready.
 
-- `draft: true` —— 只在本地 `npm run dev` 里看得到，**永远不会进生产构建**。
-- 删掉这一行（或写 `draft: false`）—— 下次构建就会发布。
-
-写到一半可以放心提交，只要 draft 还在就不会上线。
-
-> **注意：main 分支 push 之后会自动构建部署到 muxinqi.com。**
-> 提交即发布，没有额外的确认步骤。
-
-## 加一篇文章
-
-复制 `posts/example.md`，改文件名（用短横线，别用空格和中文），然后：
-
-```yaml
-title: 收据取整为什么不能总把零头给同一个人   # 具体的问题或完整的结论，别写"关于 X 的一些记录"
-summary: 列表页和 RSS 里显示的一句话
-created: 2026-08-18
-updated: 2026-09-02   # 可选，改过才写
-tags: [astro, cloudflare]   # 可选
-lang: zh                    # zh 或 en
-draft: true
-```
-
-## 加一个项目
-
-复制 `projects/menu.md`：
-
-```yaml
-title: CoSplit
-summary: 列表页显示的一句话
-status: shipped        # active / shipped / paused / retired / unfinished
-created: 2026-01-15
-updated: 2026-08-18    # 可选
-url: https://cosplit.net       # 可选
-repo: https://github.com/...   # 可选
-featured: true         # 首页只显示 featured 的项目
-lang: zh
-draft: true
-```
-
-`status` 要诚实——停掉的写 `paused`，不做了的写 `retired`，没做完的写 `unfinished`。
-这是这个站点的一条设计前提：不把不动了的东西说成还在维护。
-
-## 首页的 Now 区块
-
-改 `now/current.md`，最多四条。删掉 `draft: true` 才会显示；
-把整个文件删掉，首页那一块就整块消失。
-
-## 正文里别用 HTML 注释
-
-`<!-- 这样的注释 -->` 会原样出现在生成的页面源码里。要留备忘就写在
-frontmatter 里，用 `#` 开头的 YAML 注释——那些不会输出。
+**Never put an HTML comment (`<!-- … -->`) in a Markdown body.** It survives into
+the built HTML. Frontmatter comments (`#`) are safe — they never reach output.
 
 ---
 
-## 还没写、等你补的内容
+## Adding a note
 
-- **`projects/cosplit.md`** —— 现在只有从公开信息能确认的部分。缺：真实的起止日期、
-  当初为什么做、现在到底还维护不维护、关键的产品和技术决策、做过的取舍、截图、学到了什么。
-- **`projects/menu.md`** —— 缺：为什么做、真实日期。
-- **`now/current.md`** —— 三条现状。
-- **`src/pages/about.astro`** —— 现在只有 GitHub profile 上那两句已公开的话。缺：
-  简短个人经历、你喜欢做什么样的东西、工作之外愿意公开的兴趣、
-  是否公开邮箱（公开哪个）、要不要放简历。
-- **`public/images/avatar.jpg`** —— 现在是从 GitHub 头像下载的 192px 版本。
-  要换成别的（照片 / 字母组合 / 别的图）直接替换这个文件。
+Create `notes/some-slug.md`. The filename becomes the URL: `/notes/some-slug/`.
+
+```markdown
+---
+title: Why the status sits next to the title
+summary: Optional. A row without one is simply shorter.
+created: 2026-08-21
+updated: 2026-09-02   # optional; only when the text really changed
+tags: []
+lang: en              # or zh
+draft: true
+---
+
+Body starts at `##` — the page title is already the `h1`.
+```
+
+Write in whichever language you were thinking in and set `lang` to match. That
+attribute drives the Chinese typesetting rules (line-height, `line-break`) and
+the per-entry `xml:lang` in the Atom feed. There is no translation duty: an
+English note and a Chinese note sit next to each other in the same list.
+
+`updated` moves only when the text actually changed — feed readers use it to
+decide whether to re-surface an entry.
+
+## Adding a project
+
+Create `projects/some-slug.md` → `/projects/some-slug/`.
+
+```markdown
+---
+title: CoSplit
+summary: One sentence. It is the list row and the page lede.
+status: live          # active | live | offline
+created: 2026-03-25
+updated: 2026-08-18
+closed: 2027-02-01    # offline only — when it stopped working
+url: https://cosplit.net
+repo: https://github.com/muxinqi/cosplit   # omit for a private repo
+stack: React · Cloudflare Workers          # detail page only, never a list row
+featured: true        # the homepage shows up to three featured projects
+lang: en
+---
+```
+
+The body is optional. A project page with a summary and a metadata table is a
+complete page — better a short honest one than a padded one.
+
+### Choosing a status
+
+Two facts decide it, and neither of them is how you feel about the project:
+
+| Status    | Means                                              |
+| --------- | -------------------------------------------------- |
+| `active`  | Usable, and you are still adding to it              |
+| `live`    | Usable, but you have stopped changing it            |
+| `offline` | No longer usable; the page stays as a record        |
+
+`live` is where most finished things end up, and that is not a failure. An
+`offline` row dims its whole line but keeps its links clickable.
+
+## The Now block
+
+`now/current.md` feeds the homepage's Now section. It shows the first two items;
+the file allows up to four. Delete the file (or leave `draft: true`) and the
+section disappears rather than showing an empty box — Now is optional in a way
+Projects and Notes are not.
+
+```markdown
+---
+updated: 2026-08-21
+items:
+  - label: Making
+    text: One sentence.
+  - label: Off screen
+    text: One sentence.
+---
+```
+
+The homepage prints `Updated Aug 2026` from that date. It is deliberately
+absolute rather than "2 mo ago": the site is a static build, so a relative label
+freezes at build time and quietly becomes wrong.
+
+---
+
+## Still waiting on you
+
+Nothing invented was published, so these are the gaps that remain:
+
+- [ ] **Project bodies.** CoSplit and Menu have real titles, summaries, dates,
+      links and statuses, but no prose. Both detail pages currently end at the
+      metadata table.
+- [ ] **CoSplit vs Menu status.** CoSplit is marked `live` and Menu `active`,
+      carried over from what you said earlier. Note that the `cosplit` repo was
+      pushed to on 2026-08-18 and `menu` on 2026-07-01 — if CoSplit is still
+      moving, flip the two words.
+- [ ] **Dates.** `created` and `updated` come from the GitHub repositories'
+      creation and last-push timestamps. Change them if the project started
+      somewhere else.
+- [ ] **The Now block.** `now/current.md` is still the placeholder template and
+      is `draft: true`, so no Now section renders in production.
+- [ ] **Email.** The About page has no contact address. `hi@muxinqi.com` was
+      never published because you have not said whether you want it public —
+      worth deciding, since the site is going on a résumé.
+- [ ] **Location.** About says `Ottawa, Canada`, taken from your public GitHub
+      profile. Remove the row if you would rather not have it on the site.
+- [ ] **The first note.** `notes/example.md` is a draft template. Until a real
+      one exists, `/notes` and the homepage show their empty state, which is a
+      designed component rather than a fallback.

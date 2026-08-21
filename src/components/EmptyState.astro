@@ -1,13 +1,22 @@
 ---
 interface Props {
-  /** 说清楚这里将来放什么，以及现在为什么是空的。不放假内容。 */
   title: string;
+  detail?: string;
 }
 
-const { title } = Astro.props;
+const { title, detail } = Astro.props;
+
+// A first-class component, not a fallback. It stands about as tall as one row,
+// so the page keeps its shape between zero items and one. The dashed border uses
+// --line-strong — one step heavier than a row line — to mark it as temporary.
 ---
 
-<div class="rounded-lg border border-dashed border-line p-8 text-center">
-  <p class="font-medium">{title}</p>
-  <p class="mx-auto mt-2 max-w-md text-sm leading-relaxed text-muted"><slot /></p>
+<div
+  class="border border-dashed border-line-strong bg-[repeating-linear-gradient(135deg,color-mix(in_srgb,var(--ink)_2.2%,transparent)_0_6px,transparent_6px_12px)] px-[18px] py-4"
+>
+  {/* --ink-faint, which the mockup used here, is 3.11:1 — fine for a decorative
+      mark, short of AA for a 10.5px label. --ink-muted is the same role at 7:1. */}
+  <p class="font-mono text-rail text-ink-muted uppercase">Empty</p>
+  <p class="mt-[7px] text-item text-ink">{title}</p>
+  {detail && <p class="text-sum text-ink-muted">{detail}</p>}
 </div>

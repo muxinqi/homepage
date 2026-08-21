@@ -1,0 +1,41 @@
+---
+interface Props {
+  /** Doubles as the section heading, which is why inner pages need no h2. */
+  label: string;
+  /** Second line in the rail: the section's exit, or a timestamp. */
+  note?: string;
+  noteHref?: string;
+  /** Rows sitting under a top border need the label pushed down to meet them. */
+  alignToList?: boolean;
+  class?: string;
+}
+
+const { label, note, noteHref, alignToList = true, class: className } = Astro.props;
+const headingId = `section-${label.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`;
+---
+
+<section class:list={["rail-row", className]} aria-labelledby={headingId}>
+  <div
+    class:list={[
+      "rail font-mono text-rail leading-[1.9] text-ink-muted",
+      alignToList ? "pt-[15px]" : "pt-[3px]",
+    ]}
+  >
+    <h2 id={headingId} class="font-medium uppercase">{label}</h2>
+    {
+      note &&
+        (noteHref ? (
+          <a
+            href={noteHref}
+            class="meta-link inline-block tracking-[0.02em] text-accent"
+          >
+            {note}
+          </a>
+        ) : (
+          <span class="inline-block tracking-[0.02em]">{note}</span>
+        ))
+    }
+  </div>
+
+  <div class="column measure-row"><slot /></div>
+</section>

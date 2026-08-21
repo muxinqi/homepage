@@ -1,27 +1,52 @@
 ---
 import BaseLayout from "@layouts/BaseLayout.astro";
+import MetaTable, { type MetaRow } from "@components/MetaTable.astro";
 
-const description = "关于 Xinqi Mu：我做什么样的软件，以及为什么有这个网站。";
+const description = "About Xinqi Mu — what he builds, and how to reach him.";
+
+const rows: MetaRow[] = [
+  { label: "Where", value: "Ottawa, Canada" },
+  {
+    label: "Elsewhere",
+    links: [
+      { label: "github", href: "https://github.com/muxinqi", external: true },
+      { label: "linkedin", href: "https://linkedin.com/in/muxinqi", external: true },
+    ],
+  },
+  { label: "Feed", links: [{ label: "/notes/feed.xml", href: "/notes/feed.xml" }] },
+];
 ---
 
-<BaseLayout title="About" description={description}>
-  <h1 class="text-2xl font-semibold tracking-tight">About</h1>
+<BaseLayout title="About" {description}>
+  <div class="rail-row pt-[clamp(2rem,9vw,3.25rem)]">
+    <div class="rail">
+      {/* The only rounded corner on the site. */}
+      <img
+        src="/images/avatar.jpg"
+        alt=""
+        width="64"
+        height="64"
+        class="size-16 rounded-full border border-line"
+      />
+    </div>
 
-  <div class="prose mt-8 max-w-xl">
-    <p>
-      I build useful software for the web, mobile, and the occasional thing I wanted to make
-      simpler. I like tools that feel obvious after you use them.
-    </p>
+    <div class="column">
+      <h1 class="font-display text-h1 text-ink">About</h1>
 
+      <div class="prose mt-5">
+        <p>
+          I'm Xinqi Mu. I build useful software for the web, mobile, and the occasional
+          thing I wanted to make simpler. I like tools that feel obvious after you use
+          them.
+        </p>
+        <p>
+          This site holds what I've made and what I want to remember about making it. It's
+          written first for a later version of me, which is why the status next to a
+          project says whether it still works rather than how it went.
+        </p>
+      </div>
 
-    <h2>这个网站</h2>
-    <p>
-      这里放我做过的东西和想记住的结论。它主要是写给以后的我自己看的——如果没什么人来，它对我依然有用。
-    </p>
-    <p>
-      源码在 <a href="https://github.com/muxinqi/homepage" target="_blank" rel="noopener noreferrer"
-        >GitHub</a
-      >。
-    </p>
+      <MetaTable {rows} class="mt-[22px]" />
+    </div>
   </div>
 </BaseLayout>

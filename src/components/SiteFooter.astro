@@ -1,0 +1,23 @@
+---
+import ThemeToggle from "@components/ThemeToggle.astro";
+
+// The theme control lives down here on purpose: it is a display preference, the
+// system value is usually already right, and it has no business in the header.
+---
+
+<footer
+  class="mt-10 flex flex-wrap items-baseline justify-between gap-x-5 gap-y-3 border-t border-line pt-[13px] font-mono text-meta text-ink-muted uppercase"
+>
+  <a href="/" class="meta-link hover:text-ink">muxinqi</a>
+
+  <div class="flex flex-wrap gap-x-5 gap-y-2">
+    <a
+      href="https://github.com/muxinqi"
+      class="meta-link hover:text-ink"
+      rel="me noopener noreferrer"
+      target="_blank">GitHub ↗</a
+    >
+    <a href="/notes/feed.xml" class="meta-link hover:text-ink">Feed</a>
+    <ThemeToggle />
+  </div>
+</footer>

@@ -1,20 +1,19 @@
 ---
 import BaseLayout from "@layouts/BaseLayout.astro";
-import ProjectRow from "@components/ProjectRow.astro";
+import NoteRow from "@components/NoteRow.astro";
 import EmptyState from "@components/EmptyState.astro";
-import { getProjects, groupByYear } from "@lib/content";
+import { getNotes, groupByYear } from "@lib/content";
 
-const groups = groupByYear(await getProjects());
+const groups = groupByYear(await getNotes());
 
 const description =
-  "Small tools Xinqi Mu built because he wanted to use them, and whether each one still works.";
+  "Short pieces by Xinqi Mu on the decisions behind the things he builds. No schedule.";
 ---
 
-<BaseLayout title="Projects" {description}>
-  <h1 class="mt-[clamp(2rem,9vw,3.25rem)] mb-2 font-display text-h1 text-ink">Projects</h1>
+<BaseLayout title="Notes" {description}>
+  <h1 class="mt-[clamp(2rem,9vw,3.25rem)] mb-2 font-display text-h1 text-ink">Notes</h1>
   <p class="mb-[34px] max-w-[48ch] text-intro text-ink-soft text-pretty">
-    Small tools I built because I wanted to use them. The status says whether you can use
-    it today.
+    Short pieces on the decisions behind the things I build. No schedule.
   </p>
 
   {
@@ -25,8 +24,8 @@ const description =
             {year}
           </div>
           <div class="column measure-row row-list border-t border-line">
-            {rows.map((project) => (
-              <ProjectRow {project} dateFormat="updated" />
+            {rows.map((note) => (
+              <NoteRow {note} />
             ))}
           </div>
         </div>
@@ -34,7 +33,7 @@ const description =
     ) : (
       <EmptyState
         title="Nothing here yet"
-        detail="The first one will show up here, with what it does and whether it still works."
+        detail="The first one will show up here, and in the feed."
       />
     )
   }

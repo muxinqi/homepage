@@ -1,152 +1,237 @@
 @import "tailwindcss";
 
-/* ---------------------------------------------------------------
-   Design tokens.
-
-   视觉方向尚未确定。所有颜色和字体都集中在这里，页面里只使用
-   语义类名（bg-surface / text-muted ...），换皮时只改这个文件。
-   --------------------------------------------------------------- */
-
-:root {
-  --ground: #fbfaf8;
-  --surface: #ffffff;
-  --ink: #1a1a18;
-  --muted: #57534e;
-  --faint: #6b645f;
-  --line: #e7e5e1;
-  --accent: #1d4e6b;
-  --accent-ink: #ffffff;
-
-  --font-body: ui-sans-serif, system-ui, -apple-system, "Segoe UI", "PingFang SC",
-    "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
-  --font-code: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --ground: #131211;
-    --surface: #1b1a18;
-    --ink: #edeae4;
-    --muted: #b3aca4;
-    --faint: #948c83;
-    --line: #2c2a27;
-    --accent: #8dbdd9;
-    --accent-ink: #131211;
+/* ---------------------------------------------------------------------------
+   Dark mode
+   Colours come from light-dark(), so color-scheme alone flips the theme and the
+   `dark:` variant is only needed for the rare non-colour difference. Class wins
+   over the system preference in both directions.
+--------------------------------------------------------------------------- */
+@custom-variant dark {
+  &:where(.dark, .dark *) { @slot; }
+  @media (prefers-color-scheme: dark) {
+    &:where(:root:not(.light), :root:not(.light) *) { @slot; }
   }
 }
 
+@theme {
+  --font-display: var(--font-newsreader);
+  --font-text: var(--font-plex-sans);
+  --font-mono: var(--font-plex-mono);
+
+  --spacing-rail: 7rem;      /* 112 — flex basis of the metadata rail */
+  --spacing-track: 5.5rem;   /* 88  — inner grid track */
+  --spacing-gutter: 1.25rem; /* 20  — the only gutter in the system */
+  --container-frame: 55rem;  /* 880 — content frame */
+
+  --breakpoint-sm: 30rem;    /* 480 — year stickiness, type floor */
+  --breakpoint-md: 48rem;    /* 768 — reserved for a fourth nav item */
+  --breakpoint-lg: initial;
+  --breakpoint-xl: initial;
+  --breakpoint-2xl: initial;
+
+  --text-name: clamp(1.875rem, 7.5vw, 2.625rem);
+  --text-name--line-height: 1.08;
+  --text-name--letter-spacing: -0.018em;
+  --text-h1: clamp(1.625rem, 5.5vw, 2rem);
+  --text-h1--line-height: 1.14;
+  --text-h1--letter-spacing: -0.015em;
+  --text-row: 1.1875rem;
+  --text-row--line-height: 1.35;
+  --text-lede: 1.125rem;
+  --text-lede--line-height: 1.7;
+  --text-intro: 1.0625rem;
+  --text-intro--line-height: 1.7;
+  --text-body: 1.0625rem;
+  --text-body--line-height: 1.85;
+  --text-item: 1rem;
+  --text-item--line-height: 1.8;
+  --text-sum: 0.9375rem;
+  --text-sum--line-height: 1.8;
+  --text-meta: 0.6875rem;
+  --text-meta--line-height: 1;
+  --text-meta--letter-spacing: 0.1em;
+  --text-rail: 0.65625rem;
+  --text-rail--line-height: 1.9;
+  --text-rail--letter-spacing: 0.12em;
+}
+
+/* `inline` makes utilities reference the variable itself rather than copying its
+   value, which is what lets the theme flip at runtime. */
 @theme inline {
   --color-ground: var(--ground);
-  --color-surface: var(--surface);
-  --color-ink: var(--ink);
-  --color-muted: var(--muted);
-  --color-faint: var(--faint);
+  --color-sunk: var(--surface-sunk);
   --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-ink: var(--ink);
+  --color-ink-soft: var(--ink-soft);
+  --color-ink-dim: var(--ink-dim);
+  --color-ink-muted: var(--ink-muted);
+  --color-ink-faint: var(--ink-faint);
   --color-accent: var(--accent);
-  --color-accent-ink: var(--accent-ink);
-
-  --font-sans: var(--font-body);
-  --font-mono: var(--font-code);
 }
 
-/* --------------------------------------------------------------- */
-
-html {
-  scroll-behavior: smooth;
-  -webkit-text-size-adjust: 100%;
+:root {
+  color-scheme: light dark;
+  --ground:       light-dark(#FBFBFC, #101214);
+  --surface-sunk: light-dark(#F1F2F4, #191C1F);
+  --line:         light-dark(#E1E3E6, #2A2F34);
+  --line-strong:  light-dark(#D5D8DC, #3E444B);
+  --ink:          light-dark(#16181A, #E8EAEC);
+  --ink-soft:     light-dark(#2E3134, #C8CCD1);
+  --ink-dim:      light-dark(#35383C, #C0C4C9);
+  --ink-muted:    light-dark(#53575D, #999FA6);
+  --ink-faint:    light-dark(#8A9098, #6E747B);
+  --accent:       light-dark(#274690, #86ABEE);
+  text-autospace: normal;
 }
+:root.light { color-scheme: light; }
+:root.dark  { color-scheme: dark; }
 
 body {
   background: var(--ground);
   color: var(--ink);
-  font-family: var(--font-body);
+  font: var(--text-body) / var(--text-body--line-height) var(--font-text);
   -webkit-font-smoothing: antialiased;
 }
 
-:focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: 3px;
-  border-radius: 2px;
+/* ---------------------------------------------------------------------------
+   Layout: flex handles collapse (no breakpoint), grid + subgrid handle alignment
+--------------------------------------------------------------------------- */
+@utility rail-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.625rem var(--spacing-gutter);
+  align-items: flex-start;
+}
+@utility rail {
+  flex: 0 0 var(--spacing-rail);
+}
+@utility column {
+  flex: 1 1 21.25rem;
+  min-width: 0;
+}
+@utility row-list {
+  display: grid;
+  column-gap: var(--spacing-gutter);
+  grid-template-columns: var(--spacing-track) minmax(0, 1fr);
+}
+@utility row {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: subgrid;
+  column-gap: var(--spacing-gutter);
 }
 
-@media (prefers-reduced-motion: reduce) {
-  html { scroll-behavior: auto; }
-  *, *::before, *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
+/* A divider is exactly as wide as the row it divides, so the constraint lives on
+   the element carrying the line — never on the text inside it. */
+@utility measure-row {
+  max-width: calc(6.75rem + 54ch);
+}
+@utility measure-wide {
+  max-width: calc(6.75rem + 62ch);
+}
+
+@layer base {
+  a { color: inherit; text-decoration: none; }
+  a:hover {
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 3px;
   }
 }
 
-/* 渲染 Markdown 正文。没有装 typography 插件，这里是站点自己的排版规则。 */
+:where(a, button, [tabindex]):focus-visible {
+  outline: 2px solid var(--accent);   /* WCAG 2.4.13 wants >= 2px */
+  outline-offset: 2px;
+}
+:target { scroll-margin-top: 3.5rem; }
+:lang(zh) { line-break: strict; }
+html { scroll-behavior: smooth; }
 
+/* Small monospace links get a 44px hit area on touch, without moving anything. */
+@media (pointer: coarse) {
+  .meta-link { padding-block: 0.5rem; margin-block: -0.5rem; }
+}
+
+@media (prefers-contrast: more) {
+  :root { --line: var(--ink-muted); --line-strong: var(--ink); }
+}
+
+.meta-table a,
+.prose a { overflow-wrap: anywhere; }
+
+@media print {
+  :root { color-scheme: light; }
+  a { color: inherit; text-decoration: underline; }
+  header nav, footer, .skip-link { display: none; }
+  .row { break-inside: avoid; }
+}
+
+/* ---------------------------------------------------------------------------
+   Prose — the page title is already h1, so body copy starts at h2
+--------------------------------------------------------------------------- */
 .prose {
+  max-width: 62ch;
+  font-size: var(--text-body);
+  line-height: var(--text-body--line-height);
   color: var(--ink);
-  line-height: 1.75;
+  text-wrap: pretty;
 }
-
-.prose > * + * { margin-top: 1.15em; }
-
-.prose h2 {
-  margin-top: 2em;
-  font-size: 1.25rem;
-  font-weight: 600;
-  letter-spacing: -0.01em;
-}
-
-.prose h3 {
-  margin-top: 1.6em;
-  font-size: 1.05rem;
-  font-weight: 600;
-}
-
+.prose > * + * { margin-top: 1.0625rem; }
+.prose :is(h2, h3) { font-weight: 600; letter-spacing: 0; }
+.prose h2 { font-size: 1.25rem; line-height: 1.4; margin-top: 2rem; margin-bottom: 0.6875rem; }
+.prose h3 { font-size: 1rem; line-height: 1.5; margin-top: 1.5rem; margin-bottom: 0.5625rem; }
+.prose :is(h2, h3) + * { margin-top: 0; }
 .prose a {
   color: var(--accent);
   text-decoration: underline;
-  text-underline-offset: 2px;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
 }
-
-.prose ul, .prose ol { padding-left: 1.4em; }
+.prose :is(ul, ol) { padding-left: 1.1875rem; }
 .prose ul { list-style: disc; }
 .prose ol { list-style: decimal; }
-.prose li + li { margin-top: 0.35em; }
-
+.prose li + li { margin-top: 0.1875rem; }
 .prose blockquote {
-  padding-left: 1em;
-  border-left: 2px solid var(--line);
-  color: var(--muted);
+  padding: 0.125rem 0 0.125rem 1.0625rem;
+  border-left: 2px solid var(--line-strong);
+  max-width: 58ch;
+  font-size: 1rem;
+  line-height: 1.8;
+  color: var(--ink-dim);
 }
-
 .prose code {
-  font-family: var(--font-code);
-  font-size: 0.9em;
-  background: color-mix(in srgb, var(--line) 55%, transparent);
-  padding: 0.15em 0.35em;
-  border-radius: 3px;
-}
-
-.prose pre {
-  overflow-x: auto;
-  padding: 1em;
-  border-radius: 8px;
-  border: 1px solid var(--line);
+  font-family: var(--font-mono);
   font-size: 0.875rem;
-}
-
-.prose pre code {
-  background: none;
-  padding: 0;
-  font-size: inherit;
-}
-
-.prose img {
-  max-width: 100%;
-  height: auto;
-  border-radius: 8px;
+  background: var(--surface-sunk);
   border: 1px solid var(--line);
+  padding: 1px 5px;
 }
+.prose pre {
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  line-height: 1.7;
+  background: var(--surface-sunk);
+  border: 1px solid var(--line);
+  padding: 1rem;
+  overflow-x: auto;
+}
+.prose pre code { background: none; border: 0; padding: 0; font-size: inherit; }
+.prose hr { border: 0; border-top: 1px solid var(--line); margin: 1.375rem 0; }
+.prose img { max-width: 100%; height: auto; }
+.prose figcaption {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  color: var(--ink-muted);
+  margin-top: 0.4375rem;
+}
+.prose :lang(zh) { line-height: 1.85; }
 
-.prose hr {
-  border: 0;
-  border-top: 1px solid var(--line);
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+  html { scroll-behavior: auto; }
+  a:hover { text-decoration: underline; }
 }
