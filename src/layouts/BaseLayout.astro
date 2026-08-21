@@ -3,6 +3,7 @@ import { Font } from "astro:assets";
 import SiteHeader from "@components/SiteHeader.astro";
 import SiteFooter from "@components/SiteFooter.astro";
 import avatar from "@assets/avatar.jpg";
+import themeInit from "@lib/theme-init.js?raw";
 import "@styles/global.css";
 
 interface Props {
@@ -31,13 +32,10 @@ const ogImage = new URL(avatar.src, Astro.site).href;
     <meta name="theme-color" media="(prefers-color-scheme: light)" content="#FBFBFC" />
     <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#101214" />
 
-    {/* Synchronous, and before the stylesheet, so the theme never flashes. */}
-    <script is:inline>
-      try {
-        var t = localStorage.getItem("theme");
-        if (t === "dark" || t === "light") document.documentElement.classList.add(t);
-      } catch (e) {}
-    </script>
+    {/* Synchronous, and before the stylesheet, so the theme never flashes.
+        Its source is src/lib/theme-init.js, which astro.config.mjs also reads to
+        derive the CSP hash — see the note there. */}
+    <script is:inline set:html={themeInit} />
 
     <title>{pageTitle}</title>
     <meta name="description" content={description} />

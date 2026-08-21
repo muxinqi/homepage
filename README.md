@@ -47,8 +47,16 @@ src/
   immutable caching for the content-hashed files in `/_astro/`. It only applies
   to static asset responses, which is all this site serves.
 - A `<meta http-equiv="content-security-policy">` on every page, from
-  `security.csp` in the Astro config. Astro hashes its own inline script and
-  styles into it, so there is no `'unsafe-inline'` anywhere.
+  `security.csp` in the Astro config. No `'unsafe-inline'` anywhere: every
+  inline script and style is covered by a hash, including the theme script,
+  whose hash `astro.config.mjs` derives from `src/lib/theme-init.js` at build
+  time. Nothing here is ever maintained by hand.
+
+  Two things to know. Astro does not apply the policy in `astro dev`, so CSP
+  problems only appear in `npm run build`. And a `<meta>`-delivered policy
+  governs only what is parsed after it — moving it into a response header would
+  need an Astro adapter that supports `staticHeaders`, which the plain static
+  build does not use.
 
 ## Design
 
