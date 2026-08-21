@@ -46,17 +46,16 @@ src/
 - `_headers` — parsed by Cloudflare Workers static assets. Security headers plus
   immutable caching for the content-hashed files in `/_astro/`. It only applies
   to static asset responses, which is all this site serves.
-- A `<meta http-equiv="content-security-policy">` on every page, from
-  `security.csp` in the Astro config. No `'unsafe-inline'` anywhere: every
-  inline script and style is covered by a hash, including the theme script,
-  whose hash `astro.config.mjs` derives from `src/lib/theme-init.js` at build
-  time. Nothing here is ever maintained by hand.
+- `og.png` — the 1200×630 social card in `public/`. It was rendered by loading a
+  card built from the site's own tokens and webfonts in headless Chrome at
+  exactly that size. Regenerate the same way if the name or the one-liner
+  changes; it is static, so nothing needs to build it.
 
-  Two things to know. Astro does not apply the policy in `astro dev`, so CSP
-  problems only appear in `npm run build`. And a `<meta>`-delivered policy
-  governs only what is parsed after it — moving it into a response header would
-  need an Astro adapter that supports `staticHeaders`, which the plain static
-  build does not use.
+There is deliberately no Content Security Policy. CSP mitigates injected script,
+and this site has no injection surface: no user content, no query parameters read
+at runtime, no third-party scripts, no forms. It is HTML compiled from Markdown
+in this repo. The cost was real — a hash to keep in sync for every inline script
+— so it was removed rather than carried.
 
 ## Design
 

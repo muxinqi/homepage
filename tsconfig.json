@@ -14,12 +14,7 @@
             "@components/*": ["src/components/*"],
             "@layouts/*": ["src/layouts/*"],
             "@lib/*": ["src/lib/*"],
-            "@pages/*": ["src/pages/*"],
-            "@public/*": ["public/*"],
-            "@styles/*": ["src/styles/*"],
-        },
-        "types": [
-            "@cloudflare/workers-types/2023-07-01"
-        ]
+            "@styles/*": ["src/styles/*"]
+        }
     }
 }

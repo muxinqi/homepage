@@ -1,17 +1,7 @@
 @import "tailwindcss";
 
-/* ---------------------------------------------------------------------------
-   Dark mode
-   Colours come from light-dark(), so color-scheme alone flips the theme and the
-   `dark:` variant is only needed for the rare non-colour difference. Class wins
-   over the system preference in both directions.
---------------------------------------------------------------------------- */
-@custom-variant dark {
-  &:where(.dark, .dark *) { @slot; }
-  @media (prefers-color-scheme: dark) {
-    &:where(:root:not(.light), :root:not(.light) *) { @slot; }
-  }
-}
+/* Every colour is a light-dark() pair, so color-scheme alone flips the theme and
+   no `dark:` utility variant is needed anywhere. See :root below. */
 
 @theme {
   --font-display: var(--font-newsreader);
@@ -126,9 +116,6 @@ body {
    the element carrying the line — never on the text inside it. */
 @utility measure-row {
   max-width: calc(6.75rem + 54ch);
-}
-@utility measure-wide {
-  max-width: calc(6.75rem + 62ch);
 }
 
 @layer base {

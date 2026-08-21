@@ -6,15 +6,6 @@ import avatar from "@assets/avatar.jpg";
 
 const description = "About Xinqi Mu — what he builds, and how to reach him.";
 
-// Only facts that are already public and verifiable from the pages they link to.
-const personSchema = {
-  "@context": "https://schema.org",
-  "@type": "Person",
-  name: "Xinqi Mu",
-  url: new URL("/", Astro.site).href,
-  sameAs: ["https://github.com/muxinqi", "https://linkedin.com/in/muxinqi"],
-};
-
 const rows: MetaRow[] = [
   { label: "Where", value: "Ottawa, Canada" },
   {
@@ -62,10 +53,4 @@ const rows: MetaRow[] = [
       <MetaTable {rows} class="mt-[22px]" />
     </div>
   </div>
-
-  <script
-    type="application/ld+json"
-    is:inline
-    set:html={JSON.stringify(personSchema)}
-  />
 </BaseLayout>
