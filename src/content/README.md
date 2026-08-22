@@ -108,9 +108,10 @@ items:
 ---
 ```
 
-The homepage prints `Updated Aug 2026` from that date. It is deliberately
-absolute rather than "2 mo ago": the site is a static build, so a relative label
-freezes at build time and quietly becomes wrong.
+The homepage renders `Updated Aug 2026` from that date and a script rewrites it
+as `Updated 2 months ago` — staleness is the point of this block, and a relative
+label is what makes it legible. The absolute month is what the build can honestly
+say, so it is what stands with no JavaScript.
 
 ---
 
@@ -121,20 +122,11 @@ Nothing invented was published, so these are the gaps that remain:
 - [ ] **Project bodies.** CoSplit and Menu have real titles, summaries, dates,
       links and statuses, but no prose. Both detail pages currently end at the
       metadata table.
-- [ ] **CoSplit vs Menu status.** CoSplit is marked `live` and Menu `active`,
-      carried over from what you said earlier. Note that the `cosplit` repo was
-      pushed to on 2026-08-18 and `menu` on 2026-07-01 — if CoSplit is still
-      moving, flip the two words.
 - [ ] **Dates.** `created` and `updated` come from the GitHub repositories'
       creation and last-push timestamps. Change them if the project started
       somewhere else.
 - [ ] **The Now block.** There is no `now/` file, so the homepage renders no Now
       section at all. Write one from the template above when you want it.
-- [ ] **Email.** The About page has no contact address. `hi@muxinqi.com` was
-      never published because you have not said whether you want it public —
-      worth deciding, since the site is going on a résumé.
-- [ ] **Location.** About says `Ottawa, Canada`, taken from your public GitHub
-      profile. Remove the row if you would rather not have it on the site.
 - [ ] **The first note.** `notes/` is empty, so `/notes` and the homepage show
       their empty state — a designed component, not a fallback. Until then the
       build prints "collection … is empty" warnings; they are accurate and they
