@@ -4,6 +4,9 @@ import { getCollection, type CollectionEntry } from "astro:content";
  * Drafts are visible while developing and are dropped from every production
  * build. This matters more than usual here: a push to `main` deploys, so an
  * unfinished file must never be one merge away from being public.
+ *
+ * `draft` defaults to true in the schemas, so publishing is an explicit edit and
+ * forgetting one keeps a file off the site rather than putting it on.
  */
 const includeDrafts = import.meta.env.DEV;
 

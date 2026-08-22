@@ -24,7 +24,7 @@ const projects = defineCollection({
     stack: z.string().optional(),
     featured: z.boolean().default(false),
     lang: z.enum(["en", "zh"]).default("en"),
-    draft: z.boolean().default(false),
+    draft: z.boolean().default(true),
   }),
 });
 
@@ -38,7 +38,7 @@ const notes = defineCollection({
     updated: z.coerce.date().optional(),
     tags: z.array(z.string()).default([]),
     lang: z.enum(["en", "zh"]).default("en"),
-    draft: z.boolean().default(false),
+    draft: z.boolean().default(true),
   }),
 });
 
@@ -46,7 +46,7 @@ const now = defineCollection({
   loader: glob({ pattern: "**/*.md", base: "./src/content/now" }),
   schema: z.object({
     updated: z.coerce.date(),
-    draft: z.boolean().default(false),
+    draft: z.boolean().default(true),
     items: z.array(z.object({ label: z.string(), text: z.string() })).max(4),
   }),
 });

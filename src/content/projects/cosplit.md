@@ -8,4 +8,5 @@ url: https://cosplit.net
 stack: React · Cloudflare Workers
 featured: true
 lang: en
+draft: false
 ---

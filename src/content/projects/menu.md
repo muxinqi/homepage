@@ -7,4 +7,5 @@ updated: 2026-07-01
 url: https://menu.xinqi.mu
 featured: true
 lang: en
+draft: false
 ---

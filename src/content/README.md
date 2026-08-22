@@ -7,8 +7,17 @@ CMS and no database — you edit a file, commit, and push.
 > repository from the dashboard side, so there is no CI file in the repo that
 > would tell you this. Anything merged to `main` is public within a minute.
 
-`draft: true` is the safety net: a draft is visible in `npm run dev` and is
-dropped from every production build. Remove the line when the piece is ready.
+**Everything is a draft until you say otherwise.** `draft` defaults to `true`, so
+a new file is visible in `npm run dev` and dropped from every production build.
+Publishing is an explicit `draft: false` in the frontmatter.
+
+That is the wrong way round for convenience and the right way round for these
+stakes: forgetting the line keeps a file off the site instead of putting it on
+it, a minute after a merge.
+
+Note that this protects the *site*, not the *file*. This repository is public, so
+a draft pushed to any branch is already readable on github.com in its Markdown
+form. Do not put anything in here that you would mind being read early.
 
 **Never put an HTML comment (`<!-- … -->`) in a Markdown body.** It survives into
 the built HTML. Frontmatter comments (`#`) are safe — they never reach output.
@@ -27,7 +36,7 @@ created: 2026-08-21
 updated: 2026-09-02   # optional; only when the text really changed
 tags: []
 lang: en              # or zh
-draft: true
+draft: false          # omit or set true while it is not ready
 ---
 
 Body starts at `##` — the page title is already the `h1`.
@@ -58,6 +67,7 @@ repo: https://github.com/muxinqi/cosplit   # omit for a private repo
 stack: React · Cloudflare Workers          # detail page only, never a list row
 featured: true        # the homepage shows up to three featured projects
 lang: en
+draft: false          # omit or set true while it is not ready
 ---
 ```
 
@@ -80,13 +90,14 @@ Two facts decide it, and neither of them is how you feel about the project:
 ## The Now block
 
 `now/current.md` feeds the homepage's Now section. It shows the first two items;
-the file allows up to four. Delete the file (or leave `draft: true`) and the
-section disappears rather than showing an empty box — Now is optional in a way
-Projects and Notes are not.
+the file allows up to four. Delete the file, or leave it a draft, and the section
+disappears rather than showing an empty box — Now is optional in a way Projects
+and Notes are not.
 
 ```markdown
 ---
 updated: 2026-08-21
+draft: false          # omit or set true while it is not ready
 items:
   - label: Making
     text: One sentence.
