@@ -53,6 +53,12 @@ src/
   content type. That last one lives here because a static build writes only the
   body to `dist/` and drops the `Response` headers the route sets, so without it
   the feed goes out as `application/xml`.
+- `/notes/feed.xml` — Atom, chosen over RSS because its dates are RFC 3339, it
+  has native `xml:lang` for a Chinese note, and `summary` is its own field.
+  Entries carry a title, a date, a sentence and a link — no inlined post body.
+  That cost three dependencies and a tree walk to absolutise its URLs, to save
+  one click and to hand the writing to a feed reader's stylesheet, which is
+  where most of this site's design would have gone to die.
 - `og.png` — the 1200×630 social card in `public/`. It was rendered by loading a
   card built from the site's own tokens and webfonts in headless Chrome at
   exactly that size. Regenerate the same way if the name or the one-liner
