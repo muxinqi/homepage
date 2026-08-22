@@ -22,6 +22,12 @@ the rule to hold in your head; it was true before and the flag was hiding it.
 **Never put an HTML comment (`<!-- … -->`) in a Markdown body.** It survives into
 the built HTML. Frontmatter comments (`#`) are safe — they never reach output.
 
+**If you delete a file and it is still in `dist/`, clear the content cache:**
+`rm node_modules/.astro/data-store.json`. Astro caches collection entries there
+and does not evict one when its source file goes away. This is local only —
+CI and Cloudflare build from a fresh checkout, so a deleted note cannot be
+published by a stale cache — but it will mislead you on your own machine.
+
 ---
 
 ## Adding a note

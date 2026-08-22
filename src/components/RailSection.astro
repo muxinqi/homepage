@@ -8,16 +8,28 @@ interface Props {
   /** Every section's exit reads "All →"; this is what tells them apart in a
       screen reader's list of links. */
   noteLabel?: string;
+  /**
+   * Renders the note as a `<time>` and lets a script rewrite it as "2 months
+   * ago" once it loads. Without JavaScript the absolute month stands, which is
+   * why the server renders that and not a placeholder.
+   */
+  noteDatetime?: Date;
+  /** Kept in front of the relative form: "Updated 2 months ago". */
+  notePrefix?: string;
   /** Rows sitting under a top border need the label pushed down to meet them. */
   alignToList?: boolean;
   class?: string;
 }
+
+import { isoDate } from "@lib/date";
 
 const {
   label,
   note,
   noteHref,
   noteLabel,
+  noteDatetime,
+  notePrefix,
   alignToList = true,
   class: className,
 } = Astro.props;
@@ -42,6 +54,14 @@ const headingId = `section-${label.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`;
           >
             {note}
           </a>
+        ) : noteDatetime ? (
+          <time
+            datetime={isoDate(noteDatetime)}
+            data-relative={notePrefix}
+            class="inline-block tracking-[0.02em]"
+          >
+            {note}
+          </time>
         ) : (
           <span class="inline-block tracking-[0.02em]">{note}</span>
         ))

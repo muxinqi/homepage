@@ -9,14 +9,18 @@ interface Props {
   showLinks?: boolean;
   /**
    * `year` on the homepage, where nothing else carries the date. Inside a
-   * year-grouped list the rail already says the year, so the row spends that
-   * slot on the more useful fact instead: when it was last touched.
+   * year-grouped list the rail already says it, so the row shows nothing — two
+   * dates of identical form and different meaning, told apart only by a `title`
+   * nobody on a touchscreen can read, is worse than one.
+   *
+   * An offline row keeps its date either way: `closed Feb 2024` says in words
+   * which fact it is, and it is the row's own headline.
    */
-  dateFormat?: "year" | "updated";
+  showYear?: boolean;
 }
 
-const { project, showLinks = true, dateFormat = "year" } = Astro.props;
-const { title, summary, status, created, updated, closed, url, repo, lang } =
+const { project, showLinks = true, showYear = true } = Astro.props;
+const { title, summary, status, created, closed, url, repo, lang } =
   project.data;
 
 const offline = status === "offline";
@@ -27,18 +31,13 @@ const offline = status === "offline";
 // would resolve by stylesheet order, which this component does not control.
 const titleTone = offline ? "text-ink-muted" : "text-ink";
 
-const touched = updated ?? created;
-const stamp = offline && closed ? closed : dateFormat === "updated" ? touched : created;
-const when = offline && closed
-  ? `closed ${monthYear(closed)}`
-  : dateFormat === "updated"
-    ? monthYear(touched)
-    : year(created);
-const whenTitle = offline && closed
-  ? "Stopped working"
-  : dateFormat === "updated"
-    ? "Last updated"
-    : "Started";
+const closedDate = offline && closed ? closed : undefined;
+const stamp = closedDate ?? created;
+const when = closedDate
+  ? `closed ${monthYear(closedDate)}`
+  : showYear
+    ? year(created)
+    : undefined;
 ---
 
 <div class="row border-b border-line py-[17px]">
@@ -51,11 +50,16 @@ const whenTitle = offline && closed
         class:list={["font-display text-row font-medium wrap-anywhere", titleTone]}
         lang={lang}>{title}</a
       >
-      <time
-        datetime={isoDate(stamp)}
-        title={whenTitle}
-        class="font-mono text-[0.6875rem] whitespace-nowrap text-ink-muted">{when}</time
-      >
+      {
+        when && (
+          <time
+            datetime={isoDate(stamp)}
+            class="font-mono text-[0.6875rem] whitespace-nowrap text-ink-muted"
+          >
+            {when}
+          </time>
+        )
+      }
     </div>
 
     <p

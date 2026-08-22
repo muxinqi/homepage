@@ -26,7 +26,7 @@ const description =
           </div>
           <div class="column measure-row row-list border-t border-line">
             {rows.map((project) => (
-              <ProjectRow {project} dateFormat="updated" />
+              <ProjectRow {project} showYear={false} />
             ))}
           </div>
         </div>

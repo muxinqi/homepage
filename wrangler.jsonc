@@ -8,6 +8,10 @@
 		// 404 page is never reached.
 		"not_found_handling": "404-page"
 	},
+	// The site answers on its custom domain. Without this a full second copy
+	// is also live at homepage.<subdomain>.workers.dev, indexable and serving a
+	// robots.txt that says Allow: /.
+	"workers_dev": false,
 	"observability": {
 		"enabled": true
 	}

@@ -11,12 +11,22 @@ interface Props {
   ogType?: "website" | "article";
   /** Set to "zh" on a page whose main content is Chinese. */
   lang?: "en" | "zh";
+  /** For pages that answer on URLs other than their own — see 404. */
+  noindex?: boolean;
 }
 
-const { title, description, ogType = "website", lang = "en" } = Astro.props;
+const {
+  title,
+  description,
+  ogType = "website",
+  lang = "en",
+  noindex = false,
+} = Astro.props;
 
 const pageTitle = title ? `${title} — Xinqi Mu` : "Xinqi Mu";
-const canonical = new URL(Astro.url.pathname, Astro.site).href;
+// A page served for every unknown path cannot name a canonical URL: it would be
+// advertising /404/ as the original of whatever the reader actually asked for.
+const canonical = noindex ? undefined : new URL(Astro.url.pathname, Astro.site).href;
 const ogImage = new URL("/og.png", Astro.site).href;
 ---
 
@@ -42,12 +52,13 @@ const ogImage = new URL("/og.png", Astro.site).href;
 
     <title>{pageTitle}</title>
     <meta name="description" content={description} />
-    <link rel="canonical" href={canonical} />
+    {canonical && <link rel="canonical" href={canonical} />}
+    {noindex && <meta name="robots" content="noindex" />}
 
     <meta property="og:type" content={ogType} />
     <meta property="og:title" content={pageTitle} />
     <meta property="og:description" content={description} />
-    <meta property="og:url" content={canonical} />
+    {canonical && <meta property="og:url" content={canonical} />}
     <meta property="og:site_name" content="Xinqi Mu" />
     <meta property="og:image" content={ogImage} />
     <meta property="og:image:width" content="1200" />

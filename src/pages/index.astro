@@ -66,6 +66,8 @@ const description =
       <RailSection
         label="Now"
         note={`Updated ${monthYear(now.data.updated)}`}
+        noteDatetime={now.data.updated}
+        notePrefix="Updated"
         alignToList={false}
         class="pt-8"
       >
@@ -83,3 +85,45 @@ const description =
     )
   }
 </BaseLayout>
+
+<script>
+  // "Updated 2 months ago" rather than "Updated Aug 2026". A static build cannot
+  // say this — it would freeze at deploy time — so it is the one thing here that
+  // genuinely belongs at runtime.
+  //
+  // Intl.RelativeTimeFormat is built in (2018), so this costs no dependency. The
+  // server already rendered the absolute month; if anything below fails, that is
+  // what stays on screen, and it is never wrong — only less pointed.
+  const DIVISIONS = [
+    [60, "second"],
+    [60, "minute"],
+    [24, "hour"],
+    [7, "day"],
+    [4.34524, "week"],
+    [12, "month"],
+    [Number.POSITIVE_INFINITY, "year"],
+  ] as const;
+
+  try {
+    const rtf = new Intl.RelativeTimeFormat(document.documentElement.lang || "en", {
+      numeric: "auto",
+    });
+
+    for (const el of document.querySelectorAll<HTMLTimeElement>("[data-relative]")) {
+      const then = new Date(el.dateTime);
+      if (Number.isNaN(then.valueOf())) continue;
+
+      let delta = (then.valueOf() - Date.now()) / 1000;
+      for (const [amount, unit] of DIVISIONS) {
+        if (Math.abs(delta) < amount) {
+          const prefix = el.dataset.relative;
+          el.textContent = (prefix ? prefix + " " : "") + rtf.format(Math.round(delta), unit);
+          break;
+        }
+        delta /= amount;
+      }
+    }
+  } catch {
+    // No Intl.RelativeTimeFormat. The absolute month is already on screen.
+  }
+</script>

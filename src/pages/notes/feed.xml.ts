@@ -14,6 +14,14 @@ import { isoStamp } from "@lib/date";
  * moves only when the text actually changed.
  */
 
+/**
+ * Root-relative URLs in entry content resolve against the feed document per RFC
+ * 4287, but plenty of readers render the HTML without resolving anything and
+ * show a dead link or a missing image. Absolutising costs nothing here.
+ */
+const absolutise = (html: string, site: URL) =>
+  html.replace(/(\s(?:href|src)=")\/(?!\/)/g, `$1${site.origin}/`);
+
 const escape = (value: string) =>
   value
     .replace(/&/g, "&amp;")
@@ -31,7 +39,7 @@ export const GET: APIRoute = async (context) => {
   const entries = await Promise.all(
     notes.map(async (note) => {
       const { Content } = await render(note);
-      const html = await container.renderToString(Content);
+      const html = absolutise(await container.renderToString(Content), site);
       const url = new URL(`/notes/${note.id}/`, site).href;
       const updated = note.data.updated ?? note.data.created;
 
