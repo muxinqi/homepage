@@ -1,6 +1,9 @@
 import type { APIRoute } from "astro";
 import { render } from "astro:content";
 import { experimental_AstroContainer as AstroContainer } from "astro/container";
+import { fromHtml } from "hast-util-from-html";
+import { toHtml } from "hast-util-to-html";
+import { visit } from "unist-util-visit";
 import { getNotes } from "@lib/content";
 import { isoStamp } from "@lib/date";
 
@@ -17,10 +20,55 @@ import { isoStamp } from "@lib/date";
 /**
  * Root-relative URLs in entry content resolve against the feed document per RFC
  * 4287, but plenty of readers render the HTML without resolving anything and
- * show a dead link or a missing image. Absolutising costs nothing here.
+ * show a dead link or a missing image.
+ *
+ * This walks the HTML tree rather than running a regex over the string, because
+ * a regex cannot tell an attribute from text that looks like one: a note showing
+ * `<a href="/projects/">` inside backticks had its example rewritten, so the feed
+ * disagreed with the page about what the author had typed. Attributes only exist
+ * on element nodes, so visiting elements cannot make that mistake.
  */
-const absolutise = (html: string, site: URL) =>
-  html.replace(/(\s(?:href|src)=")\/(?!\/)/g, `$1${site.origin}/`);
+const URL_ATTRIBUTES = ["href", "src", "poster"] as const;
+
+const toAbsolute = (value: string, site: URL) =>
+  value.startsWith("/") && !value.startsWith("//") ? new URL(value, site).href : value;
+
+function absolutise(html: string, site: URL): string {
+  const tree = fromHtml(html, { fragment: true });
+
+  visit(tree, "element", (node) => {
+    const props = node.properties;
+    if (!props) return;
+
+    for (const attribute of URL_ATTRIBUTES) {
+      const value = props[attribute];
+      if (typeof value === "string") props[attribute] = toAbsolute(value, site);
+    }
+
+    // srcset is a comma-separated list of "url descriptor" candidates. hast
+    // hands it back as a plain string; the array form is handled too, because
+    // property-information can classify it either way depending on version.
+    const srcSet = props.srcSet;
+    const candidates =
+      typeof srcSet === "string"
+        ? srcSet.split(",")
+        : Array.isArray(srcSet)
+          ? srcSet.map(String)
+          : undefined;
+
+    if (candidates) {
+      const rewritten = candidates
+        .map((candidate) => {
+          const [url, ...descriptor] = candidate.trim().split(/\s+/);
+          return url ? [toAbsolute(url, site), ...descriptor].join(" ") : "";
+        })
+        .filter(Boolean);
+      props.srcSet = typeof srcSet === "string" ? rewritten.join(", ") : rewritten;
+    }
+  });
+
+  return toHtml(tree);
+}
 
 const escape = (value: string) =>
   value
