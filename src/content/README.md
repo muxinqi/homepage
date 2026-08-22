@@ -7,17 +7,17 @@ CMS and no database — you edit a file, commit, and push.
 > repository from the dashboard side, so there is no CI file in the repo that
 > would tell you this. Anything merged to `main` is public within a minute.
 
-**Everything is a draft until you say otherwise.** `draft` defaults to `true`, so
-a new file is visible in `npm run dev` and dropped from every production build.
-Publishing is an explicit `draft: false` in the frontmatter.
+**The branch is the draft.** There is no `draft` flag: this repository is public,
+so a file marked as a draft was already readable as Markdown on github.com the
+moment it was pushed. The flag only ever closed one of the two doors, while
+reading as though it had closed both.
 
-That is the wrong way round for convenience and the right way round for these
-stakes: forgetting the line keeps a file off the site instead of putting it on
-it, a minute after a merge.
+So unfinished work lives on a branch. `npm run dev` renders it locally, and the
+Cloudflare build for that branch gives it a preview URL. Merging to `main` is
+what publishes — there is no second switch to forget.
 
-Note that this protects the *site*, not the *file*. This repository is public, so
-a draft pushed to any branch is already readable on github.com in its Markdown
-form. Do not put anything in here that you would mind being read early.
+Anything committed here is public the moment it is pushed, on any branch. That is
+the rule to hold in your head; it was true before and the flag was hiding it.
 
 **Never put an HTML comment (`<!-- … -->`) in a Markdown body.** It survives into
 the built HTML. Frontmatter comments (`#`) are safe — they never reach output.
@@ -36,7 +36,6 @@ created: 2026-08-21
 updated: 2026-09-02   # optional; only when the text really changed
 tags: []
 lang: en              # or zh
-draft: false          # omit or set true while it is not ready
 ---
 
 Body starts at `##` — the page title is already the `h1`.
@@ -67,7 +66,6 @@ repo: https://github.com/muxinqi/cosplit   # omit for a private repo
 stack: React · Cloudflare Workers          # detail page only, never a list row
 featured: true        # the homepage shows up to three featured projects
 lang: en
-draft: false          # omit or set true while it is not ready
 ---
 ```
 
@@ -90,14 +88,12 @@ Two facts decide it, and neither of them is how you feel about the project:
 ## The Now block
 
 `now/current.md` feeds the homepage's Now section. It shows the first two items;
-the file allows up to four. Delete the file, or leave it a draft, and the section
-disappears rather than showing an empty box — Now is optional in a way Projects
-and Notes are not.
+the file allows up to four. With no file there the section disappears rather
+than showing an empty box — Now is optional in a way Projects and Notes are not.
 
 ```markdown
 ---
 updated: 2026-08-21
-draft: false          # omit or set true while it is not ready
 items:
   - label: Making
     text: One sentence.
@@ -126,13 +122,14 @@ Nothing invented was published, so these are the gaps that remain:
 - [ ] **Dates.** `created` and `updated` come from the GitHub repositories'
       creation and last-push timestamps. Change them if the project started
       somewhere else.
-- [ ] **The Now block.** `now/current.md` is still the placeholder template and
-      is `draft: true`, so no Now section renders in production.
+- [ ] **The Now block.** There is no `now/` file, so the homepage renders no Now
+      section at all. Write one from the template above when you want it.
 - [ ] **Email.** The About page has no contact address. `hi@muxinqi.com` was
       never published because you have not said whether you want it public —
       worth deciding, since the site is going on a résumé.
 - [ ] **Location.** About says `Ottawa, Canada`, taken from your public GitHub
       profile. Remove the row if you would rather not have it on the site.
-- [ ] **The first note.** `notes/example.md` is a draft template. Until a real
-      one exists, `/notes` and the homepage show their empty state, which is a
-      designed component rather than a fallback.
+- [ ] **The first note.** `notes/` is empty, so `/notes` and the homepage show
+      their empty state — a designed component, not a fallback. Until then the
+      build prints "collection … is empty" warnings; they are accurate and they
+      go away with the first file.

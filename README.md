@@ -5,13 +5,18 @@ served from Cloudflare Workers static assets.
 
 > **A push to `main` deploys.** Cloudflare Workers Builds is wired to this
 > repository from the dashboard, not from a file in the repo, so nothing here
-> would otherwise tell you that. Work on a branch.
+> would otherwise tell you that.
+>
+> Work on a branch. There is no draft flag — the branch is the draft, previewed
+> locally and by the Cloudflare build for that branch. This repository is public,
+> so anything pushed anywhere is readable; a flag would only have hidden it from
+> the site, not from github.com.
 
 ## Commands
 
 | Command         | What it does                                    |
 | --------------- | ----------------------------------------------- |
-| `npm run dev`   | Dev server at `localhost:4321`, drafts visible   |
+| `npm run dev`   | Dev server at `localhost:4321`                    |
 | `npm run build` | Static build into `dist/`                        |
 | `npm run check` | `astro check` — types and template diagnostics   |
 | `npm run preview` | Build, then serve through `wrangler dev`       |
@@ -29,7 +34,7 @@ project, what the three project statuses mean, and what is still missing.
 src/
   content.config.ts     collection schemas (projects, notes, now)
   content/              the Markdown itself
-  lib/content.ts        collection queries, draft filtering, year grouping
+  lib/content.ts        collection queries and year grouping
   lib/date.ts           the one date dialect — Jul 2026, 2026, closed Feb 2024
   layouts/BaseLayout.astro
   components/           header, footer, theme toggle, rows, empty state

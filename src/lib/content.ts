@@ -1,14 +1,12 @@
 import { getCollection, type CollectionEntry } from "astro:content";
 
 /**
- * Drafts are visible while developing and are dropped from every production
- * build. This matters more than usual here: a push to `main` deploys, so an
- * unfinished file must never be one merge away from being public.
- *
- * `draft` defaults to true in the schemas, so publishing is an explicit edit and
- * forgetting one keeps a file off the site rather than putting it on.
+ * There is no draft flag. The branch is the draft: this repository is public, so
+ * a `draft: true` file was already readable as Markdown on github.com the moment
+ * it was pushed — the flag hid it from one of two doors. Unfinished work stays on
+ * a branch, where `npm run dev` and the Cloudflare preview build can both reach
+ * it, and merging to `main` is what publishes.
  */
-const includeDrafts = import.meta.env.DEV;
 
 export type Project = CollectionEntry<"projects">;
 export type Note = CollectionEntry<"notes">;
@@ -19,26 +17,16 @@ function byNewest(a: { data: { created: Date } }, b: { data: { created: Date } }
 }
 
 export async function getProjects(): Promise<Project[]> {
-  const entries = await getCollection(
-    "projects",
-    ({ data }) => includeDrafts || !data.draft,
-  );
-  return entries.sort(byNewest);
+  return (await getCollection("projects")).sort(byNewest);
 }
 
 export async function getNotes(): Promise<Note[]> {
-  const entries = await getCollection(
-    "notes",
-    ({ data }) => includeDrafts || !data.draft,
-  );
-  return entries.sort(byNewest);
+  return (await getCollection("notes")).sort(byNewest);
 }
 
+/** Undefined when there is no Now file, which hides the section entirely. */
 export async function getNow() {
-  const entries = await getCollection(
-    "now",
-    ({ data }) => includeDrafts || !data.draft,
-  );
+  const entries = await getCollection("now");
   return entries[0];
 }
 
