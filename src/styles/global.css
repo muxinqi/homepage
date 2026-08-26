@@ -72,7 +72,6 @@
   --ink-dim:      light-dark(#35383C, #C0C4C9);
   --ink-muted:    light-dark(#53575D, #999FA6);
   --accent:       light-dark(#274690, #86ABEE);
-  text-autospace: normal;
 }
 /* One state bit for the whole feature: data-theme on <html>. It selects the
    colour scheme, picks the toggle's icon, and — by existing at all — is what

@@ -54,7 +54,7 @@ src/
   body to `dist/` and drops the `Response` headers the route sets, so without it
   the feed goes out as `application/xml`.
 - `/notes/feed.xml` — Atom, chosen over RSS because its dates are RFC 3339, it
-  has native `xml:lang` for a Chinese note, and `summary` is its own field.
+  declares its language natively with `xml:lang`, and `summary` is its own field.
   Entries carry a title, a date, a sentence and a link — no inlined post body.
   That cost three dependencies and a tree walk to absolutise its URLs, to save
   one click and to hand the writing to a feed reader's stylesheet, which is
@@ -111,8 +111,7 @@ A few things worth knowing before changing anything:
   viewport px once the frame's 5vw padding is counted, so the two agree.
 - **Fonts are self-hosted.** Astro's font pipeline pulls the latin subsets of
   Newsreader, IBM Plex Sans and IBM Plex Mono into `dist/_astro/fonts/` with
-  preload links. Chinese never downloads a webfont — it falls through to
-  PingFang SC and friends.
+  preload links. The site is English, so the latin subset is the whole of it.
 - **`border-radius: 0` everywhere** except the avatar. No shadows. The only
   motion is a 1px underline on link hover, which `prefers-reduced-motion`
   removes.

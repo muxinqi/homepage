@@ -34,7 +34,6 @@ const notes = defineCollection({
     summary: z.string().optional(),
     created: z.coerce.date(),
     updated: z.coerce.date().optional(),
-    tags: z.array(z.string()).default([]),
   }),
 });
 

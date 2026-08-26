@@ -40,7 +40,6 @@ title: Why the status sits next to the title
 summary: Optional. A row without one is simply shorter.
 created: 2026-08-21
 updated: 2026-09-02   # optional; only when the text really changed
-tags: []
 ---
 
 Body starts at `##` — the page title is already the `h1`.
@@ -65,7 +64,8 @@ summary: One sentence. It is the list row and the page lede.
 status: live          # active | live | offline
 created: 2026-03-25
 updated: 2026-08-18
-closed: 2027-02-01    # offline only — when it stopped working
+closed: 2027-02-01    # offline only — read nowhere else, so a live project
+                      # carrying one loses it silently
 url: https://cosplit.net
 repo: https://github.com/muxinqi/cosplit   # omit for a private repo
 stack: React · Cloudflare Workers          # detail page only, never a list row
@@ -75,6 +75,11 @@ featured: true        # the homepage shows up to three featured projects
 
 The body is optional. A project page with a summary and a metadata table is a
 complete page — better a short honest one than a padded one.
+
+`created` and `updated` become the `Built` row, so they should span the stretch
+when the work was actually done. A repository's last push is usually the wrong
+value for `updated`: a year of Dependabot commits after the last real change
+turns one month of building into "Dec 2023 – Feb 2025".
 
 ### Choosing a status
 
@@ -117,12 +122,6 @@ say, so it is what stands with no JavaScript.
 
 Nothing invented was published, so these are the gaps that remain:
 
-- [ ] **Project bodies.** CoSplit and Menu have real titles, summaries, dates,
-      links and statuses, but no prose. Both detail pages currently end at the
-      metadata table.
-- [ ] **Dates.** `created` and `updated` come from the GitHub repositories'
-      creation and last-push timestamps. Change them if the project started
-      somewhere else.
 - [ ] **The Now block.** There is no `now/` file, so the homepage renders no Now
       section at all. Write one from the template above when you want it.
 - [ ] **The first note.** `notes/` is empty, so `/notes` and the homepage show

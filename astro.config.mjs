@@ -8,8 +8,8 @@ export default defineConfig({
   integrations: [sitemap()],
 
   // Self-hosted from Google's catalogue: latin subset only, emitted into dist as
-  // woff2 with preload and metric-matched fallbacks. CJK is never downloaded —
-  // it falls through to the system faces listed in each `fallbacks`.
+  // woff2 with preload and metric-matched fallbacks. The site is English, so the
+  // latin subset is the whole of it.
   fonts: [
     {
       name: 'Newsreader',
@@ -18,7 +18,7 @@ export default defineConfig({
       weights: [400, 500],
       styles: ['normal', 'italic'],
       subsets: ['latin'],
-      fallbacks: ['Songti SC', 'Georgia', 'serif'],
+      fallbacks: ['Georgia', 'serif'],
     },
     {
       name: 'IBM Plex Sans',
@@ -27,7 +27,7 @@ export default defineConfig({
       weights: [400, 500, 600],
       styles: ['normal', 'italic'],
       subsets: ['latin'],
-      fallbacks: ['PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'sans-serif'],
+      fallbacks: ['sans-serif'],
     },
     {
       name: 'IBM Plex Mono',
@@ -36,7 +36,7 @@ export default defineConfig({
       weights: [400, 500],
       styles: ['normal'],
       subsets: ['latin'],
-      fallbacks: ['PingFang SC', 'ui-monospace', 'monospace'],
+      fallbacks: ['ui-monospace', 'monospace'],
     },
   ],
 
