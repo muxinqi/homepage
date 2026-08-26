@@ -1,7 +1,6 @@
 ---
 import ThemeToggle from "@components/ThemeToggle.astro";
 import GithubMark from "@assets/icons/github.svg";
-import FeedMark from "@assets/icons/feed.svg";
 
 const isHome = Astro.url.pathname === "/";
 
@@ -36,11 +35,6 @@ const isHome = Astro.url.pathname === "/";
     >
       <GithubMark width="12" height="12" aria-hidden="true" />
       GitHub ↗
-    </a>
-
-    <a href="/notes/feed.xml" class="meta-link inline-flex items-center gap-1.5 hover:text-ink">
-      <FeedMark width="12" height="12" aria-hidden="true" />
-      Feed
     </a>
 
     <ThemeToggle />

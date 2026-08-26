@@ -38,7 +38,7 @@ src/
   lib/date.ts           the one date dialect — Jul 2026, 2026, closed Feb 2024
   layouts/BaseLayout.astro
   components/           header, footer, theme toggle, rows, empty state
-  pages/                /, /projects, /notes, /about, /404, /notes/feed.xml
+  pages/                /, /projects, /notes, /about, /404
   styles/global.css     every design token, in one file
 ```
 
@@ -48,17 +48,8 @@ src/
   `/404` excluded. `lastmod` is deliberately absent: a build-date stamp on every
   URL is worse than none, and per-page dates would mean hand-rolling the sitemap.
 - `robots.txt` — points at the sitemap.
-- `_headers` — parsed by Cloudflare Workers static assets. Security headers,
-  immutable caching for the content-hashed files in `/_astro/`, and the feed's
-  content type. That last one lives here because a static build writes only the
-  body to `dist/` and drops the `Response` headers the route sets, so without it
-  the feed goes out as `application/xml`.
-- `/notes/feed.xml` — Atom, chosen over RSS because its dates are RFC 3339, it
-  declares its language natively with `xml:lang`, and `summary` is its own field.
-  Entries carry a title, a date, a sentence and a link — no inlined post body.
-  That cost three dependencies and a tree walk to absolutise its URLs, to save
-  one click and to hand the writing to a feed reader's stylesheet, which is
-  where most of this site's design would have gone to die.
+- `_headers` — parsed by Cloudflare Workers static assets. Security headers and
+  immutable caching for the content-hashed files in `/_astro/`.
 - `og.png` — the 1200×630 social card in `public/`. It was rendered by loading a
   card built from the site's own tokens and webfonts in headless Chrome at
   exactly that size. Regenerate the same way if the name or the one-liner

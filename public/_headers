@@ -8,10 +8,3 @@
 # can be cached indefinitely.
 /_astro/*
   Cache-Control: public, max-age=31536000, immutable
-
-# A static build discards the Response headers set in the route, so the feed
-# would otherwise go out as application/xml. Feed readers poll it, so let them
-# revalidate rather than serve a stale copy.
-/notes/feed.xml
-  Content-Type: application/atom+xml; charset=utf-8
-  Cache-Control: public, max-age=0, must-revalidate
