@@ -46,12 +46,16 @@ Body starts at `##` — the page title is already the `h1`.
 ```
 
 The site is in English, and so is everything in it. There is no `lang` field and
-no second language: `<html lang="en">` is set once in the layout, the feed
-declares `xml:lang="en"` once at the top, and no entry says anything about its
-own language because there is only one to say.
+no second language: `<html lang="en">` is set once in the layout, and no entry
+says anything about its own language because there is only one to say.
 
-`updated` moves only when the text actually changed — feed readers use it to
-decide whether to re-surface an entry.
+`updated` moves only when the text actually changed. It is what the `rev.` line
+in the rail reads from, so moving it for a typo tells the reader something
+untrue.
+
+**Until the first note exists, the Notes section does not.** No nav item, no
+block on the homepage, and `/notes` asks not to be indexed and stays out of the
+sitemap. Publishing one file turns all of that on; nothing needs editing.
 
 ## Adding a project
 

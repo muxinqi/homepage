@@ -8,9 +8,14 @@ const groups = groupByYear(await getNotes());
 
 const description =
   "Short pieces by Xinqi Mu on the decisions behind the things he builds. No schedule.";
+
+// Nothing links here while the section is empty, so the only way in is a search
+// result — and an empty page is a bad one. The route still answers, for anyone
+// holding the URL.
+const empty = groups.length === 0;
 ---
 
-<BaseLayout title="Notes" {description}>
+<BaseLayout title="Notes" {description} noindex={empty}>
   <h1 class="mt-[clamp(2rem,9vw,3.25rem)] mb-2 font-display text-h1 text-ink">Notes</h1>
   <p class="mb-[34px] max-w-[48ch] text-intro text-ink-soft text-pretty">
     Short pieces on the decisions behind the things I build. No schedule.

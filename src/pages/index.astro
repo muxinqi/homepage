@@ -41,19 +41,19 @@ const description =
     }
   </RailSection>
 
-  <RailSection label="Notes" note="All →" noteHref="/notes/" noteLabel="All notes" class="pt-8">
-    {
-      notes.length > 0 ? (
+  {/* The whole section waits for its first note, the way Now waits for its
+      file. An empty box on the homepage advertises a room with nothing in it. */}
+  {
+    notes.length > 0 && (
+      <RailSection label="Notes" note="All →" noteHref="/notes/" noteLabel="All notes" class="pt-8">
         <div class="row-list border-t border-line">
           {notes.map((note) => (
             <NoteRow {note} dateFormat="monthYear" />
           ))}
         </div>
-      ) : (
-        <EmptyState section="notes" />
-      )
-    }
-  </RailSection>
+      </RailSection>
+    )
+  }
 
   {
     now && (

@@ -1,7 +1,11 @@
 ---
+import { hasNotes } from "@lib/content";
+
+// Notes only appears once there is one. A nav item that leads to an empty room
+// spends the reader's attention on nothing.
 const links = [
   { href: "/projects/", label: "Projects" },
-  { href: "/notes/", label: "Notes" },
+  ...((await hasNotes()) ? [{ href: "/notes/", label: "Notes" }] : []),
   { href: "/about/", label: "About" },
 ];
 

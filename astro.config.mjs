@@ -1,11 +1,21 @@
 // @ts-check
+import { readdirSync } from 'node:fs';
 import { defineConfig, fontProviders } from 'astro/config';
 import tailwindcss from '@tailwindcss/vite';
 import sitemap from '@astrojs/sitemap';
 
+// `hasNotes()` in src/lib/content.ts answers this from the content collection,
+// which is the right source everywhere else. Integrations are configured before
+// the collection exists, so this reads the directory instead — the same fact,
+// asked earlier. Both are one line; keep them in step.
+const hasNotes = readdirSync('./src/content/notes').some((f) => f.endsWith('.md'));
+
 export default defineConfig({
   site: 'https://muxinqi.com',
-  integrations: [sitemap()],
+  // `/notes` sets `noindex` while it is empty, and submitting a page in a
+  // sitemap while telling robots to skip it is a contradiction Search Console
+  // reports back as a warning.
+  integrations: [sitemap({ filter: (page) => hasNotes || !page.endsWith('/notes/') })],
 
   // Self-hosted from Google's catalogue: latin subset only, emitted into dist as
   // woff2 with preload and metric-matched fallbacks. The site is English, so the

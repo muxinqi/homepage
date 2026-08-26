@@ -24,6 +24,17 @@ export async function getNotes(): Promise<Note[]> {
   return (await getCollection("notes")).sort(byNewest);
 }
 
+/**
+ * Whether the Notes section exists yet, which is what puts it in the nav.
+ *
+ * An empty room should not be advertised: until the first note is published
+ * there is no Notes item, no Notes block on the homepage, and `/notes` asks not
+ * to be indexed. Publishing one turns all of it on with no code to change.
+ */
+export async function hasNotes(): Promise<boolean> {
+  return (await getCollection("notes")).length > 0;
+}
+
 /** Undefined when there is no Now file, which hides the section entirely. */
 export async function getNow() {
   const entries = await getCollection("now");
