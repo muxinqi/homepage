@@ -78,9 +78,11 @@ const description =
       </RailSection>
     )
   }
-</BaseLayout>
 
-<script>
+  {/* Inside the layout on purpose. BaseLayout renders the whole document, so a
+      script placed after </BaseLayout> lands after </html> — which browsers
+      recover from and strict parsers do not. */}
+  <script>
   // "Updated 2 months ago" rather than "Updated Aug 2026". A static build cannot
   // say this — it would freeze at deploy time — so it is the one thing here that
   // genuinely belongs at runtime.
@@ -107,7 +109,11 @@ const description =
       const then = new Date(el.dateTime);
       if (Number.isNaN(then.valueOf())) continue;
 
-      let delta = (then.valueOf() - Date.now()) / 1000;
+      // Never positive. `datetime` is a bare date, which parses as UTC midnight,
+      // so a reader east of UTC sees today's date as an hour or ten in their own
+      // future — and "Updated in 9 hours" is worse than no rewrite at all. A
+      // clamped delta formats as "now", which is what the reader means by it.
+      let delta = Math.min(0, (then.valueOf() - Date.now()) / 1000);
       for (const [amount, unit] of DIVISIONS) {
         if (Math.abs(delta) < amount) {
           const prefix = el.dataset.relative;
@@ -120,4 +126,5 @@ const description =
   } catch {
     // No Intl.RelativeTimeFormat. The absolute month is already on screen.
   }
-</script>
+  </script>
+</BaseLayout>
