@@ -112,6 +112,8 @@ A few things worth knowing before changing anything:
 - **Fonts are self-hosted.** Astro's font pipeline pulls the latin subsets of
   Newsreader, IBM Plex Sans and IBM Plex Mono into `dist/_astro/fonts/` with
   preload links. The site is English, so the latin subset is the whole of it.
-- **`border-radius: 0` everywhere** except the avatar. No shadows. The only
-  motion is a 1px underline on link hover, which `prefers-reduced-motion`
-  removes.
+- **`border-radius: 0` everywhere** except the avatar. No shadows, and nothing
+  transitions or animates — the `prefers-reduced-motion` block has no motion of
+  its own to switch off, only smooth scrolling. A 1px underline appears on link
+  hover; appearing is not motion, and it stays for everyone, because taking the
+  affordance away would cost more than the stillness is worth.

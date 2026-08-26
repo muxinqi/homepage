@@ -268,5 +268,4 @@ html {
     animation-duration: 0.01ms !important;
   }
   html { scroll-behavior: auto; }
-  a:hover { text-decoration: underline; }
 }
