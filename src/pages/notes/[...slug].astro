@@ -15,14 +15,14 @@ interface Props {
 }
 
 const { note } = Astro.props;
-const { title, summary, created, updated, lang } = note.data;
+const { title, summary, created, updated } = note.data;
 const { Content } = await render(note);
 
 // The rail carries the date and nothing else. The page ends by going back to the
 // list — no "next post", no recommendations.
 ---
 
-<BaseLayout {title} description={summary ?? title} ogType="article" {lang}>
+<BaseLayout {title} description={summary ?? title} ogType="article">
   <div class="rail-row pt-[clamp(2rem,9vw,3.25rem)]">
     <div class="rail">
       <time
@@ -43,9 +43,9 @@ const { Content } = await render(note);
     </div>
 
     <div class="column">
-      <h1 class="max-w-[34ch] font-display text-h1 text-ink" {lang}>{title}</h1>
+      <h1 class="max-w-[34ch] font-display text-h1 text-ink">{title}</h1>
 
-      <div class="prose mt-[22px]" {lang}><Content /></div>
+      <div class="prose mt-[22px]"><Content /></div>
 
       <div class="mt-[26px] border-t border-line pt-[13px] font-mono text-meta text-accent">
         <a href="/notes/" class="meta-link">← Notes</a>

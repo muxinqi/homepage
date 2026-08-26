@@ -12,7 +12,7 @@ interface Props {
 }
 
 const { note, dateFormat = "month" } = Astro.props;
-const { title, summary, created, lang } = note.data;
+const { title, summary, created } = note.data;
 
 // A note title is a sentence; a project name is a name. Hence Plex Sans here and
 // Newsreader there.
@@ -26,12 +26,10 @@ const { title, summary, created, lang } = note.data;
   >
 
   <div class="min-w-0">
-    <a href={`/notes/${note.id}/`} class="text-item text-ink wrap-anywhere" lang={lang}
-      >{title}</a
-    >
+    <a href={`/notes/${note.id}/`} class="text-item text-ink wrap-anywhere">{title}</a>
     {
       summary && (
-        <p class="mt-0.5 max-w-[50ch] text-sum text-ink-muted text-pretty" lang={lang}>
+        <p class="mt-0.5 max-w-[50ch] text-sum text-ink-muted text-pretty">
           {summary}
         </p>
       )

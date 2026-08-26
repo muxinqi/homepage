@@ -20,8 +20,7 @@ interface Props {
 }
 
 const { project, showLinks = true, showYear = true } = Astro.props;
-const { title, summary, status, created, closed, url, repo, lang } =
-  project.data;
+const { title, summary, status, created, closed, url, repo } = project.data;
 
 const offline = status === "offline";
 // An offline row drops title and summary to muted so a glance separates history
@@ -48,7 +47,7 @@ const when = closedDate
       <a
         href={`/projects/${project.id}/`}
         class:list={["font-display text-row font-medium wrap-anywhere", titleTone]}
-        lang={lang}>{title}</a
+        >{title}</a
       >
       {
         when && (
@@ -62,12 +61,7 @@ const when = closedDate
       }
     </div>
 
-    <p
-      class="mt-1 max-w-[54ch] text-sum text-ink-muted text-pretty"
-      lang={lang}
-    >
-      {summary}
-    </p>
+    <p class="mt-1 max-w-[54ch] text-sum text-ink-muted text-pretty">{summary}</p>
 
     {
       showLinks && (url || repo) && (

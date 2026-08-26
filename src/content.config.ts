@@ -23,7 +23,6 @@ const projects = defineCollection({
     /** Shown in the detail page's metadata table, never in a list row. */
     stack: z.string().optional(),
     featured: z.boolean().default(false),
-    lang: z.enum(["en", "zh"]).default("en"),
   }),
 });
 
@@ -36,7 +35,6 @@ const notes = defineCollection({
     created: z.coerce.date(),
     updated: z.coerce.date().optional(),
     tags: z.array(z.string()).default([]),
-    lang: z.enum(["en", "zh"]).default("en"),
   }),
 });
 

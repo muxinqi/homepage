@@ -9,19 +9,11 @@ interface Props {
   title?: string;
   description: string;
   ogType?: "website" | "article";
-  /** Set to "zh" on a page whose main content is Chinese. */
-  lang?: "en" | "zh";
   /** For pages that answer on URLs other than their own — see 404. */
   noindex?: boolean;
 }
 
-const {
-  title,
-  description,
-  ogType = "website",
-  lang = "en",
-  noindex = false,
-} = Astro.props;
+const { title, description, ogType = "website", noindex = false } = Astro.props;
 
 const pageTitle = title ? `${title} — Xinqi Mu` : "Xinqi Mu";
 // A page served for every unknown path cannot name a canonical URL: it would be
@@ -31,7 +23,7 @@ const ogImage = new URL("/og.png", Astro.site).href;
 ---
 
 <!doctype html>
-<html lang={lang}>
+<html lang="en">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />

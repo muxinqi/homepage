@@ -41,16 +41,15 @@ summary: Optional. A row without one is simply shorter.
 created: 2026-08-21
 updated: 2026-09-02   # optional; only when the text really changed
 tags: []
-lang: en              # or zh
 ---
 
 Body starts at `##` — the page title is already the `h1`.
 ```
 
-Write in whichever language you were thinking in and set `lang` to match. That
-attribute drives the Chinese typesetting rules (line-height, `line-break`) and
-the per-entry `xml:lang` in the Atom feed. There is no translation duty: an
-English note and a Chinese note sit next to each other in the same list.
+The site is in English, and so is everything in it. There is no `lang` field and
+no second language: `<html lang="en">` is set once in the layout, the feed
+declares `xml:lang="en"` once at the top, and no entry says anything about its
+own language because there is only one to say.
 
 `updated` moves only when the text actually changed — feed readers use it to
 decide whether to re-surface an entry.
@@ -71,7 +70,6 @@ url: https://cosplit.net
 repo: https://github.com/muxinqi/cosplit   # omit for a private repo
 stack: React · Cloudflare Workers          # detail page only, never a list row
 featured: true        # the homepage shows up to three featured projects
-lang: en
 ---
 ```
 

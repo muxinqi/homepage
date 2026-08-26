@@ -155,7 +155,6 @@ body {
   outline-offset: 2px;
 }
 :target { scroll-margin-top: 3.5rem; }
-:lang(zh) { line-break: strict; }
 
 html {
   scroll-behavior: smooth;
@@ -263,7 +262,6 @@ html {
   color: var(--ink-muted);
   margin-top: 0.4375rem;
 }
-.prose :lang(zh) { line-height: 1.85; }
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {

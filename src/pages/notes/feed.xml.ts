@@ -4,9 +4,9 @@ import { isoStamp } from "@lib/date";
 
 /**
  * Atom rather than RSS, for three reasons that all matter here: its dates are
- * RFC 3339 (the same spelling as `<time datetime>`), `xml:lang` is native so a
- * Chinese note can declare itself, and `summary` is its own field rather than an
- * overloaded `description`.
+ * RFC 3339 (the same spelling as `<time datetime>`), the feed declares its
+ * language natively with `xml:lang`, and `summary` is its own field rather than
+ * an overloaded `description`.
  *
  * Two invariants: an entry id never changes, even if its URL does, and `updated`
  * moves only when the text actually changed.
@@ -38,7 +38,7 @@ export const GET: APIRoute = async (context) => {
     const updated = note.data.updated ?? note.data.created;
 
     return [
-      `  <entry xml:lang="${note.data.lang}">`,
+      `  <entry>`,
       `    <title>${escape(note.data.title)}</title>`,
       `    <link rel="alternate" type="text/html" href="${escape(url)}"/>`,
       `    <id>tag:muxinqi.com,2026:note/${escape(note.id)}</id>`,
