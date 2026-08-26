@@ -36,10 +36,7 @@ const description =
           ))}
         </div>
       ) : (
-        <EmptyState
-          title="Nothing here yet"
-          detail="The first one will show up here, with what it does and whether it still works."
-        />
+        <EmptyState section="projects" />
       )
     }
   </RailSection>
@@ -53,10 +50,7 @@ const description =
           ))}
         </div>
       ) : (
-        <EmptyState
-          title="Nothing here yet"
-          detail="The first one will show up here, and in the feed."
-        />
+        <EmptyState section="notes" />
       )
     }
   </RailSection>
