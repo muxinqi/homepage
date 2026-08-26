@@ -1,0 +1,134 @@
+# Writing content
+
+Everything on the site comes from the Markdown files in this folder. There is no
+CMS and no database — you edit a file, commit, and push.
+
+> **A push to `main` deploys.** Cloudflare Workers Builds is connected to this
+> repository from the dashboard side, so there is no CI file in the repo that
+> would tell you this. Anything merged to `main` is public within a minute.
+
+**The branch is the draft.** There is no `draft` flag: this repository is public,
+so a file marked as a draft was already readable as Markdown on github.com the
+moment it was pushed. The flag only ever closed one of the two doors, while
+reading as though it had closed both.
+
+So unfinished work lives on a branch. `npm run dev` renders it locally, and the
+Cloudflare build for that branch gives it a preview URL. Merging to `main` is
+what publishes — there is no second switch to forget.
+
+Anything committed here is public the moment it is pushed, on any branch. That is
+the rule to hold in your head; it was true before and the flag was hiding it.
+
+**Never put an HTML comment (`<!-- … -->`) in a Markdown body.** It survives into
+the built HTML. Frontmatter comments (`#`) are safe — they never reach output.
+
+**If you delete a file and it is still in `dist/`, clear the content cache:**
+`rm node_modules/.astro/data-store.json`. Astro caches collection entries there
+and does not evict one when its source file goes away. This is local only —
+CI and Cloudflare build from a fresh checkout, so a deleted note cannot be
+published by a stale cache — but it will mislead you on your own machine.
+
+---
+
+## Adding a note
+
+Create `notes/some-slug.md`. The filename becomes the URL: `/notes/some-slug/`.
+
+```markdown
+---
+title: Why the status sits next to the title
+summary: Optional. A row without one is simply shorter.
+created: 2026-08-21
+updated: 2026-09-02   # optional; only when the text really changed
+---
+
+Body starts at `##` — the page title is already the `h1`.
+```
+
+The site is in English, and so is everything in it. There is no `lang` field and
+no second language: `<html lang="en">` is set once in the layout, and no entry
+says anything about its own language because there is only one to say.
+
+`updated` moves only when the text actually changed. It is what the `rev.` line
+in the rail reads from, so moving it for a typo tells the reader something
+untrue.
+
+**Until the first note exists, the Notes section does not.** No nav item, no
+block on the homepage, and `/notes` asks not to be indexed and stays out of the
+sitemap. Publishing one file turns all of that on; nothing needs editing.
+
+## Adding a project
+
+Create `projects/some-slug.md` → `/projects/some-slug/`.
+
+```markdown
+---
+title: CoSplit
+summary: One sentence. It is the list row and the page lede.
+status: live          # active | live | offline
+created: 2026-03-25
+updated: 2026-08-18
+closed: 2027-02-01    # offline only — read nowhere else, so a live project
+                      # carrying one loses it silently
+url: https://cosplit.net
+repo: https://github.com/muxinqi/cosplit   # omit for a private repo
+stack: React · Cloudflare Workers          # detail page only, never a list row
+featured: true        # the homepage shows up to three featured projects
+---
+```
+
+The body is optional. A project page with a summary and a metadata table is a
+complete page — better a short honest one than a padded one.
+
+`created` and `updated` become the `Built` row, so they should span the stretch
+when the work was actually done. A repository's last push is usually the wrong
+value for `updated`: a year of Dependabot commits after the last real change
+turns one month of building into "Dec 2023 – Feb 2025".
+
+### Choosing a status
+
+Two facts decide it, and neither of them is how you feel about the project:
+
+| Status    | Means                                              |
+| --------- | -------------------------------------------------- |
+| `active`  | Usable, and you are still adding to it              |
+| `live`    | Usable, but you have stopped changing it            |
+| `offline` | No longer usable; the page stays as a record        |
+
+`live` is where most finished things end up, and that is not a failure. An
+`offline` row dims its whole line but keeps its links clickable.
+
+## The Now block
+
+`now/current.md` feeds the homepage's Now section. It shows the first two items;
+the file allows up to four. With no file there the section disappears rather
+than showing an empty box — Now is optional in a way Projects and Notes are not.
+
+```markdown
+---
+updated: 2026-08-21
+items:
+  - label: Making
+    text: One sentence.
+  - label: Off screen
+    text: One sentence.
+---
+```
+
+The homepage renders `Updated Aug 2026` from that date and a script rewrites it
+as `Updated 2 months ago` — staleness is the point of this block, and a relative
+label is what makes it legible. The absolute month is what the build can honestly
+say, so it is what stands with no JavaScript.
+
+---
+
+## Still waiting on you
+
+Nothing invented was published, so these are the gaps that remain:
+
+- [ ] **The Now block.** There is no `now/` file, so the homepage renders no Now
+      section at all. Write one from the template above when you want it.
+- [ ] **The first note.** `notes/` is empty, so `/notes` and the homepage show
+      their empty state — a designed component, not a fallback. Until then the
+      build prints "collection … is empty" warnings; they are accurate and they
+      go away with the first file.

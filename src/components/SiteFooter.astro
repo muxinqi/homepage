@@ -1,0 +1,42 @@
+---
+import ThemeToggle from "@components/ThemeToggle.astro";
+import GithubMark from "@assets/icons/github.svg";
+
+const isHome = Astro.url.pathname === "/";
+
+// The theme control lives down here on purpose: it is a display preference, the
+// system value is usually already right, and it has no business in the header.
+//
+// Icons sit beside the labels rather than replacing them. At 12px they are what
+// the eye lands on first; the word is what removes the ambiguity an icon alone
+// would leave — especially for a control with three states.
+---
+
+<footer
+  class="mt-10 flex flex-wrap items-center justify-between gap-x-5 gap-y-3 border-t border-line pt-[13px] font-mono text-meta text-ink-muted uppercase"
+>
+  {/* Same rule as the header: no live link to the page you are already on. */}
+  {
+    isHome ? (
+      <span aria-current="page">muxinqi</span>
+    ) : (
+      <a href="/" class="meta-link hover:text-ink">
+        muxinqi
+      </a>
+    )
+  }
+
+  <div class="flex flex-wrap items-center gap-x-5 gap-y-2">
+    <a
+      href="https://github.com/muxinqi"
+      class="meta-link inline-flex items-center gap-1.5 hover:text-ink"
+      rel="me noopener noreferrer"
+      target="_blank"
+    >
+      <GithubMark width="12" height="12" aria-hidden="true" />
+      GitHub ↗
+    </a>
+
+    <ThemeToggle />
+  </div>
+</footer>

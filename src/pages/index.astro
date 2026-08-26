@@ -1,43 +1,130 @@
 ---
-import LinkButton from "@components/LinkButton.astro";
-import GithubIcon from "@components/icons/GithubIcon.astro";
-import LinkedinIcon from "@components/icons/LinkedinIcon.astro";
-import Layout from "@layouts/Layout.astro";
+import BaseLayout from "@layouts/BaseLayout.astro";
+import RailSection from "@components/RailSection.astro";
+import ProjectRow from "@components/ProjectRow.astro";
+import NoteRow from "@components/NoteRow.astro";
+import EmptyState from "@components/EmptyState.astro";
+import { getNotes, getNow, getProjects } from "@lib/content";
+import { monthYear } from "@lib/date";
 
-const name = "Xinqi Mu";
-const description = "";
+const allProjects = await getProjects();
+const featured = allProjects.filter((p) => p.data.featured);
+const projects = (featured.length > 0 ? featured : allProjects).slice(0, 3);
+
+const notes = (await getNotes()).slice(0, 2);
+const now = await getNow();
+
+const description =
+  "Xinqi Mu builds useful software for the web, mobile, and the occasional thing he wanted to make simpler.";
 ---
 
-<Layout>
-  <main class="bg-gray-100 flex items-center justify-center min-h-screen">
-    <div class="bg-white p-6 rounded-2xl shadow-lg w-full max-w-sm text-center">
-      <img
-        src="https://github.com/muxinqi.png"
-        alt="Xinqi Mu's Avatar"
-        class="w-24 h-24 rounded-full mx-auto mb-4"
-      />
-      <h1 class="text-2xl font-bold mb-2">{name}</h1>
-      <p class="text-gray-600 mb-6">{description}</p>
+<BaseLayout {description}>
+  <div class="pt-[clamp(2rem,9vw,3.25rem)]">
+    <h1 class="font-display text-name text-ink">Xinqi Mu</h1>
+    <p class="mt-3.5 max-w-[46ch] text-lede text-ink-soft text-pretty">
+      I build useful software for the web, mobile, and the occasional thing I wanted to
+      make simpler. Based in Ottawa.
+    </p>
+  </div>
 
-      <div class="flex flex-col gap-4">
-        <LinkButton
-          href="https://github.com/muxinqi"
-          icon={GithubIcon}
-          color="github"
-          text="GitHub"
-        />
+  <RailSection label="Projects" note="All →" noteHref="/projects/" noteLabel="All projects" class="pt-10">
+    {
+      projects.length > 0 ? (
+        <div class="row-list border-t border-line">
+          {projects.map((project) => (
+            <ProjectRow {project} showLinks={false} />
+          ))}
+        </div>
+      ) : (
+        <EmptyState section="projects" />
+      )
+    }
+  </RailSection>
 
-        <LinkButton
-          href="https://linkedin.com/in/muxinqi"
-          icon={LinkedinIcon}
-          color="linkedin"
-          text="LinkedIn"
-        />
+  {/* The whole section waits for its first note, the way Now waits for its
+      file. An empty box on the homepage advertises a room with nothing in it. */}
+  {
+    notes.length > 0 && (
+      <RailSection label="Notes" note="All →" noteHref="/notes/" noteLabel="All notes" class="pt-8">
+        <div class="row-list border-t border-line">
+          {notes.map((note) => (
+            <NoteRow {note} dateFormat="monthYear" />
+          ))}
+        </div>
+      </RailSection>
+    )
+  }
 
-        <!-- <LinkButton href="https://blog.muxinqi.com" icon={GlobeIcon} color="blog" text="My Blog" /> -->
-      </div>
+  {
+    now && (
+      <RailSection
+        label="Now"
+        note={`Updated ${monthYear(now.data.updated)}`}
+        noteDatetime={now.data.updated}
+        notePrefix="Updated"
+        alignToList={false}
+        class="pt-8"
+      >
+        <dl class="row-list">
+          {now.data.items.slice(0, 2).map((item) => (
+            <div class="row pb-[11px]">
+              <dt class="pt-[5px] font-mono text-rail tracking-[0.1em] text-ink-muted uppercase">
+                {item.label}
+              </dt>
+              <dd class="max-w-[54ch] min-w-0 text-item text-pretty">{item.text}</dd>
+            </div>
+          ))}
+        </dl>
+      </RailSection>
+    )
+  }
 
-      <footer class="mt-6 text-xs text-gray-400">© 2025 Xinqi Mu. All rights reserved.</footer>
-    </div>
-  </main>
-</Layout>
+  {/* Inside the layout on purpose. BaseLayout renders the whole document, so a
+      script placed after </BaseLayout> lands after </html> — which browsers
+      recover from and strict parsers do not. */}
+  <script>
+  // "Updated 2 months ago" rather than "Updated Aug 2026". A static build cannot
+  // say this — it would freeze at deploy time — so it is the one thing here that
+  // genuinely belongs at runtime.
+  //
+  // Intl.RelativeTimeFormat is built in (2018), so this costs no dependency. The
+  // server already rendered the absolute month; if anything below fails, that is
+  // what stays on screen, and it is never wrong — only less pointed.
+  const DIVISIONS = [
+    [60, "second"],
+    [60, "minute"],
+    [24, "hour"],
+    [7, "day"],
+    [4.34524, "week"],
+    [12, "month"],
+    [Number.POSITIVE_INFINITY, "year"],
+  ] as const;
+
+  try {
+    const rtf = new Intl.RelativeTimeFormat(document.documentElement.lang || "en", {
+      numeric: "auto",
+    });
+
+    for (const el of document.querySelectorAll<HTMLTimeElement>("[data-relative]")) {
+      const then = new Date(el.dateTime);
+      if (Number.isNaN(then.valueOf())) continue;
+
+      // Never positive. `datetime` is a bare date, which parses as UTC midnight,
+      // so a reader east of UTC sees today's date as an hour or ten in their own
+      // future — and "Updated in 9 hours" is worse than no rewrite at all. A
+      // clamped delta formats as "now", which is what the reader means by it.
+      let delta = Math.min(0, (then.valueOf() - Date.now()) / 1000);
+      for (const [amount, unit] of DIVISIONS) {
+        if (Math.abs(delta) < amount) {
+          const prefix = el.dataset.relative;
+          el.textContent = (prefix ? prefix + " " : "") + rtf.format(Math.round(delta), unit);
+          break;
+        }
+        delta /= amount;
+      }
+    }
+  } catch {
+    // No Intl.RelativeTimeFormat. The absolute month is already on screen.
+  }
+  </script>
+</BaseLayout>

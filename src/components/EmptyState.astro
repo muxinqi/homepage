@@ -1,0 +1,38 @@
+---
+interface Props {
+  /**
+   * Which list is empty. The copy lives here rather than at the four call sites
+   * because each section's empty state is written twice — once on its own page
+   * and once in the homepage's preview of it — and two copies of a sentence
+   * drift the first time one of them is reworded.
+   */
+  section: "projects" | "notes";
+}
+
+const { section } = Astro.props;
+
+const COPY = {
+  projects: {
+    title: "Nothing here yet",
+    detail: "The first one will show up here, with what it does and whether it still works.",
+  },
+  notes: {
+    title: "Nothing here yet",
+    detail: "The first one will show up here.",
+  },
+} as const;
+
+const { title, detail } = COPY[section];
+
+// A first-class component, not a fallback. It stands about as tall as one row,
+// so the page keeps its shape between zero items and one. The dashed border uses
+// --line-strong — one step heavier than a row line — to mark it as temporary.
+---
+
+<div
+  class="border border-dashed border-line-strong bg-[repeating-linear-gradient(135deg,color-mix(in_srgb,var(--ink)_2.2%,transparent)_0_6px,transparent_6px_12px)] px-[18px] py-4"
+>
+  <p class="font-mono text-rail text-ink-muted uppercase">Empty</p>
+  <p class="mt-[7px] text-item text-ink">{title}</p>
+  <p class="text-sum text-ink-muted">{detail}</p>
+</div>

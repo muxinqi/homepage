@@ -1,0 +1,65 @@
+---
+import { Image } from "astro:assets";
+import BaseLayout from "@layouts/BaseLayout.astro";
+import MetaTable, { type MetaRow } from "@components/MetaTable.astro";
+import avatar from "@assets/avatar.jpg";
+
+const description = "About Xinqi Mu — what he builds, and how to reach him.";
+
+const rows: MetaRow[] = [
+  { label: "Where", value: "Ottawa, Canada" },
+  // Not obfuscated. The address is already in this repository's public commit
+  // metadata, so hiding it here would only cost a human reader the next step.
+  {
+    label: "Email",
+    links: [{ label: "hi@muxinqi.com", href: "mailto:hi@muxinqi.com" }],
+  },
+  {
+    label: "Elsewhere",
+    links: [
+      { label: "github", href: "https://github.com/muxinqi", external: true },
+      { label: "linkedin", href: "https://linkedin.com/in/muxinqi", external: true },
+    ],
+  },
+];
+---
+
+<BaseLayout title="About" {description}>
+  <div class="rail-row pt-[clamp(2rem,9vw,3.25rem)]">
+    <div class="rail">
+      {/* The only rounded corner on the site. */}
+      <Image
+        src={avatar}
+        alt=""
+        width={64}
+        height={64}
+        densities={[1, 2]}
+        loading="eager"
+        class="size-16 rounded-full border border-line"
+      />
+    </div>
+
+    <div class="column">
+      <h1 class="font-display text-h1 text-ink">About</h1>
+
+      <div class="prose mt-5">
+        <p>
+          I'm Xinqi Mu. I build useful software for the web, mobile, and the occasional
+          thing I wanted to make simpler. I like tools that feel obvious after you use
+          them.
+        </p>
+        <p>
+          This site holds what I've made and what I want to remember about making it. It's
+          written first for a later version of me, which is why the status next to a
+          project says whether it still works rather than how it went.
+        </p>
+        <p>
+          I cook, too. Here's a <a href="https://menu.xinqi.mu">menu</a> of the dishes I'd
+          make for you.
+        </p>
+      </div>
+
+      <MetaTable {rows} class="mt-[22px]" />
+    </div>
+  </div>
+</BaseLayout>

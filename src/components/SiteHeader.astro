@@ -1,0 +1,76 @@
+---
+import { hasNotes } from "@lib/content";
+
+// Notes only appears once there is one. A nav item that leads to an empty room
+// spends the reader's attention on nothing.
+const links = [
+  { href: "/projects/", label: "Projects" },
+  ...((await hasNotes()) ? [{ href: "/notes/", label: "Notes" }] : []),
+  { href: "/about/", label: "About" },
+];
+
+const path = Astro.url.pathname;
+const isHome = path === "/";
+
+// `page` only for the page you are actually on. A section link is highlighted on
+// its detail pages too, but announcing "current page" there would be a lie —
+// `true` is the value for an ancestor.
+const currentState = (href: string) =>
+  path === href ? "page" : path.startsWith(href) ? "true" : undefined;
+
+// The space is escaped and non-breaking on purpose: if the name wrapped to two
+// lines the header would grow, which is the very thing this component guards.
+const wordmark = "Xinqi\u00A0Mu";
+const wordmarkType = "font-display text-[0.9375rem]";
+
+// The wordmark is a home link, so the homepage does not carry one: an active
+// link to the page you are already on is noise, and the 42px name sits right
+// below it anyway.
+//
+// It is still *rendered* on the homepage, just invisible. Newsreader at 15px has
+// a line box about 17px taller than the 11px monospace nav, and `items-baseline`
+// sizes the header to the tallest item — so simply dropping the element
+// collapsed the header by 16.75px and moved the rule, the nav, and everything
+// below them. Holding the space keeps every page's header identical by
+// construction rather than by coincidence.
+//
+// The bottom rule is drawn in --ink. It is the only ink-weight line on the site,
+// and it is what makes the header read as the top edge of the page.
+---
+
+<header
+  class="flex flex-wrap items-baseline justify-between gap-x-8 gap-y-3 border-b border-ink pb-[13px]"
+>
+  {
+    isHome ? (
+      <span class:list={[wordmarkType, "invisible"]} aria-hidden="true">
+        {wordmark}
+      </span>
+    ) : (
+      <a href="/" class:list={[wordmarkType, "text-ink"]} aria-label="Xinqi Mu, home">
+        {wordmark}
+      </a>
+    )
+  }
+
+  <nav aria-label="Main">
+    <ul class="flex flex-wrap items-baseline gap-x-5 gap-y-2 font-mono text-meta tracking-[0.12em] uppercase">
+      {
+        links.map(({ href, label }) => (
+          <li>
+            <a
+              href={href}
+              class:list={[
+                "meta-link",
+                currentState(href) ? "text-ink" : "text-ink-muted hover:text-ink",
+              ]}
+              aria-current={currentState(href)}
+            >
+              {label}
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </nav>
+</header>

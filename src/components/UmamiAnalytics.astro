@@ -1,7 +1,0 @@
----
-const isProd = import.meta.env.PROD;
-const src = "https://cloud.umami.is/script.js";
-const websiteId = "7af7406e-c6a8-4ee1-95c7-8735e6fed671";
----
-
-{isProd && <script is:inline defer src={src} data-website-id={websiteId} />}

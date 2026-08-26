@@ -1,0 +1,10 @@
+# Parsed by Cloudflare Workers static assets; the file itself is never served.
+
+/*
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+
+# Filenames here carry a content hash, so a change is a new URL and the old one
+# can be cached indefinitely.
+/_astro/*
+  Cache-Control: public, max-age=31536000, immutable

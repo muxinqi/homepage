@@ -1,0 +1,38 @@
+---
+import type { Note } from "@lib/content";
+import { isoDate, month, monthYear } from "@lib/date";
+
+interface Props {
+  note: Note;
+  /**
+   * `month` inside a year-grouped list, `monthYear` on the homepage where no
+   * year rail is there to supply it.
+   */
+  dateFormat?: "month" | "monthYear";
+}
+
+const { note, dateFormat = "month" } = Astro.props;
+const { title, summary, created } = note.data;
+
+// A note title is a sentence; a project name is a name. Hence Plex Sans here and
+// Newsreader there.
+---
+
+<div class="row border-b border-line py-[15px]">
+  <time
+    datetime={isoDate(created)}
+    class="pt-[5px] font-mono text-rail tracking-[0.1em] text-ink-muted uppercase"
+    >{dateFormat === "month" ? month(created) : monthYear(created)}</time
+  >
+
+  <div class="min-w-0">
+    <a href={`/notes/${note.id}/`} class="text-item text-ink wrap-anywhere">{title}</a>
+    {
+      summary && (
+        <p class="mt-0.5 max-w-[50ch] text-sum text-ink-muted text-pretty">
+          {summary}
+        </p>
+      )
+    }
+  </div>
+</div>

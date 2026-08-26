@@ -1,0 +1,83 @@
+---
+import StatusMark from "@components/StatusMark.astro";
+import type { Project } from "@lib/content";
+import { isoDate, monthYear, year } from "@lib/date";
+
+interface Props {
+  project: Project;
+  /** The homepage omits the outbound links; the full list keeps them. */
+  showLinks?: boolean;
+  /**
+   * `year` on the homepage, where nothing else carries the date. Inside a
+   * year-grouped list the rail already says it, so the row shows nothing — two
+   * dates of identical form and different meaning, told apart only by a `title`
+   * nobody on a touchscreen can read, is worse than one.
+   *
+   * An offline row keeps its date either way: `closed Feb 2024` says in words
+   * which fact it is, and it is the row's own headline.
+   */
+  showYear?: boolean;
+}
+
+const { project, showLinks = true, showYear = true } = Astro.props;
+const { title, summary, status, created, closed, url, repo } = project.data;
+
+const offline = status === "offline";
+// An offline row drops title and summary to muted so a glance separates history
+// from what still works. Its links stay accent — they remain clickable.
+//
+// One class, not two: emitting `text-ink text-ink-muted` and letting them fight
+// would resolve by stylesheet order, which this component does not control.
+const titleTone = offline ? "text-ink-muted" : "text-ink";
+
+const closedDate = offline && closed ? closed : undefined;
+const stamp = closedDate ?? created;
+const when = closedDate
+  ? `closed ${monthYear(closedDate)}`
+  : showYear
+    ? year(created)
+    : undefined;
+---
+
+<div class="row border-b border-line py-[17px]">
+  <StatusMark status={status} alignToTitle />
+
+  <div class="min-w-0">
+    <div class="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-0.5">
+      <a
+        href={`/projects/${project.id}/`}
+        class:list={["font-display text-row font-medium wrap-anywhere", titleTone]}
+        >{title}</a
+      >
+      {
+        when && (
+          <time
+            datetime={isoDate(stamp)}
+            class="font-mono text-[0.6875rem] whitespace-nowrap text-ink-muted"
+          >
+            {when}
+          </time>
+        )
+      }
+    </div>
+
+    <p class="mt-1 max-w-[54ch] text-sum text-ink-muted text-pretty">{summary}</p>
+
+    {
+      showLinks && (url || repo) && (
+        <div class="mt-2 flex flex-wrap gap-x-4 font-mono text-[0.6875rem] text-accent">
+          {url && (
+            <a class="meta-link" href={url} rel="noopener noreferrer" target="_blank">
+              Site ↗
+            </a>
+          )}
+          {repo && (
+            <a class="meta-link" href={repo} rel="noopener noreferrer" target="_blank">
+              Code ↗
+            </a>
+          )}
+        </div>
+      )
+    }
+  </div>
+</div>

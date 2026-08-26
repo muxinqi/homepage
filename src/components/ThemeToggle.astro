@@ -1,0 +1,56 @@
+---
+import Monitor from "@assets/icons/monitor.svg";
+import Sun from "@assets/icons/sun.svg";
+import Moon from "@assets/icons/moon.svg";
+
+// Three states, not two: System → Light → Dark. With only two, a reader who
+// clicks once can never get back to following the OS. Returning to System is
+// `localStorage.removeItem`.
+//
+// The state lives in one place — data-theme on <html>, written by the script in
+// <head> before first paint. CSS derives everything else from it: the colour
+// scheme, which of the three icons shows, and whether this button is visible at
+// all. So the only thing left for this script is the word.
+---
+
+<button
+  type="button"
+  data-theme-toggle
+  title="Switch colour theme — System, Light, Dark"
+  class="meta-link cursor-pointer items-center gap-1.5 uppercase hover:text-ink"
+>
+  <span data-icon="system" aria-hidden="true"><Monitor width="12" height="12" /></span>
+  <span data-icon="light" aria-hidden="true"><Sun width="12" height="12" /></span>
+  <span data-icon="dark" aria-hidden="true"><Moon width="12" height="12" /></span>
+  <span class="sr-only">Theme:</span>
+  <span data-theme-label>System</span>
+</button>
+
+<script>
+  const NEXT = { system: "light", light: "dark", dark: "system" } as const;
+  type Theme = keyof typeof NEXT;
+
+  const root = document.documentElement;
+  const label = document.querySelector<HTMLElement>("[data-theme-label]");
+  const current = () => (root.dataset.theme ?? "system") as Theme;
+
+  function render() {
+    const theme = current();
+    if (label) label.textContent = theme[0].toUpperCase() + theme.slice(1);
+  }
+
+  render();
+
+  document.querySelector("[data-theme-toggle]")?.addEventListener("click", () => {
+    const next = NEXT[current()] ?? "system";
+    root.dataset.theme = next;
+    try {
+      if (next === "system") localStorage.removeItem("theme");
+      else localStorage.setItem("theme", next);
+    } catch {
+      // Private mode, or site data blocked. The choice holds for this page view
+      // and simply does not persist.
+    }
+    render();
+  });
+</script>

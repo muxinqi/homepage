@@ -1,0 +1,87 @@
+---
+import { Font } from "astro:assets";
+import SiteHeader from "@components/SiteHeader.astro";
+import SiteFooter from "@components/SiteFooter.astro";
+import "@styles/global.css";
+
+interface Props {
+  /** Omit on the homepage — the site name alone is the title there. */
+  title?: string;
+  description: string;
+  ogType?: "website" | "article";
+  /** For pages that answer on URLs other than their own — see 404. */
+  noindex?: boolean;
+}
+
+const { title, description, ogType = "website", noindex = false } = Astro.props;
+
+const pageTitle = title ? `${title} — Xinqi Mu` : "Xinqi Mu";
+// A page served for every unknown path cannot name a canonical URL: it would be
+// advertising /404/ as the original of whatever the reader actually asked for.
+const canonical = noindex ? undefined : new URL(Astro.url.pathname, Astro.site).href;
+const ogImage = new URL("/og.png", Astro.site).href;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    {/* Paints the mobile browser chrome to match --ground in each theme. */}
+    <meta name="theme-color" media="(prefers-color-scheme: light)" content="#FBFBFC" />
+    <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#101214" />
+
+    {/* Synchronous, and before the stylesheet, so the theme never flashes.
+        Setting the attribute is also what reveals the toggle. */}
+    <script is:inline>
+      try {
+        var t = localStorage.getItem("theme");
+      } catch (e) {}
+      document.documentElement.dataset.theme =
+        t === "light" || t === "dark" ? t : "system";
+    </script>
+
+    <title>{pageTitle}</title>
+    <meta name="description" content={description} />
+    {canonical && <link rel="canonical" href={canonical} />}
+    {noindex && <meta name="robots" content="noindex" />}
+
+    <meta property="og:type" content={ogType} />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={description} />
+    {canonical && <meta property="og:url" content={canonical} />}
+    <meta property="og:site_name" content="Xinqi Mu" />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <link rel="icon" href="/favicon.png" type="image/png" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+
+    {/* Upright only: italics are never on the first screen, and mono is small
+        enough that its fallback swap is not worth a blocking request. */}
+    <Font cssVariable="--font-newsreader" preload={[{ style: "normal" }]} />
+    <Font cssVariable="--font-plex-sans" preload={[{ style: "normal" }]} />
+    <Font cssVariable="--font-plex-mono" />
+  </head>
+
+  <body class="flex min-h-screen flex-col">
+    <a
+      href="#main"
+      class="skip-link sr-only font-mono text-meta uppercase focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:bg-ground focus:p-2"
+      >Skip to content</a
+    >
+
+    <div
+      class="mx-auto flex w-full max-w-frame flex-1 flex-col px-[clamp(1.25rem,5vw,2.5rem)] pt-4 pb-[clamp(2.5rem,8vw,4.5rem)]"
+    >
+      <SiteHeader />
+      {/* tabindex="-1" so the skip link actually moves focus. Chrome and Firefox
+          shift the sequential-focus origin on their own; Safari does not. */}
+      <main id="main" tabindex="-1" class="flex-1"><slot /></main>
+      <SiteFooter />
+    </div>
+  </body>
+</html>

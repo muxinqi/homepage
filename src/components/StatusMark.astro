@@ -1,0 +1,30 @@
+---
+import { statusLabels, statusMeaning } from "@lib/content";
+
+interface Props {
+  status: keyof typeof statusLabels;
+  /** Aligns the mark with a 19px row title. Off for standalone use. */
+  alignToTitle?: boolean;
+}
+
+const { status, alignToTitle = false } = Astro.props;
+
+// Shape is read before colour, so it carries the distinction on its own — in
+// greyscale print and for colour-blind readers. Accent is spent only on Active.
+const shape = status === "offline" ? "" : "rounded-full";
+const tone = status === "active" ? "text-accent" : "text-ink-muted";
+const fill =
+  status === "active" ? "bg-accent" : status === "live" ? "bg-ink" : "bg-ink-muted";
+---
+
+<span
+  class:list={[
+    "inline-flex items-center gap-1.5 self-start font-mono text-rail tracking-[0.1em] uppercase",
+    tone,
+    alignToTitle && "pt-[9px]",
+  ]}
+  title={statusMeaning[status]}
+>
+  <span class:list={["size-1.5 shrink-0", shape, fill]} aria-hidden="true"></span>
+  {statusLabels[status]}
+</span>

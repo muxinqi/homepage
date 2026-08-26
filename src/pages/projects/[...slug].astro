@@ -1,0 +1,71 @@
+---
+import type { GetStaticPaths } from "astro";
+import { render } from "astro:content";
+import BaseLayout from "@layouts/BaseLayout.astro";
+import StatusMark from "@components/StatusMark.astro";
+import MetaTable, { type MetaRow } from "@components/MetaTable.astro";
+import { getProjects, statusLabels, statusMeaning, type Project } from "@lib/content";
+import { monthYear } from "@lib/date";
+
+export const getStaticPaths: GetStaticPaths = async () => {
+  const projects = await getProjects();
+  return projects.map((project) => ({ params: { slug: project.id }, props: { project } }));
+};
+
+interface Props {
+  project: Project;
+}
+
+const { project } = Astro.props;
+const { title, summary, status, created, updated, closed, url, repo, stack } =
+  project.data;
+const { Content } = await render(project);
+// A project with only a summary and a metadata table is a complete page. Better
+// an honest short one than a padded long one.
+const hasBody = Boolean(project.body?.trim());
+
+const built =
+  updated && monthYear(updated) !== monthYear(created)
+    ? `${monthYear(created)} – ${monthYear(updated)}`
+    : monthYear(created);
+
+const links = [
+  url && { label: new URL(url).host, href: url, external: true },
+  repo && { label: "Source", href: repo, external: true },
+].filter((link): link is { label: string; href: string; external: boolean } =>
+  Boolean(link),
+);
+
+const rows: MetaRow[] = [
+  { label: "Status", value: `${statusLabels[status]} — ${statusMeaning[status]}` },
+  { label: "Built", value: built },
+  // Only meaningful for an offline project; the list row already gates on the
+  // same pair, and without this an Active badge could sit above a Closed date.
+  ...(status === "offline" && closed
+    ? [{ label: "Closed", value: monthYear(closed) }]
+    : []),
+  ...(stack ? [{ label: "Stack", value: stack }] : []),
+  ...(links.length > 0 ? [{ label: "Links", links }] : []),
+];
+---
+
+<BaseLayout title={title} description={summary} ogType="article">
+  <div class="rail-row pt-[clamp(2rem,9vw,3.25rem)]">
+    <div class="rail"><StatusMark {status} alignToTitle /></div>
+
+    <div class="column">
+      <h1 class="font-display text-h1 text-ink">{title}</h1>
+      <p class="mt-[9px] max-w-[48ch] text-intro text-ink-soft text-pretty">
+        {summary}
+      </p>
+
+      <MetaTable {rows} class="mt-[22px]" />
+
+      {hasBody && <div class="prose mt-[26px]"><Content /></div>}
+
+      <div class="mt-[26px] border-t border-line pt-[13px] font-mono text-meta text-accent">
+        <a href="/projects/" class="meta-link">← Projects</a>
+      </div>
+    </div>
+  </div>
+</BaseLayout>

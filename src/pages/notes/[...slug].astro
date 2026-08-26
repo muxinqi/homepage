@@ -1,0 +1,58 @@
+---
+import type { GetStaticPaths } from "astro";
+import { render } from "astro:content";
+import BaseLayout from "@layouts/BaseLayout.astro";
+import { getNotes, type Note } from "@lib/content";
+import { isoDate, monthYear } from "@lib/date";
+
+export const getStaticPaths: GetStaticPaths = async () => {
+  const notes = await getNotes();
+  return notes.map((note) => ({ params: { slug: note.id }, props: { note } }));
+};
+
+interface Props {
+  note: Note;
+}
+
+const { note } = Astro.props;
+const { title, summary, created, updated } = note.data;
+const { Content } = await render(note);
+// Same guard as the project page: an empty `.prose` still carries its margin,
+// so a note that is only a title would open a gap where the text should be.
+const hasBody = Boolean(note.body?.trim());
+
+// The rail carries the date and nothing else. The page ends by going back to the
+// list — no "next post", no recommendations.
+---
+
+<BaseLayout {title} description={summary ?? title} ogType="article">
+  <div class="rail-row pt-[clamp(2rem,9vw,3.25rem)]">
+    <div class="rail">
+      <time
+        datetime={isoDate(created)}
+        class="block pt-[9px] font-mono text-rail tracking-[0.1em] text-ink-muted uppercase"
+        >{monthYear(created)}</time
+      >
+      {
+        updated && monthYear(updated) !== monthYear(created) && (
+          <time
+            datetime={isoDate(updated)}
+            class="block font-mono text-rail tracking-[0.02em] text-ink-muted"
+          >
+            rev. {monthYear(updated)}
+          </time>
+        )
+      }
+    </div>
+
+    <div class="column">
+      <h1 class="max-w-[34ch] font-display text-h1 text-ink">{title}</h1>
+
+      {hasBody && <div class="prose mt-[22px]"><Content /></div>}
+
+      <div class="mt-[26px] border-t border-line pt-[13px] font-mono text-meta text-accent">
+        <a href="/notes/" class="meta-link">← Notes</a>
+      </div>
+    </div>
+  </div>
+</BaseLayout>
