@@ -16,7 +16,11 @@ export default defineConfig({
       cssVariable: '--font-newsreader',
       provider: fontProviders.google(),
       weights: [400, 500],
-      styles: ['normal', 'italic'],
+      // Upright only. Newsreader is --font-display, which is worn by the h1s,
+      // the project titles and the wordmark — all plain strings. Markdown runs
+      // in .prose, which inherits the body face, so no <em> can ever land in
+      // this family and the italic files would ship unreachable.
+      styles: ['normal'],
       subsets: ['latin'],
       fallbacks: ['Georgia', 'serif'],
     },
@@ -45,16 +49,17 @@ export default defineConfig({
     css: {
       transformer: 'lightningcss',
       lightningcss: {
-        // Packed as major << 16 | minor << 8. These match Tailwind v4's own
-        // floor — below it the utilities do not work anyway, so supporting
-        // anything older would be pretending.
+        // Packed as major << 16 | minor << 8. Tailwind v4's own floor is
+        // Chrome 111, but this layout is held together by `subgrid`, which
+        // Chrome only shipped in 117 and Lightning CSS cannot lower. Below that
+        // every row stacks its rail above its content instead of beside it, so
+        // 117 is the real floor and saying 111 was flattering ourselves.
         targets: {
-          chrome: 111 << 16,
+          chrome: 117 << 16,
           safari: (16 << 16) | (4 << 8),
           firefox: 128 << 16,
         },
       },
     },
-    build: { cssMinify: 'lightningcss' },
   },
 });
