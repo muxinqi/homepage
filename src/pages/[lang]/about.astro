@@ -3,7 +3,7 @@ import { Image } from "astro:assets";
 import BaseLayout from "@layouts/BaseLayout.astro";
 import MetaTable, { type MetaRow } from "@components/MetaTable.astro";
 import avatar from "@assets/avatar.jpg";
-import { localeParams, type Locale } from "@i18n/locales";
+import { localeParams, localePath, type Locale } from "@i18n/locales";
 import { useTranslations } from "@i18n/ui";
 
 export const getStaticPaths = localeParams;
@@ -75,7 +75,7 @@ const rows: MetaRow[] = [
                 这个网站放着我做过的东西，以及做的时候想记住的事。它首先是写给以后的自己看的，所以项目旁边的状态只说它还能不能用，不说做得怎么样。
               </p>
               <p>
-                我也做饭。这里有一份<a href="https://menu.xinqi.mu">菜单</a>，都是我愿意做给你吃的菜。
+                我也做饭。这里有一份<a href={localePath(lang, "/menu/")}>菜单</a>，都是我愿意做给你吃的菜。
               </p>
             </>
           ) : (
@@ -91,7 +91,7 @@ const rows: MetaRow[] = [
                 a project says whether it still works rather than how it went.
               </p>
               <p>
-                I cook, too. Here's a <a href="https://menu.xinqi.mu">menu</a> of the dishes
+                I cook, too. Here's a <a href={localePath(lang, "/menu/")}>menu</a> of the dishes
                 I'd make for you.
               </p>
             </>

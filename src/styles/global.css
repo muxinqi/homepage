@@ -59,6 +59,7 @@
   --color-ink-dim: var(--ink-dim);
   --color-ink-muted: var(--ink-muted);
   --color-accent: var(--accent);
+  --color-spice: var(--spice);
 }
 
 :root {
@@ -74,6 +75,8 @@
   --ink-dim:      light-dark(#3A3632, #C2BDB8);
   --ink-muted:    light-dark(#57534E, #A29D98);
   --accent:       light-dark(#274690, #86ABEE);
+  /* The only red on the site, and it means one thing: how hot a dish is. */
+  --spice:        light-dark(#B42318, #F97066);
 }
 /* One state bit for the whole feature: data-theme on <html>. It selects the
    colour scheme, picks the toggle's icon, and — by existing at all — is what

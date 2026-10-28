@@ -16,6 +16,12 @@ interface Props {
   noteDatetime?: Date;
   /** Kept in front of the relative form: "Updated 2 months ago". */
   notePrefix?: string;
+  /**
+   * Names the heading's id. Required in practice for any page with more than
+   * one section: the fallback is built from the label, which works for English
+   * and collapses to the same id for every Chinese one.
+   */
+  id?: string;
   /** Rows sitting under a top border need the label pushed down to meet them. */
   alignToList?: boolean;
   class?: string;
@@ -30,10 +36,11 @@ const {
   noteLabel,
   noteDatetime,
   notePrefix,
+  id,
   alignToList = true,
   class: className,
 } = Astro.props;
-const headingId = `section-${label.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`;
+const headingId = `section-${id ?? label.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`;
 ---
 
 <section class:list={["rail-row", className]} aria-labelledby={headingId}>

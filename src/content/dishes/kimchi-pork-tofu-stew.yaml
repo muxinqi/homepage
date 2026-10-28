@@ -1,0 +1,13 @@
+# yaml-language-server: $schema=../../../.astro/collections/dishes.schema.json
+category: meat
+spice: 0
+order: 6
+photo: ./kimchi-pork-tofu-stew.jpg
+en:
+  name: "Kimchi Jjigae with Pork Shoulder"
+  description: "An upgraded version of the classic Korean kimchi stew, featuring pork shoulder instead of pork belly—the meat is heartier and more chewy, making it the perfect accompaniment to rice."
+  ingredients: ["Kimchi", "pork shoulder", "tofu", "Korean chili paste", "garlic", "ginger"]
+zh:
+  name: "泡菜五花猪肩炖豆腐"
+  description: "经典韩式泡菜锅升级版，用猪肩肉代替五花肉，肉质更厚实、更有嚼劲，配米饭下饭一绝"
+  ingredients: ["泡菜", "猪肩", "豆腐", "韩式辣椒酱", "蒜", "姜"]

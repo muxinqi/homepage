@@ -19,7 +19,8 @@ static assets.
 | --------------- | ----------------------------------------------- |
 | `npm run dev`   | Dev server — open `localhost:4321/en/` (`/` only redirects on Cloudflare) |
 | `npm run build` | Static build into `dist/`                        |
-| `npm run check` | `astro check` — types and template diagnostics   |
+| `npm run check` | `astro check`, then checks dish photos are ready to publish |
+| `npm run photos` | Shrinks dish photos to 2400px and strips their metadata, in place |
 | `npm run preview` | Build, then serve through `wrangler dev`       |
 | `npm run deploy`  | Build and `wrangler deploy` — publishes         |
 
@@ -34,7 +35,8 @@ project, what the three project statuses mean, and what is still missing.
 ```
 src/
   content.config.ts     collection schemas (projects, notes, now)
-  content/              the Markdown itself, under en/ and zh/
+  content/              the Markdown itself, under en/ and zh/; dishes/ holds
+                        one YAML file and one photo per dish
   i18n/locales.ts       the two languages, their tags, and URL helpers
   i18n/ui.ts            every word the chrome uses, in both languages
   lib/content.ts        collection queries, year grouping, the pairing check
@@ -141,6 +143,15 @@ A few things worth knowing before changing anything:
   domain is the link on a resume, and it should open the same page for everyone.
   Astro's built-in redirect for `/` is off on purpose — in a static build it is a
   page that waits two seconds and then navigates.
+- **The menu's dishes and photos live in this repository.** One YAML file per
+  dish with its photo beside it, read through a content collection whose schema
+  checks the category, the heat, both languages, and that the photo exists — a
+  mistake fails `npm run check` on the branch instead of shipping. Photos are
+  rendered by Astro's own pipeline as AVIF and WebP at the sizes actually shown,
+  and the tap-to-enlarge view is a native `<dialog>` with no animation. Before a
+  photo is committed, `npm run photos` brings it under 2400px and strips its
+  metadata, because the repository is public and a phone photo can carry the
+  place it was taken; `npm run check` refuses one that has not been through it.
 - **`border-radius: 0` everywhere** except the avatar. No shadows, and nothing
   transitions or animates — the `prefers-reduced-motion` block has no motion of
   its own to switch off, only smooth scrolling. A 1px underline appears on link

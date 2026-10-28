@@ -1,4 +1,5 @@
 import { getCollection, type CollectionEntry } from "astro:content";
+import { dishCategories } from "@lib/dish-categories";
 import { isLocale, locales, type Locale } from "@i18n/locales";
 import { useTranslations } from "@i18n/ui";
 
@@ -101,6 +102,22 @@ export async function getNow(lang: Locale) {
   const all = (await getCollection("now")).map(localize);
   pairs("now", all, ["updated"]);
   return all.find((entry) => entry.lang === lang);
+}
+
+export type Dish = CollectionEntry<"dishes">;
+export type DishCategory = Dish["data"]["category"];
+
+/** The menu, category by category in menu order, leaving out empty ones. */
+export async function getMenu(): Promise<{ category: DishCategory; dishes: Dish[] }[]> {
+  const dishes = await getCollection("dishes");
+  return dishCategories
+    .map((category) => ({
+      category,
+      dishes: dishes
+        .filter((d) => d.data.category === category)
+        .sort((a, b) => a.data.order - b.data.order),
+    }))
+    .filter((group) => group.dishes.length > 0);
 }
 
 export type YearGroup<T> = { year: string; rows: T[] };
