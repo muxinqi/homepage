@@ -12,6 +12,11 @@
 	// is also live at homepage.<subdomain>.workers.dev, indexable and serving a
 	// robots.txt that says Allow: /.
 	"workers_dev": false,
+	// Preview URLs (<version>-homepage.<subdomain>.workers.dev) are what put a
+	// link on each pull request. Left unset they follow workers_dev and stay
+	// off. They are public, so public/_headers sends X-Robots-Tag: noindex for
+	// every workers.dev host; the custom domain never matches that rule.
+	"preview_urls": true,
 	"observability": {
 		"enabled": true
 	}
