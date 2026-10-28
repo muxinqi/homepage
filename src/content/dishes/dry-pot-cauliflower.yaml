@@ -1,4 +1,3 @@
-# yaml-language-server: $schema=../../../.astro/collections/dishes.schema.json
 category: meat
 spice: 1
 order: 2
