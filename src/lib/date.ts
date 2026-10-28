@@ -41,3 +41,8 @@ export function closedOn(date: Date, lang: Locale): string {
 export function isoDate(date: Date): string {
   return date.toISOString().slice(0, 10);
 }
+
+/** Full RFC 3339 timestamp, which is what Atom's `updated` field wants. */
+export function isoStamp(date: Date): string {
+  return date.toISOString();
+}

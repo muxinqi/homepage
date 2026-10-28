@@ -4,10 +4,10 @@ import { useTranslations } from "@i18n/ui";
 
 interface Props {
   /**
-   * Which list is empty. The copy lives in one place rather than at the four
-   * call sites because each section's empty state is written twice — once on its
-   * own page and once in the homepage's preview of it — and two copies of a
-   * sentence drift the first time one of them is reworded.
+   * Which list is empty. The copy lives here rather than at the four call sites
+   * because each section's empty state is written twice — once on its own page
+   * and once in the homepage's preview of it — and two copies of a sentence
+   * drift the first time one of them is reworded.
    */
   section: "projects" | "notes";
   lang: Locale;
