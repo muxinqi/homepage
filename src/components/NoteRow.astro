@@ -1,6 +1,7 @@
 ---
 import type { Note } from "@lib/content";
 import { isoDate, month, monthYear } from "@lib/date";
+import { localePath } from "@i18n/locales";
 
 interface Props {
   note: Note;
@@ -13,6 +14,7 @@ interface Props {
 
 const { note, dateFormat = "month" } = Astro.props;
 const { title, summary, created } = note.data;
+const { lang } = note;
 
 // A note title is a sentence; a project name is a name. Hence Plex Sans here and
 // Newsreader there.
@@ -21,12 +23,12 @@ const { title, summary, created } = note.data;
 <div class="row border-b border-line py-[15px]">
   <time
     datetime={isoDate(created)}
-    class="pt-[5px] font-mono text-rail tracking-[0.1em] text-ink-muted uppercase"
-    >{dateFormat === "month" ? month(created) : monthYear(created)}</time
+    class="pt-[5px] font-mono text-rail tracking-label text-ink-muted uppercase"
+    >{dateFormat === "month" ? month(created, lang) : monthYear(created, lang)}</time
   >
 
   <div class="min-w-0">
-    <a href={`/notes/${note.id}/`} class="text-item text-ink wrap-anywhere">{title}</a>
+    <a href={localePath(lang, `/notes/${note.slug}/`)} class="text-item text-ink wrap-anywhere">{title}</a>
     {
       summary && (
         <p class="mt-0.5 max-w-[50ch] text-sum text-ink-muted text-pretty">

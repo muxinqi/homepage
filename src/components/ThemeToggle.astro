@@ -2,6 +2,22 @@
 import Monitor from "@assets/icons/monitor.svg";
 import Sun from "@assets/icons/sun.svg";
 import Moon from "@assets/icons/moon.svg";
+import type { Locale } from "@i18n/locales";
+import { useTranslations } from "@i18n/ui";
+
+interface Props {
+  lang: Locale;
+}
+
+const t = useTranslations(Astro.props.lang);
+
+// The script only swaps the word, so the three words travel with the button in
+// the page's own language.
+const labels = {
+  system: t("themeSystem"),
+  light: t("themeLight"),
+  dark: t("themeDark"),
+};
 
 // Three states, not two: System → Light → Dark. With only two, a reader who
 // clicks once can never get back to following the OS. Returning to System is
@@ -16,14 +32,15 @@ import Moon from "@assets/icons/moon.svg";
 <button
   type="button"
   data-theme-toggle
-  title="Switch colour theme — System, Light, Dark"
+  data-labels={JSON.stringify(labels)}
+  title={t("themeTitle")}
   class="meta-link cursor-pointer items-center gap-1.5 uppercase hover:text-ink"
 >
   <span data-icon="system" aria-hidden="true"><Monitor width="12" height="12" /></span>
   <span data-icon="light" aria-hidden="true"><Sun width="12" height="12" /></span>
   <span data-icon="dark" aria-hidden="true"><Moon width="12" height="12" /></span>
-  <span class="sr-only">Theme:</span>
-  <span data-theme-label>System</span>
+  <span class="sr-only">{t("themeLabel")}</span>
+  <span data-theme-label>{labels.system}</span>
 </button>
 
 <script>
@@ -31,17 +48,19 @@ import Moon from "@assets/icons/moon.svg";
   type Theme = keyof typeof NEXT;
 
   const root = document.documentElement;
+  const button = document.querySelector<HTMLElement>("[data-theme-toggle]");
   const label = document.querySelector<HTMLElement>("[data-theme-label]");
+  const words = JSON.parse(button?.dataset.labels ?? "{}") as Partial<Record<Theme, string>>;
   const current = () => (root.dataset.theme ?? "system") as Theme;
 
   function render() {
     const theme = current();
-    if (label) label.textContent = theme[0].toUpperCase() + theme.slice(1);
+    if (label) label.textContent = words[theme] ?? theme;
   }
 
   render();
 
-  document.querySelector("[data-theme-toggle]")?.addEventListener("click", () => {
+  button?.addEventListener("click", () => {
     const next = NEXT[current()] ?? "system";
     root.dataset.theme = next;
     try {

@@ -1,0 +1,12 @@
+category: meat
+spice: 1
+order: 4
+photo: ./kung-pao-chicken.jpg
+en:
+  name: "Kung Pao Chicken"
+  description: "Chicken is tender paired with crispy peanuts, a classic Sichuan flavor intertwined with sweet, sour, and slightly spicy notes."
+  ingredients: ["Chicken", "peanuts", "green peppers", "dried chili peppers", "ginger", "garlic"]
+zh:
+  name: "宫保鸡丁"
+  description: "鸡肉滑嫩配合香脆花生，甜酸微辣交织的经典川味"
+  ingredients: ["鸡肉", "花生", "青椒", "干辣椒", "姜蒜"]

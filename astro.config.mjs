@@ -1,5 +1,5 @@
 // @ts-check
-import { readdirSync } from 'node:fs';
+import { readdirSync, renameSync, rmdirSync } from 'node:fs';
 import { defineConfig, fontProviders } from 'astro/config';
 import tailwindcss from '@tailwindcss/vite';
 import sitemap from '@astrojs/sitemap';
@@ -8,18 +8,67 @@ import sitemap from '@astrojs/sitemap';
 // which is the right source everywhere else. Integrations are configured before
 // the collection exists, so this reads the directory instead — the same fact,
 // asked earlier. Both are one line; keep them in step.
-const hasNotes = readdirSync('./src/content/notes').some((f) => f.endsWith('.md'));
+const hasNotes = readdirSync('./src/content/notes', { recursive: true }).some((f) =>
+  String(f).endsWith('.md'),
+);
+
+// Mirrors src/i18n/locales.ts, which this file cannot import.
+const locales = ['en', 'zh'];
+
+/**
+ * Cloudflare answers a missing path with the 404.html nearest to it, so
+ * /zh/anything gets /zh/404.html — but Astro writes a `[lang]/404` page as
+ * /zh/404/index.html, which Cloudflare never looks for. This moves each one to
+ * where it is looked for. The root 404.html is Astro's own and needs nothing.
+ *
+ * @type {import('astro').AstroIntegration}
+ */
+const localized404 = {
+  name: 'localized-404',
+  hooks: {
+    'astro:build:done': ({ dir }) => {
+      for (const lang of locales) {
+        renameSync(new URL(`${lang}/404/index.html`, dir), new URL(`${lang}/404.html`, dir));
+        rmdirSync(new URL(`${lang}/404/`, dir));
+      }
+    },
+  },
+};
 
 export default defineConfig({
   site: 'https://muxinqi.com',
-  // `/notes` sets `noindex` while it is empty, and submitting a page in a
-  // sitemap while telling robots to skip it is a contradiction Search Console
-  // reports back as a warning.
-  integrations: [sitemap({ filter: (page) => hasNotes || !page.endsWith('/notes/') })],
+
+  // English at /en/, Chinese at /zh/, and nothing at /: Cloudflare redirects it
+  // to /en/ (public/_redirects). Astro's own redirect for `/` would be a page
+  // that waits two seconds and then navigates, so it is switched off.
+  i18n: {
+    defaultLocale: 'en',
+    locales: ['en', { path: 'zh', codes: ['zh-Hans'] }],
+    routing: { prefixDefaultLocale: true, redirectToDefaultLocale: false },
+  },
+
+  integrations: [
+    sitemap({
+      // `/notes` sets `noindex` while it is empty, and submitting a page in a
+      // sitemap while telling robots to skip it is a contradiction Search
+      // Console reports back as a warning. The 404s are never pages of their
+      // own.
+      filter: (page) => (hasNotes || !page.endsWith('/notes/')) && !page.endsWith('/404/'),
+      // Pairs each URL with its other-language twin, the same pairs the
+      // hreflang links in <head> declare.
+      i18n: { defaultLocale: 'en', locales: { en: 'en', zh: 'zh-Hans' } },
+    }),
+    localized404,
+  ],
 
   // Self-hosted from Google's catalogue: latin subset only, emitted into dist as
-  // woff2 with preload and metric-matched fallbacks. The site is English, so the
-  // latin subset is the whole of it.
+  // woff2 with preload and metric-matched fallbacks. Chinese is not downloaded at
+  // all; each stack names the system's own Chinese sans after its Latin face —
+  // PingFang on Apple devices, Microsoft YaHei on Windows, Noto Sans CJK on
+  // Android and Linux — so a Chinese glyph falls through to it and Latin text
+  // never does. Sans even under Newsreader: a system serif is Songti on a Mac,
+  // SimSun on Windows and often missing on an iPhone, which would give one
+  // heading three different looks.
   fonts: [
     {
       name: 'Newsreader',
@@ -32,7 +81,7 @@ export default defineConfig({
       // this family and the italic files would ship unreachable.
       styles: ['normal'],
       subsets: ['latin'],
-      fallbacks: ['Georgia', 'serif'],
+      fallbacks: ['Georgia', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Noto Sans CJK SC', 'serif'],
     },
     {
       name: 'IBM Plex Sans',
@@ -41,7 +90,7 @@ export default defineConfig({
       weights: [400, 500, 600],
       styles: ['normal', 'italic'],
       subsets: ['latin'],
-      fallbacks: ['sans-serif'],
+      fallbacks: ['PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Noto Sans CJK SC', 'sans-serif'],
     },
     {
       name: 'IBM Plex Mono',
@@ -50,7 +99,7 @@ export default defineConfig({
       weights: [400, 500],
       styles: ['normal'],
       subsets: ['latin'],
-      fallbacks: ['ui-monospace', 'monospace'],
+      fallbacks: ['ui-monospace', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Noto Sans CJK SC', 'monospace'],
     },
   ],
 

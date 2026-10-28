@@ -4,10 +4,19 @@ import { render } from "astro:content";
 import BaseLayout from "@layouts/BaseLayout.astro";
 import { getNotes, type Note } from "@lib/content";
 import { isoDate, monthYear } from "@lib/date";
+import { locales, localePath } from "@i18n/locales";
+import { useTranslations } from "@i18n/ui";
 
 export const getStaticPaths: GetStaticPaths = async () => {
-  const notes = await getNotes();
-  return notes.map((note) => ({ params: { slug: note.id }, props: { note } }));
+  const pages = await Promise.all(
+    locales.map(async (lang) =>
+      (await getNotes(lang)).map((note) => ({
+        params: { lang, slug: note.slug },
+        props: { note },
+      })),
+    ),
+  );
+  return pages.flat();
 };
 
 interface Props {
@@ -15,6 +24,8 @@ interface Props {
 }
 
 const { note } = Astro.props;
+const { lang } = note;
+const t = useTranslations(lang);
 const { title, summary, created, updated } = note.data;
 const { Content } = await render(note);
 // Same guard as the project page: an empty `.prose` still carries its margin,
@@ -25,21 +36,21 @@ const hasBody = Boolean(note.body?.trim());
 // list — no "next post", no recommendations.
 ---
 
-<BaseLayout {title} description={summary ?? title} ogType="article">
+<BaseLayout {lang} {title} description={summary ?? title} ogType="article">
   <div class="rail-row pt-[clamp(2rem,9vw,3.25rem)]">
     <div class="rail">
       <time
         datetime={isoDate(created)}
-        class="block pt-[9px] font-mono text-rail tracking-[0.1em] text-ink-muted uppercase"
-        >{monthYear(created)}</time
+        class="block pt-[9px] font-mono text-rail tracking-label text-ink-muted uppercase"
+        >{monthYear(created, lang)}</time
       >
       {
-        updated && monthYear(updated) !== monthYear(created) && (
+        updated && monthYear(updated, lang) !== monthYear(created, lang) && (
           <time
             datetime={isoDate(updated)}
             class="block font-mono text-rail tracking-[0.02em] text-ink-muted"
           >
-            rev. {monthYear(updated)}
+            {t("revised")} {monthYear(updated, lang)}
           </time>
         )
       }
@@ -51,7 +62,7 @@ const hasBody = Boolean(note.body?.trim());
       {hasBody && <div class="prose mt-[22px]"><Content /></div>}
 
       <div class="mt-[26px] border-t border-line pt-[13px] font-mono text-meta text-accent">
-        <a href="/notes/" class="meta-link">← Notes</a>
+        <a href={localePath(lang, "/notes/")} class="meta-link">{t("backToNotes")}</a>
       </div>
     </div>
   </div>

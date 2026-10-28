@@ -30,9 +30,24 @@ published by a stale cache — but it will mislead you on your own machine.
 
 ---
 
+## Two languages, always both
+
+Every note, project, and Now file is written twice: once under `en/`, once under
+`zh/`, with the same filename. The filename is the URL in both languages —
+`notes/en/some-slug.md` is `/en/notes/some-slug/`, and `notes/zh/some-slug.md`
+is `/zh/notes/some-slug/`.
+
+**Nothing publishes until both halves exist.** The build stops on an entry with
+only one language, and on two halves that disagree about anything that is not
+wording — a status, a date, a URL. Translate the words; copy everything else.
+
+Write Chinese paragraphs on a single line. A line break inside a paragraph
+becomes a space in the page, and a space between two Chinese characters shows.
+
 ## Adding a note
 
-Create `notes/some-slug.md`. The filename becomes the URL: `/notes/some-slug/`.
+Create `notes/en/some-slug.md` and `notes/zh/some-slug.md`. The filename becomes
+the URL: `/en/notes/some-slug/` and `/zh/notes/some-slug/`.
 
 ```markdown
 ---
@@ -45,9 +60,8 @@ updated: 2026-09-02   # optional; only when the text really changed
 Body starts at `##` — the page title is already the `h1`.
 ```
 
-The site is in English, and so is everything in it. There is no `lang` field and
-no second language: `<html lang="en">` is set once in the layout, and no entry
-says anything about its own language because there is only one to say.
+There is no `lang` field: the folder says which language a file is, and the
+layout sets `<html lang>` from it.
 
 `updated` moves only when the text actually changed. It is what the `rev.` line
 in the rail reads from, so moving it for a typo tells the reader something
@@ -59,7 +73,8 @@ sitemap. Publishing one file turns all of that on; nothing needs editing.
 
 ## Adding a project
 
-Create `projects/some-slug.md` → `/projects/some-slug/`.
+Create `projects/en/some-slug.md` and `projects/zh/some-slug.md` →
+`/en/projects/some-slug/` and `/zh/projects/some-slug/`.
 
 ```markdown
 ---
@@ -98,10 +113,40 @@ Two facts decide it, and neither of them is how you feel about the project:
 `live` is where most finished things end up, and that is not a failure. An
 `offline` row dims its whole line but keeps its links clickable.
 
+## Adding a dish
+
+A dish is one YAML file and one photo, side by side in `dishes/`. Both languages
+share the file — the photo, category, and heat are written once, and only the
+words are written twice. It appears on `/en/menu/` and `/zh/menu/`.
+
+1. Put the photo in `dishes/` as `some-dish.jpg`.
+2. Run `npm run photos`. It turns the photo upright, brings it under 2400px, and
+   strips its metadata — camera, time, and location. The repository is public,
+   so this is not optional: `npm run check` fails on a photo that skipped it.
+3. Create `dishes/some-dish.yaml`:
+
+```yaml
+category: meat        # meat | vegetable | soup | staple | snack | dessert
+spice: 1              # 0 to 3; 0 shows nothing
+order: 4              # position within its category
+photo: ./some-dish.jpg
+en:
+  name: "Kung Pao Chicken"
+  description: "One sentence."
+  ingredients: ["Chicken", "peanuts", "dried chili"]
+zh:
+  name: "宫保鸡丁"
+  description: "一句话。"
+  ingredients: ["鸡肉", "花生", "干辣椒"]
+```
+
+A missing photo, an unknown category, or a missing language fails
+`npm run check`.
+
 ## The Now block
 
-`now/current.md` feeds the homepage's Now section. It shows the first two items;
-the file allows up to four. With no file there the section disappears rather
+`now/en/current.md` and `now/zh/current.md` feed the homepage's Now section. It
+shows the first two items; the file allows up to four. With no file there the section disappears rather
 than showing an empty box — Now is optional in a way Projects and Notes are not.
 
 ```markdown

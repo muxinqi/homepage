@@ -45,6 +45,13 @@
   --text-rail: 0.65625rem;
   --text-rail--line-height: 1.9;
   --text-rail--letter-spacing: 0.12em;
+  /* Inline mono notes inside a row: a date, a link, a list of ingredients. */
+  --text-tag: 0.6875rem;
+
+  /* Spacing for the small monospace labels. Tokens rather than literals so that
+     Chinese, which is set solid, can turn them down in one place. */
+  --tracking-label: 0.1em;
+  --tracking-caps: 0.12em;
 }
 
 /* `inline` makes utilities reference the variable itself rather than copying its
@@ -59,19 +66,24 @@
   --color-ink-dim: var(--ink-dim);
   --color-ink-muted: var(--ink-muted);
   --color-accent: var(--accent);
+  --color-spice: var(--spice);
 }
 
 :root {
   color-scheme: light dark;
-  --ground:       light-dark(#FBFBFC, #101214);
-  --surface-sunk: light-dark(#F1F2F4, #191C1F);
-  --line:         light-dark(#E1E3E6, #2A2F34);
-  --line-strong:  light-dark(#D5D8DC, #3E444B);
-  --ink:          light-dark(#16181A, #E8EAEC);
-  --ink-soft:     light-dark(#2E3134, #C8CCD1);
-  --ink-dim:      light-dark(#35383C, #C0C4C9);
-  --ink-muted:    light-dark(#53575D, #999FA6);
+  /* Warm neutrals: a grey with the faintest lean toward yellow, so food photos
+     sit on paper rather than ice. The accent alone stays cool. */
+  --ground:       light-dark(#FAFAF9, #131211);
+  --surface-sunk: light-dark(#F3F2F0, #1C1A18);
+  --line:         light-dark(#E7E5E4, #2B2826);
+  --line-strong:  light-dark(#D6D3D1, #3F3B37);
+  --ink:          light-dark(#1C1917, #E9E7E5);
+  --ink-soft:     light-dark(#33302C, #CAC6C1);
+  --ink-dim:      light-dark(#3A3632, #C2BDB8);
+  --ink-muted:    light-dark(#57534E, #A29D98);
   --accent:       light-dark(#274690, #86ABEE);
+  /* The only red on the site, and it means one thing: how hot a dish is. */
+  --spice:        light-dark(#B42318, #F97066);
 }
 /* One state bit for the whole feature: data-theme on <html>. It selects the
    colour scheme, picks the toggle's icon, and — by existing at all — is what
@@ -154,6 +166,51 @@ body {
   outline-offset: 2px;
 }
 :target { scroll-margin-top: 3.5rem; }
+/* Keeps closing punctuation and small kana off the start of a line. */
+:lang(zh) { line-break: strict; }
+
+/* Chinese gets its own measures rather than English ones. Every character fills
+   a square, so at the same pixel size it reads larger and denser than Latin:
+   running text comes down a step and opens up a little. The small labels go the
+   other way — 11px is a comfortable size for uppercase Latin and a cramped one
+   for Chinese — and lose the tracking that was there for capitals, since
+   Chinese is set without letter-spacing. Headings drop the tight leading and
+   negative tracking that suit Newsreader's display cut.
+
+   Scoped to :root, so it follows the page's language: a Chinese word on an
+   English page (the language switch) inherits the English measures. */
+:root:lang(zh) {
+  --text-h1: clamp(1.5rem, 5vw, 1.75rem);
+  --text-h1--line-height: 1.35;
+  --text-h1--letter-spacing: 0;
+  --text-row: 1.125rem;
+  --text-row--line-height: 1.45;
+  --text-lede: 1.0625rem;
+  --text-lede--line-height: 1.75;
+  --text-intro: 1rem;
+  --text-intro--line-height: 1.75;
+  --text-body: 1rem;
+  --text-body--line-height: 1.8;
+  --text-item: 0.9375rem;
+  --text-item--line-height: 1.75;
+  --text-sum: 0.875rem;
+  --text-sum--line-height: 1.75;
+  --text-meta: 0.75rem;
+  --text-meta--letter-spacing: 0.04em;
+  --text-rail: 0.75rem;
+  --text-rail--letter-spacing: 0.04em;
+  --text-tag: 0.75rem;
+  --tracking-label: 0.04em;
+  --tracking-caps: 0.04em;
+}
+
+/* Chinese headings need real weight to hold their own against the body; at 400
+   they look like large body text. No synthetic bold: Latin inside them, set in
+   Newsreader, takes its nearest real weight (500) instead of a smeared 600. */
+:lang(zh) :is(.text-h1, .text-row) {
+  font-weight: 600;
+  font-synthesis-weight: none;
+}
 
 html {
   scroll-behavior: smooth;

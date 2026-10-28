@@ -1,0 +1,12 @@
+category: vegetable
+spice: 0
+order: 1
+photo: ./di-san-xian.jpg
+en:
+  name: "Stir-fried Potato, Eggplant, and Green Pepper"
+  description: "The perfect collision of potatoes, eggplants, and green peppers, stir-fried after being deep-fried until soft, fragrant, and rich in sauce."
+  ingredients: ["Potato", "eggplant", "green pepper"]
+zh:
+  name: "地三鲜"
+  description: "土豆、茄子与青椒的完美碰撞，过油爆炒后软糯鲜香，酱汁浓郁"
+  ingredients: ["土豆", "茄子", "青椒"]

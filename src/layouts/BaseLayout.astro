@@ -2,35 +2,59 @@
 import { Font } from "astro:assets";
 import SiteHeader from "@components/SiteHeader.astro";
 import SiteFooter from "@components/SiteFooter.astro";
+import { htmlLang, locales, localePath, splitPath, type Locale } from "@i18n/locales";
+import { useTranslations } from "@i18n/ui";
 import "@styles/global.css";
 
 interface Props {
+  lang: Locale;
   /** Omit on the homepage — the site name alone is the title there. */
   title?: string;
   description: string;
   ogType?: "website" | "article";
   /** For pages that answer on URLs other than their own — see 404. */
   noindex?: boolean;
+  /** Passed through to the header — see SiteHeader. */
+  switchHref?: string;
 }
 
-const { title, description, ogType = "website", noindex = false } = Astro.props;
+const { lang, title, description, ogType = "website", noindex = false, switchHref } = Astro.props;
+const t = useTranslations(lang);
 
 const pageTitle = title ? `${title} — Xinqi Mu` : "Xinqi Mu";
 // A page served for every unknown path cannot name a canonical URL: it would be
 // advertising /404/ as the original of whatever the reader actually asked for.
 const canonical = noindex ? undefined : new URL(Astro.url.pathname, Astro.site).href;
-const ogImage = new URL("/og.png", Astro.site).href;
+const ogImage = new URL(lang === "zh" ? "/og-zh.png" : "/og.png", Astro.site).href;
+
+// Every page exists in both languages, so every indexable page names both — and
+// itself among them, which is what hreflang asks for. `x-default` is where a
+// reader whose language matches neither should land: the bare domain for the
+// homepage (Cloudflare sends it on to /en/), the English page everywhere else.
+const rest = noindex ? undefined : splitPath(Astro.url.pathname).rest;
+const alternates = rest
+  ? [
+      ...locales.map((l) => ({
+        hreflang: htmlLang[l],
+        href: new URL(localePath(l, rest), Astro.site).href,
+      })),
+      {
+        hreflang: "x-default",
+        href: new URL(rest === "/" ? "/" : localePath("en", rest), Astro.site).href,
+      },
+    ]
+  : [];
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang={htmlLang[lang]}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
 
     {/* Paints the mobile browser chrome to match --ground in each theme. */}
-    <meta name="theme-color" media="(prefers-color-scheme: light)" content="#FBFBFC" />
-    <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#101214" />
+    <meta name="theme-color" media="(prefers-color-scheme: light)" content="#FAFAF9" />
+    <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#131211" />
 
     {/* Synchronous, and before the stylesheet, so the theme never flashes.
         Setting the attribute is also what reveals the toggle. */}
@@ -45,6 +69,7 @@ const ogImage = new URL("/og.png", Astro.site).href;
     <title>{pageTitle}</title>
     <meta name="description" content={description} />
     {canonical && <link rel="canonical" href={canonical} />}
+    {alternates.map((a) => <link rel="alternate" hreflang={a.hreflang} href={a.href} />)}
     {noindex && <meta name="robots" content="noindex" />}
 
     <meta property="og:type" content={ogType} />
@@ -71,17 +96,17 @@ const ogImage = new URL("/og.png", Astro.site).href;
     <a
       href="#main"
       class="skip-link sr-only font-mono text-meta uppercase focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:bg-ground focus:p-2"
-      >Skip to content</a
+      >{t("skip")}</a
     >
 
     <div
       class="mx-auto flex w-full max-w-frame flex-1 flex-col px-[clamp(1.25rem,5vw,2.5rem)] pt-4 pb-[clamp(2.5rem,8vw,4.5rem)]"
     >
-      <SiteHeader />
+      <SiteHeader {lang} {switchHref} />
       {/* tabindex="-1" so the skip link actually moves focus. Chrome and Firefox
           shift the sequential-focus origin on their own; Safari does not. */}
       <main id="main" tabindex="-1" class="flex-1"><slot /></main>
-      <SiteFooter />
+      <SiteFooter {lang} />
     </div>
   </body>
 </html>

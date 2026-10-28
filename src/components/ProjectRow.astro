@@ -1,7 +1,9 @@
 ---
 import StatusMark from "@components/StatusMark.astro";
 import type { Project } from "@lib/content";
-import { isoDate, monthYear, year } from "@lib/date";
+import { closedOn, isoDate, year } from "@lib/date";
+import { localePath } from "@i18n/locales";
+import { useTranslations } from "@i18n/ui";
 
 interface Props {
   project: Project;
@@ -20,6 +22,8 @@ interface Props {
 }
 
 const { project, showLinks = true, showYear = true } = Astro.props;
+const { lang } = project;
+const t = useTranslations(lang);
 const { title, summary, status, created, closed, url, repo } = project.data;
 
 const offline = status === "offline";
@@ -33,19 +37,19 @@ const titleTone = offline ? "text-ink-muted" : "text-ink";
 const closedDate = offline && closed ? closed : undefined;
 const stamp = closedDate ?? created;
 const when = closedDate
-  ? `closed ${monthYear(closedDate)}`
+  ? closedOn(closedDate, lang)
   : showYear
     ? year(created)
     : undefined;
 ---
 
 <div class="row border-b border-line py-[17px]">
-  <StatusMark status={status} alignToTitle />
+  <StatusMark {status} {lang} alignToTitle />
 
   <div class="min-w-0">
     <div class="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-0.5">
       <a
-        href={`/projects/${project.id}/`}
+        href={localePath(lang, `/projects/${project.slug}/`)}
         class:list={["font-display text-row font-medium wrap-anywhere", titleTone]}
         >{title}</a
       >
@@ -53,7 +57,7 @@ const when = closedDate
         when && (
           <time
             datetime={isoDate(stamp)}
-            class="font-mono text-[0.6875rem] whitespace-nowrap text-ink-muted"
+            class="font-mono text-tag whitespace-nowrap text-ink-muted"
           >
             {when}
           </time>
@@ -65,15 +69,15 @@ const when = closedDate
 
     {
       showLinks && (url || repo) && (
-        <div class="mt-2 flex flex-wrap gap-x-4 font-mono text-[0.6875rem] text-accent">
+        <div class="mt-2 flex flex-wrap gap-x-4 font-mono text-tag text-accent">
           {url && (
             <a class="meta-link" href={url} rel="noopener noreferrer" target="_blank">
-              Site ↗
+              {t("site")}
             </a>
           )}
           {repo && (
             <a class="meta-link" href={repo} rel="noopener noreferrer" target="_blank">
-              Code ↗
+              {t("code")}
             </a>
           )}
         </div>

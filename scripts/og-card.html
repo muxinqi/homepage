@@ -1,0 +1,90 @@
+<!doctype html>
+<!--
+  The 1200×630 social card, one per language. Not part of the site: open it in
+  headless Chrome at exactly that size and save the screenshot over public/.
+
+    "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" --headless \
+      --hide-scrollbars --window-size=1200,630 --virtual-time-budget=5000 \
+      --screenshot=public/og.png "file://$PWD/scripts/og-card.html?lang=en"
+
+  ?lang=zh writes the Chinese card (save it as public/og-zh.png). The colours
+  are the light-theme tokens from src/styles/global.css; change them together.
+-->
+<html>
+<head>
+<meta charset="utf-8" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400&family=IBM+Plex+Sans:wght@400&family=Newsreader:wght@400&display=block" />
+<style>
+  html, body { margin: 0; width: 1200px; height: 630px; overflow: hidden; }
+  body {
+    background: #FAFAF9;
+    color: #1C1917;
+    padding: 72px 80px;
+    box-sizing: border-box;
+    -webkit-font-smoothing: antialiased;
+  }
+  .top {
+    display: flex;
+    justify-content: space-between;
+    font: 20px "IBM Plex Mono", "PingFang SC", monospace;
+    letter-spacing: 0.12em;
+    color: #57534E;
+    padding-bottom: 26px;
+    border-bottom: 2px solid #1C1917;
+  }
+  .top nav { display: flex; gap: 42px; text-transform: uppercase; }
+  .top .host { letter-spacing: 0.04em; }
+  h1 {
+    margin: 36px 0 0;
+    font: 400 120px/1.08 "Newsreader", Georgia, serif;
+    letter-spacing: -0.018em;
+  }
+  p {
+    margin: 30px 0 0;
+    max-width: 660px;
+    font: 32px/1.7 "IBM Plex Sans", "PingFang SC", sans-serif;
+    color: #33302C;
+  }
+  .where {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-top: 40px;
+    font: 20px "IBM Plex Mono", "PingFang SC", monospace;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #57534E;
+  }
+  .where::before { content: ""; width: 9px; height: 9px; border-radius: 50%; background: #274690; }
+</style>
+</head>
+<body>
+  <div class="top">
+    <nav id="nav"></nav>
+    <span class="host">muxinqi.com</span>
+  </div>
+  <h1>Xinqi Mu</h1>
+  <p id="line"></p>
+  <div class="where" id="where"></div>
+  <script>
+    const COPY = {
+      en: {
+        nav: ["Projects", "Notes", "About"],
+        line: "I build useful software for the web, mobile, and the occasional thing I wanted to make simpler.",
+        where: "Ottawa, Canada",
+      },
+      zh: {
+        nav: ["项目", "笔记", "关于"],
+        line: "我写实用的软件，网页、手机都做，也会顺手把一些我嫌麻烦的小事变简单。",
+        where: "加拿大 渥太华",
+      },
+    };
+    const lang = new URLSearchParams(location.search).get("lang") === "zh" ? "zh" : "en";
+    const copy = COPY[lang];
+    document.documentElement.lang = lang === "zh" ? "zh-Hans" : "en";
+    document.getElementById("nav").innerHTML = copy.nav.map((n) => `<span>${n}</span>`).join("");
+    document.getElementById("line").textContent = copy.line;
+    document.getElementById("where").textContent = copy.where;
+  </script>
+</body>
+</html>

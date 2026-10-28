@@ -1,13 +1,16 @@
 ---
-import { statusLabels, statusMeaning } from "@lib/content";
+import { statusText, type ProjectStatus } from "@lib/content";
+import type { Locale } from "@i18n/locales";
 
 interface Props {
-  status: keyof typeof statusLabels;
+  status: ProjectStatus;
+  lang: Locale;
   /** Aligns the mark with a 19px row title. Off for standalone use. */
   alignToTitle?: boolean;
 }
 
-const { status, alignToTitle = false } = Astro.props;
+const { status, lang, alignToTitle = false } = Astro.props;
+const { label, meaning } = statusText(status, lang);
 
 // Shape is read before colour, so it carries the distinction on its own — in
 // greyscale print and for colour-blind readers. Accent is spent only on Active.
@@ -19,12 +22,12 @@ const fill =
 
 <span
   class:list={[
-    "inline-flex items-center gap-1.5 self-start font-mono text-rail tracking-[0.1em] uppercase",
+    "inline-flex items-center gap-1.5 self-start font-mono text-rail tracking-label uppercase",
     tone,
     alignToTitle && "pt-[9px]",
   ]}
-  title={statusMeaning[status]}
+  title={meaning}
 >
   <span class:list={["size-1.5 shrink-0", shape, fill]} aria-hidden="true"></span>
-  {statusLabels[status]}
+  {label}
 </span>

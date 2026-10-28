@@ -1,16 +1,40 @@
 ---
 import { hasNotes } from "@lib/content";
+import {
+  htmlLang,
+  localeName,
+  localePath,
+  otherLocale,
+  splitPath,
+  type Locale,
+} from "@i18n/locales";
+import { useTranslations } from "@i18n/ui";
+
+interface Props {
+  lang: Locale;
+  /**
+   * Where the language switch goes. The same page in the other language by
+   * default; the 404 page has no counterpart, so it sends you home instead.
+   */
+  switchHref?: string;
+}
+
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+const other = otherLocale(lang);
 
 // Notes only appears once there is one. A nav item that leads to an empty room
 // spends the reader's attention on nothing.
 const links = [
-  { href: "/projects/", label: "Projects" },
-  ...((await hasNotes()) ? [{ href: "/notes/", label: "Notes" }] : []),
-  { href: "/about/", label: "About" },
+  { href: localePath(lang, "/projects/"), label: t("projects") },
+  ...((await hasNotes()) ? [{ href: localePath(lang, "/notes/"), label: t("notes") }] : []),
+  { href: localePath(lang, "/about/"), label: t("about") },
 ];
 
 const path = Astro.url.pathname;
-const isHome = path === "/";
+const home = localePath(lang);
+const isHome = path === home;
+const switchHref = Astro.props.switchHref ?? localePath(other, splitPath(path).rest);
 
 // `page` only for the page you are actually on. A section link is highlighted on
 // its detail pages too, but announcing "current page" there would be a lie —
@@ -36,6 +60,11 @@ const wordmarkType = "font-display text-[0.9375rem]";
 //
 // The bottom rule is drawn in --ink. It is the only ink-weight line on the site,
 // and it is what makes the header read as the top edge of the page.
+//
+// The language switch sits last in the nav, in the language it leads to and in
+// accent: a reader who cannot read this page still has to be able to find it,
+// and the footer is too far down for that. It names only the other language, so
+// even the switch never puts the two side by side.
 ---
 
 <header
@@ -47,14 +76,14 @@ const wordmarkType = "font-display text-[0.9375rem]";
         {wordmark}
       </span>
     ) : (
-      <a href="/" class:list={[wordmarkType, "text-ink"]} aria-label="Xinqi Mu, home">
+      <a href={home} class:list={[wordmarkType, "text-ink"]} aria-label={t("home")}>
         {wordmark}
       </a>
     )
   }
 
-  <nav aria-label="Main">
-    <ul class="flex flex-wrap items-baseline gap-x-5 gap-y-2 font-mono text-meta tracking-[0.12em] uppercase">
+  <nav aria-label={t("navLabel")}>
+    <ul class="flex flex-wrap items-baseline gap-x-5 gap-y-2 font-mono text-meta tracking-caps uppercase">
       {
         links.map(({ href, label }) => (
           <li>
@@ -71,6 +100,17 @@ const wordmarkType = "font-display text-[0.9375rem]";
           </li>
         ))
       }
+      <li>
+        <a
+          href={switchHref}
+          lang={htmlLang[other]}
+          hreflang={htmlLang[other]}
+          title={useTranslations(other)("switchTo")}
+          class="meta-link tracking-[0.04em] text-accent normal-case"
+        >
+          {localeName[other]}
+        </a>
+      </li>
     </ul>
   </nav>
 </header>
