@@ -16,6 +16,8 @@
 	// link on each pull request. Left unset they follow workers_dev and stay
 	// off. They are public, so public/_headers sends X-Robots-Tag: noindex for
 	// every workers.dev host; the custom domain never matches that rule.
+	// Only `wrangler deploy` (main) writes this setting to Cloudflare; the
+	// `versions upload` that branch builds run just reads it.
 	"preview_urls": true,
 	"observability": {
 		"enabled": true
