@@ -4,12 +4,21 @@ import { render } from "astro:content";
 import BaseLayout from "@layouts/BaseLayout.astro";
 import StatusMark from "@components/StatusMark.astro";
 import MetaTable, { type MetaRow } from "@components/MetaTable.astro";
-import { getProjects, statusLabels, statusMeaning, type Project } from "@lib/content";
+import { getProjects, statusText, type Project } from "@lib/content";
 import { monthYear } from "@lib/date";
+import { locales, localePath } from "@i18n/locales";
+import { useTranslations } from "@i18n/ui";
 
 export const getStaticPaths: GetStaticPaths = async () => {
-  const projects = await getProjects();
-  return projects.map((project) => ({ params: { slug: project.id }, props: { project } }));
+  const pages = await Promise.all(
+    locales.map(async (lang) =>
+      (await getProjects(lang)).map((project) => ({
+        params: { lang, slug: project.slug },
+        props: { project },
+      })),
+    ),
+  );
+  return pages.flat();
 };
 
 interface Props {
@@ -17,6 +26,9 @@ interface Props {
 }
 
 const { project } = Astro.props;
+const { lang } = project;
+const t = useTranslations(lang);
+const { label: statusLabel, meaning: statusMeaning } = statusText(project.data.status, lang);
 const { title, summary, status, created, updated, closed, url, repo, stack } =
   project.data;
 const { Content } = await render(project);
@@ -25,33 +37,33 @@ const { Content } = await render(project);
 const hasBody = Boolean(project.body?.trim());
 
 const built =
-  updated && monthYear(updated) !== monthYear(created)
-    ? `${monthYear(created)} – ${monthYear(updated)}`
-    : monthYear(created);
+  updated && monthYear(updated, lang) !== monthYear(created, lang)
+    ? `${monthYear(created, lang)} – ${monthYear(updated, lang)}`
+    : monthYear(created, lang);
 
 const links = [
   url && { label: new URL(url).host, href: url, external: true },
-  repo && { label: "Source", href: repo, external: true },
+  repo && { label: t("source"), href: repo, external: true },
 ].filter((link): link is { label: string; href: string; external: boolean } =>
   Boolean(link),
 );
 
 const rows: MetaRow[] = [
-  { label: "Status", value: `${statusLabels[status]} — ${statusMeaning[status]}` },
-  { label: "Built", value: built },
+  { label: t("status"), value: `${statusLabel} — ${statusMeaning}` },
+  { label: t("built"), value: built },
   // Only meaningful for an offline project; the list row already gates on the
   // same pair, and without this an Active badge could sit above a Closed date.
   ...(status === "offline" && closed
-    ? [{ label: "Closed", value: monthYear(closed) }]
+    ? [{ label: t("closed"), value: monthYear(closed, lang) }]
     : []),
-  ...(stack ? [{ label: "Stack", value: stack }] : []),
-  ...(links.length > 0 ? [{ label: "Links", links }] : []),
+  ...(stack ? [{ label: t("stack"), value: stack }] : []),
+  ...(links.length > 0 ? [{ label: t("links"), links }] : []),
 ];
 ---
 
-<BaseLayout title={title} description={summary} ogType="article">
+<BaseLayout {lang} title={title} description={summary} ogType="article">
   <div class="rail-row pt-[clamp(2rem,9vw,3.25rem)]">
-    <div class="rail"><StatusMark {status} alignToTitle /></div>
+    <div class="rail"><StatusMark {status} {lang} alignToTitle /></div>
 
     <div class="column">
       <h1 class="font-display text-h1 text-ink">{title}</h1>
@@ -64,7 +76,7 @@ const rows: MetaRow[] = [
       {hasBody && <div class="prose mt-[26px]"><Content /></div>}
 
       <div class="mt-[26px] border-t border-line pt-[13px] font-mono text-meta text-accent">
-        <a href="/projects/" class="meta-link">← Projects</a>
+        <a href={localePath(lang, "/projects/")} class="meta-link">{t("backToProjects")}</a>
       </div>
     </div>
   </div>

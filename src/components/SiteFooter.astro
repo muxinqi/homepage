@@ -1,8 +1,15 @@
 ---
 import ThemeToggle from "@components/ThemeToggle.astro";
 import GithubMark from "@assets/icons/github.svg";
+import { localePath, type Locale } from "@i18n/locales";
 
-const isHome = Astro.url.pathname === "/";
+interface Props {
+  lang: Locale;
+}
+
+const { lang } = Astro.props;
+const home = localePath(lang);
+const isHome = Astro.url.pathname === home;
 
 // The theme control lives down here on purpose: it is a display preference, the
 // system value is usually already right, and it has no business in the header.
@@ -20,7 +27,7 @@ const isHome = Astro.url.pathname === "/";
     isHome ? (
       <span aria-current="page">muxinqi</span>
     ) : (
-      <a href="/" class="meta-link hover:text-ink">
+      <a href={home} class="meta-link hover:text-ink">
         muxinqi
       </a>
     )
@@ -37,6 +44,6 @@ const isHome = Astro.url.pathname === "/";
       GitHub ↗
     </a>
 
-    <ThemeToggle />
+    <ThemeToggle {lang} />
   </div>
 </footer>

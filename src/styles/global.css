@@ -156,6 +156,8 @@ body {
   outline-offset: 2px;
 }
 :target { scroll-margin-top: 3.5rem; }
+/* Keeps closing punctuation and small kana off the start of a line. */
+:lang(zh) { line-break: strict; }
 
 html {
   scroll-behavior: smooth;

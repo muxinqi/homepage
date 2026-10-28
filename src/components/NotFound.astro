@@ -1,0 +1,62 @@
+---
+import BaseLayout from "@layouts/BaseLayout.astro";
+import { localePath, otherLocale, type Locale } from "@i18n/locales";
+import { useTranslations } from "@i18n/ui";
+
+interface Props {
+  lang: Locale;
+}
+
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+
+const copy = {
+  en: {
+    title: "Not here",
+    description: "That page doesn't exist.",
+    text: "This URL doesn't exist, or it did and I moved it without leaving a redirect. Both are my fault.",
+    home: "Home →",
+    waysOut: "Ways out",
+  },
+  zh: {
+    title: "找不到",
+    description: "这个页面不存在。",
+    text: "这个地址不存在，或者以前存在、被我挪走了却没留跳转。两种情况都怪我。",
+    home: "首页 →",
+    waysOut: "其他去处",
+  },
+}[lang];
+
+// One per language, so a reader who mistypes a /zh/ address is told so in
+// Chinese. Cloudflare serves the 404.html nearest the missing path; the build
+// step in astro.config.mjs is what puts each one there. The language switch has
+// no matching page to go to, so it goes to the other language's home.
+---
+
+<BaseLayout
+  {lang}
+  title={copy.title}
+  description={copy.description}
+  noindex
+  switchHref={localePath(otherLocale(lang))}
+>
+  <div class="rail-row pt-[clamp(2rem,9vw,3.25rem)]">
+    <div class="rail pt-[9px] font-mono text-rail tracking-[0.1em] text-ink-muted uppercase">
+      404
+    </div>
+
+    <div class="column">
+      <h1 class="font-display text-h1 text-ink">{copy.title}</h1>
+      <p class="mt-[9px] max-w-[48ch] text-intro text-ink-soft text-pretty">{copy.text}</p>
+
+      <nav
+        aria-label={copy.waysOut}
+        class="mt-[22px] flex flex-wrap gap-x-4 gap-y-2 font-mono text-meta text-accent uppercase"
+      >
+        <a href={localePath(lang, "/projects/")} class="meta-link">{t("projects")} →</a>
+        <a href={localePath(lang, "/notes/")} class="meta-link">{t("notes")} →</a>
+        <a href={localePath(lang)} class="meta-link">{copy.home}</a>
+      </nav>
+    </div>
+  </div>
+</BaseLayout>
