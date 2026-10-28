@@ -61,8 +61,13 @@ src/
   the missing path. Astro writes the two language ones as `404/index.html`; a
   small build step in `astro.config.mjs` moves them to where they are looked for.
 - `robots.txt` — points at the sitemap.
-- `_headers` — parsed by Cloudflare Workers static assets. Security headers and
-  immutable caching for the content-hashed files in `/_astro/`.
+- `_headers` — parsed by Cloudflare Workers static assets. Security headers,
+  immutable caching for the content-hashed files in `/_astro/`, and
+  `X-Robots-Tag: noindex` on every `workers.dev` host. That last one exists
+  because `preview_urls` is on in `wrangler.jsonc`: each pull request gets a
+  public preview link on `workers.dev`, and it must not compete with the custom
+  domain in search. `workers_dev` stays off, so production has no
+  `workers.dev` copy at all.
 - `og.png`, `og-zh.png` — the 1200×630 social cards in `public/`, one per
   language. Each is a screenshot of `scripts/og-card.html`, which is built from
   the site's own tokens and webfonts; the command is at the top of that file.
