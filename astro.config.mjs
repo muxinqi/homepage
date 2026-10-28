@@ -63,9 +63,12 @@ export default defineConfig({
 
   // Self-hosted from Google's catalogue: latin subset only, emitted into dist as
   // woff2 with preload and metric-matched fallbacks. Chinese is not downloaded at
-  // all — a CJK webfont is megabytes — so each stack names the system's own
-  // Chinese faces after its Latin one. A Chinese glyph falls through Newsreader
-  // or Plex to Songti or PingFang; Latin text never reaches them.
+  // all; each stack names the system's own Chinese sans after its Latin face —
+  // PingFang on Apple devices, Microsoft YaHei on Windows, Noto Sans CJK on
+  // Android and Linux — so a Chinese glyph falls through to it and Latin text
+  // never does. Sans even under Newsreader: a system serif is Songti on a Mac,
+  // SimSun on Windows and often missing on an iPhone, which would give one
+  // heading three different looks.
   fonts: [
     {
       name: 'Newsreader',
@@ -78,7 +81,7 @@ export default defineConfig({
       // this family and the italic files would ship unreachable.
       styles: ['normal'],
       subsets: ['latin'],
-      fallbacks: ['Georgia', 'Songti SC', 'Noto Serif CJK SC', 'Source Han Serif SC', 'serif'],
+      fallbacks: ['Georgia', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Noto Sans CJK SC', 'serif'],
     },
     {
       name: 'IBM Plex Sans',
@@ -87,7 +90,7 @@ export default defineConfig({
       weights: [400, 500, 600],
       styles: ['normal', 'italic'],
       subsets: ['latin'],
-      fallbacks: ['PingFang SC', 'Hiragino Sans GB', 'Noto Sans CJK SC', 'Microsoft YaHei', 'sans-serif'],
+      fallbacks: ['PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Noto Sans CJK SC', 'sans-serif'],
     },
     {
       name: 'IBM Plex Mono',
@@ -96,7 +99,7 @@ export default defineConfig({
       weights: [400, 500],
       styles: ['normal'],
       subsets: ['latin'],
-      fallbacks: ['ui-monospace', 'PingFang SC', 'Noto Sans CJK SC', 'Microsoft YaHei', 'monospace'],
+      fallbacks: ['ui-monospace', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Noto Sans CJK SC', 'monospace'],
     },
   ],
 

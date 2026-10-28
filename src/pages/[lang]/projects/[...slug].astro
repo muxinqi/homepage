@@ -38,7 +38,7 @@ const hasBody = Boolean(project.body?.trim());
 
 const built =
   updated && monthYear(updated, lang) !== monthYear(created, lang)
-    ? `${monthYear(created, lang)} – ${monthYear(updated, lang)}`
+    ? `${monthYear(created, lang)}${t("until")}${monthYear(updated, lang)}`
     : monthYear(created, lang);
 
 const links = [
@@ -49,7 +49,7 @@ const links = [
 );
 
 const rows: MetaRow[] = [
-  { label: t("status"), value: `${statusLabel} — ${statusMeaning}` },
+  { label: t("status"), value: `${statusLabel}${t("statusJoin")}${statusMeaning}` },
   { label: t("built"), value: built },
   // Only meaningful for an offline project; the list row already gates on the
   // same pair, and without this an Active badge could sit above a Closed date.

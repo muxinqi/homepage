@@ -57,7 +57,7 @@ const when = closedDate
         when && (
           <time
             datetime={isoDate(stamp)}
-            class="font-mono text-[0.6875rem] whitespace-nowrap text-ink-muted"
+            class="font-mono text-tag whitespace-nowrap text-ink-muted"
           >
             {when}
           </time>
@@ -69,7 +69,7 @@ const when = closedDate
 
     {
       showLinks && (url || repo) && (
-        <div class="mt-2 flex flex-wrap gap-x-4 font-mono text-[0.6875rem] text-accent">
+        <div class="mt-2 flex flex-wrap gap-x-4 font-mono text-tag text-accent">
           {url && (
             <a class="meta-link" href={url} rel="noopener noreferrer" target="_blank">
               {t("site")}

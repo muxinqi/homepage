@@ -44,11 +44,15 @@ const en = {
   backToProjects: "← Projects",
   backToNotes: "← Notes",
   revised: "rev.",
+  // Between the two ends of a date range: `Mar 2026 – Aug 2026`.
+  until: " – ",
 
   statusActive: "Active",
   statusLive: "Live",
   statusOffline: "Offline",
-  // Rendered after the label as `Live — usable, …`, so none may contain a dash.
+  // Rendered after the label and `statusJoin` as `Live — usable, …`, so none may
+  // contain a dash.
+  statusJoin: " — ",
   meaningActive: "usable, and I'm still adding to it",
   meaningLive: "usable, but I've stopped changing it",
   meaningOffline: "no longer usable; the page stays as a record",
@@ -106,10 +110,12 @@ const zh: Record<Key, string> = {
   backToProjects: "← 项目",
   backToNotes: "← 笔记",
   revised: "修订于",
+  until: "至 ",
 
   statusActive: "在做",
   statusLive: "可用",
   statusOffline: "已下线",
+  statusJoin: "：",
   meaningActive: "能用，我还在继续加东西",
   meaningLive: "能用，但我已经不再改它了",
   meaningOffline: "已经不能用了，页面留作记录",

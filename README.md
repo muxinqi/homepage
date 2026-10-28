@@ -121,10 +121,13 @@ A few things worth knowing before changing anything:
   viewport px once the frame's 5vw padding is counted, so the two agree.
 - **Fonts are self-hosted, for Latin only.** Astro's font pipeline pulls the
   latin subsets of Newsreader, IBM Plex Sans and IBM Plex Mono into
-  `dist/_astro/fonts/` with preload links. Chinese is not downloaded: a CJK
-  webfont runs to megabytes, so each stack names the system's own Chinese faces
-  (Songti, PingFang, Noto CJK) after its Latin one, in the `fallbacks` in
-  `astro.config.mjs`.
+  `dist/_astro/fonts/` with preload links. Chinese is not downloaded: each stack
+  names the system's own Chinese sans after its Latin face (PingFang, Microsoft
+  YaHei, Noto Sans CJK), in the `fallbacks` in `astro.config.mjs` — sans even
+  under the serif headings, because the system serif differs on every platform.
+  Chinese also has its own type scale: the `:root:lang(zh)` block in
+  `global.css` redefines the size, leading and tracking tokens, so components
+  never ask which language they are in.
 - **Every page exists in both languages, and shows only one.** English lives at
   `/en/`, Chinese at `/zh/`, and the header's switch goes to the same page in the
   other language. Nothing on a page mixes the two — not even the switch, which

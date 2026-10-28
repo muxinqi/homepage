@@ -96,7 +96,7 @@ const now = await getNow(lang);
         <dl class="row-list">
           {now.data.items.slice(0, 2).map((item) => (
             <div class="row pb-[11px]">
-              <dt class="pt-[5px] font-mono text-rail tracking-[0.1em] text-ink-muted uppercase">
+              <dt class="pt-[5px] font-mono text-rail tracking-label text-ink-muted uppercase">
                 {item.label}
               </dt>
               <dd class="max-w-[54ch] min-w-0 text-item text-pretty">{item.text}</dd>

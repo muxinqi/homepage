@@ -61,7 +61,7 @@ const separator = lang === "zh" ? "、" : ", ";
       <h3 class="font-display text-row font-medium text-ink">{name}</h3>
       {
         spiceWord && (
-          <span class="inline-flex items-center gap-1 font-mono text-[0.6875rem] text-spice">
+          <span class="inline-flex items-center gap-1 font-mono text-tag text-spice">
             <span class="inline-flex" aria-hidden="true">
               {Array.from({ length: spice }, () => (
                 <Pepper width="13" height="13" />
@@ -74,7 +74,7 @@ const separator = lang === "zh" ? "、" : ", ";
     </div>
 
     <p class="mt-1 max-w-[54ch] text-sum text-ink-muted text-pretty">{description}</p>
-    <p class="mt-1.5 font-mono text-[0.6875rem] leading-[1.7] text-ink-muted">
+    <p class="mt-1.5 font-mono text-tag leading-[1.7] text-ink-muted">
       <span class="sr-only">{t("ingredients")}</span>
       {ingredients.join(separator)}
     </p>
