@@ -55,10 +55,11 @@ src/
   public preview link on `workers.dev`, and it must not compete with the custom
   domain in search. `workers_dev` stays off, so production has no
   `workers.dev` copy at all.
-- `og.png` — the 1200×630 social card in `public/`. It was rendered by loading a
-  card built from the site's own tokens and webfonts in headless Chrome at
-  exactly that size. Regenerate the same way if the name or the one-liner
-  changes; it is static, so nothing needs to build it.
+- `og.png` — the 1200×630 social card in `public/`. It is a screenshot of
+  `scripts/og-card.html`, which is built from the site's own tokens and webfonts;
+  the command is at the top of that file. Re-render it if the name, the
+  one-liner, or the light-theme colours change. It is static, so nothing in the
+  build touches it.
 
 There is deliberately no Content Security Policy. CSP mitigates injected script,
 and this site has no injection surface: no user content, no query parameters read
