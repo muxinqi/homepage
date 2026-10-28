@@ -48,8 +48,13 @@ src/
   `/404` excluded. `lastmod` is deliberately absent: a build-date stamp on every
   URL is worse than none, and per-page dates would mean hand-rolling the sitemap.
 - `robots.txt` — points at the sitemap.
-- `_headers` — parsed by Cloudflare Workers static assets. Security headers and
-  immutable caching for the content-hashed files in `/_astro/`.
+- `_headers` — parsed by Cloudflare Workers static assets. Security headers,
+  immutable caching for the content-hashed files in `/_astro/`, and
+  `X-Robots-Tag: noindex` on every `workers.dev` host. That last one exists
+  because `preview_urls` is on in `wrangler.jsonc`: each pull request gets a
+  public preview link on `workers.dev`, and it must not compete with the custom
+  domain in search. `workers_dev` stays off, so production has no
+  `workers.dev` copy at all.
 - `og.png` — the 1200×630 social card in `public/`. It was rendered by loading a
   card built from the site's own tokens and webfonts in headless Chrome at
   exactly that size. Regenerate the same way if the name or the one-liner
