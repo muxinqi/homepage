@@ -1,0 +1,13 @@
+# yaml-language-server: $schema=../../../.astro/collections/dishes.schema.json
+category: meat
+spice: 1
+order: 2
+photo: ./dry-pot-cauliflower.jpg
+en:
+  name: "Dry-fried Cauliflower"
+  description: "Stir-fried cauliflower with pork belly, crispy and tender, slightly spicy and savory, with a lasting flavor."
+  ingredients: ["Cauliflower", "pork belly", "garlic slices", "ginger strips", "dried chili peppers"]
+zh:
+  name: "干锅菜花"
+  description: "焦香脆嫩的菜花搭配五花肉煸炒，微辣咸鲜，回味无穷"
+  ingredients: ["菜花", "五花肉", "蒜片", "姜丝", "干辣椒"]

@@ -52,6 +52,20 @@ const en = {
   meaningActive: "usable, and I'm still adding to it",
   meaningLive: "usable, but I've stopped changing it",
   meaningOffline: "no longer usable; the page stays as a record",
+
+  menu: "Menu",
+  meat: "Meat",
+  vegetable: "Vegetables",
+  soup: "Soups",
+  staple: "Staples",
+  snack: "Snacks",
+  dessert: "Desserts",
+  spice1: "Mild",
+  spice2: "Medium",
+  spice3: "Hot",
+  ingredients: "Ingredients:",
+  largerPhoto: "larger photo",
+  close: "Close",
 };
 
 type Key = keyof typeof en;
@@ -99,6 +113,20 @@ const zh: Record<Key, string> = {
   meaningActive: "能用，我还在继续加东西",
   meaningLive: "能用，但我已经不再改它了",
   meaningOffline: "已经不能用了，页面留作记录",
+
+  menu: "菜单",
+  meat: "荤菜",
+  vegetable: "素菜",
+  soup: "汤品",
+  staple: "主食",
+  snack: "小食",
+  dessert: "甜点",
+  spice1: "微辣",
+  spice2: "中辣",
+  spice3: "重辣",
+  ingredients: "食材：",
+  largerPhoto: "大图",
+  close: "关闭",
 };
 
 const ui: Record<Locale, Record<Key, string>> = { en, zh };

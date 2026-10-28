@@ -113,6 +113,39 @@ Two facts decide it, and neither of them is how you feel about the project:
 `live` is where most finished things end up, and that is not a failure. An
 `offline` row dims its whole line but keeps its links clickable.
 
+## Adding a dish
+
+A dish is one YAML file and one photo, side by side in `dishes/`. Both languages
+share the file — the photo, category, and heat are written once, and only the
+words are written twice. It appears on `/en/menu/` and `/zh/menu/`.
+
+1. Put the photo in `dishes/` as `some-dish.jpg`.
+2. Run `npm run photos`. It turns the photo upright, brings it under 2400px, and
+   strips its metadata — camera, time, and location. The repository is public,
+   so this is not optional: `npm run check` fails on a photo that skipped it.
+3. Create `dishes/some-dish.yaml`:
+
+```yaml
+# yaml-language-server: $schema=../../../.astro/collections/dishes.schema.json
+category: meat        # meat | vegetable | soup | staple | snack | dessert
+spice: 1              # 0 to 3; 0 shows nothing
+order: 4              # position within its category
+photo: ./some-dish.jpg
+en:
+  name: "Kung Pao Chicken"
+  description: "One sentence."
+  ingredients: ["Chicken", "peanuts", "dried chili"]
+zh:
+  name: "宫保鸡丁"
+  description: "一句话。"
+  ingredients: ["鸡肉", "花生", "干辣椒"]
+```
+
+The first line points your editor at the schema Astro generates, so with the
+YAML extension recommended in `.vscode/` you get completion and a red underline
+for a wrong category before you ever build. A missing photo, an unknown
+category, or a missing language fails `npm run check` either way.
+
 ## The Now block
 
 `now/en/current.md` and `now/zh/current.md` feed the homepage's Now section. It

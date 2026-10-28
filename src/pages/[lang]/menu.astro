@@ -1,0 +1,84 @@
+---
+import BaseLayout from "@layouts/BaseLayout.astro";
+import RailSection from "@components/RailSection.astro";
+import DishRow from "@components/DishRow.astro";
+import { getMenu } from "@lib/content";
+import { localeParams, type Locale } from "@i18n/locales";
+import { useTranslations } from "@i18n/ui";
+
+export const getStaticPaths = localeParams;
+
+const lang = Astro.params.lang as Locale;
+const t = useTranslations(lang);
+const menu = await getMenu();
+
+const copy = {
+  en: {
+    description: "Dishes Xinqi Mu cooks at home and would make for you.",
+    intro: "These are the dishes I'd make for you.",
+  },
+  zh: {
+    description: "Xinqi Mu 在家常做、也愿意做给你吃的菜。",
+    intro: "这些是我愿意做给你吃的菜。",
+  },
+}[lang];
+
+// Photos above the fold load first; the rest wait until they are scrolled to.
+let row = 0;
+---
+
+<BaseLayout {lang} title={t("menu")} description={copy.description}>
+  <h1 class="mt-[clamp(2rem,9vw,3.25rem)] mb-2 font-display text-h1 text-ink">{t("menu")}</h1>
+  <p class="mb-[34px] max-w-[48ch] text-intro text-ink-soft text-pretty">{copy.intro}</p>
+
+  {
+    menu.map(({ category, dishes }) => (
+      <RailSection label={t(category)} id={category} class="pb-6">
+        <div class="row-list border-t border-line">
+          {dishes.map((dish) => (
+            <DishRow {dish} {lang} eager={row++ < 4} />
+          ))}
+        </div>
+      </RailSection>
+    ))
+  }
+
+  {/* One dialog for every photo. The image inside is the close button, so a tap
+      anywhere on it — or on the backdrop, or Escape — puts the page back. It
+      appears and disappears without animation, like everything else here. */}
+  <dialog
+    data-photo-dialog
+    closedby="any"
+    class="m-auto max-h-[92vh] max-w-[92vw] overflow-hidden border border-line-strong bg-ground p-0 backdrop:bg-black/80"
+  >
+    <form method="dialog">
+      <button type="submit" class="block cursor-zoom-out" aria-label={t("close")}>
+        <img alt="" class="block max-h-[92vh] max-w-[92vw] object-contain" />
+      </button>
+    </form>
+  </dialog>
+
+  <script>
+    const dialog = document.querySelector<HTMLDialogElement>("[data-photo-dialog]");
+    const image = dialog?.querySelector("img");
+
+    // Without showModal — or without JavaScript at all — each thumbnail stays a
+    // plain link to its large image, which is a fine way to see a photo.
+    if (dialog && image && typeof dialog.showModal === "function") {
+      for (const link of document.querySelectorAll<HTMLAnchorElement>("a[data-dish-photo]")) {
+        link.addEventListener("click", (event) => {
+          event.preventDefault();
+          image.src = link.href;
+          image.alt = link.dataset.name ?? "";
+          dialog.showModal();
+        });
+      }
+
+      // `closedby="any"` handles backdrop clicks where it is supported; this is
+      // the same thing for browsers that do not have it yet.
+      dialog.addEventListener("click", (event) => {
+        if (event.target === dialog) dialog.close();
+      });
+    }
+  </script>
+</BaseLayout>

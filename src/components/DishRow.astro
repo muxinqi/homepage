@@ -1,0 +1,82 @@
+---
+import { Picture, getImage } from "astro:assets";
+import Pepper from "@assets/icons/pepper.svg";
+import type { Dish } from "@lib/content";
+import type { Locale } from "@i18n/locales";
+import { useTranslations } from "@i18n/ui";
+
+interface Props {
+  dish: Dish;
+  lang: Locale;
+  /** The first few rows are on the first screen; the rest can wait. */
+  eager?: boolean;
+}
+
+const { dish, lang, eager = false } = Astro.props;
+const t = useTranslations(lang);
+const { photo, spice } = dish.data;
+const { name, description, ingredients } = dish.data[lang];
+
+// The thumbnail links to a large copy. With JavaScript it opens in the page's
+// dialog; without it, the link simply opens the image. Never wider than the
+// source, which Astro would otherwise refuse to upscale anyway.
+const large = await getImage({ src: photo, width: Math.min(1600, photo.width), format: "webp" });
+
+const spiceWord = spice > 0 ? t((["spice1", "spice2", "spice3"] as const)[spice - 1]) : undefined;
+
+// Read as a list, not as prose: the language's own list separator, no "and".
+const separator = lang === "zh" ? "、" : ", ";
+
+// The row shares ProjectRow's grid — the photo sits in the narrow track where a
+// project's status goes — so the menu lines up with everything else on the site.
+//
+// Heat is the only red on the site: one chili per level, then the word, so it
+// reads at a glance and still says exactly what it means. A dish that is not hot
+// shows nothing; "not spicy" on most rows would be noise.
+---
+
+<div class="row border-b border-line py-[17px]">
+  <a
+    href={large.src}
+    data-dish-photo
+    data-name={name}
+    aria-label={`${name}, ${t("largerPhoto")}`}
+    class="block size-16 cursor-zoom-in self-start"
+  >
+    <Picture
+      src={photo}
+      alt=""
+      width={64}
+      height={64}
+      densities={[1, 2]}
+      fit="cover"
+      formats={["avif", "webp"]}
+      loading={eager ? "eager" : "lazy"}
+      class="size-16 border border-line object-cover"
+    />
+  </a>
+
+  <div class="min-w-0">
+    <div class="flex flex-wrap items-baseline gap-x-3 gap-y-0.5">
+      <h3 class="font-display text-row font-medium text-ink">{name}</h3>
+      {
+        spiceWord && (
+          <span class="inline-flex items-center gap-1 font-mono text-[0.6875rem] text-spice">
+            <span class="inline-flex" aria-hidden="true">
+              {Array.from({ length: spice }, () => (
+                <Pepper width="13" height="13" />
+              ))}
+            </span>
+            {spiceWord}
+          </span>
+        )
+      }
+    </div>
+
+    <p class="mt-1 max-w-[54ch] text-sum text-ink-muted text-pretty">{description}</p>
+    <p class="mt-1.5 font-mono text-[0.6875rem] leading-[1.7] text-ink-muted">
+      <span class="sr-only">{t("ingredients")}</span>
+      {ingredients.join(separator)}
+    </p>
+  </div>
+</div>

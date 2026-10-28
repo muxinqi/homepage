@@ -6,9 +6,10 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro build && wrangler dev",
-    "check": "astro check",
+    "check": "astro check && node scripts/photos.mjs --check",
     "astro": "astro",
-    "deploy": "astro build && wrangler deploy"
+    "deploy": "astro build && wrangler deploy",
+    "photos": "node scripts/photos.mjs"
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.7.4",
@@ -18,6 +19,7 @@
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.12",
+    "sharp": "^0.35.5",
     "typescript": "^6.0.3",
     "wrangler": "^4.153.0"
   }
