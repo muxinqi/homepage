@@ -105,7 +105,7 @@ export async function getNow(lang: Locale) {
 }
 
 export type Dish = CollectionEntry<"dishes">;
-export type DishCategory = Dish["data"]["category"];
+type DishCategory = Dish["data"]["category"];
 
 /** The menu, category by category in menu order, leaving out empty ones. */
 export async function getMenu(): Promise<{ category: DishCategory; dishes: Dish[] }[]> {
