@@ -1,7 +1,8 @@
 # muxinqi.com
 
-Personal site — projects, notes, and a short Now block. Astro 7, static output,
-served from Cloudflare Workers static assets.
+Personal site — projects, notes, and a short Now block, in English at `/en/`
+and Chinese at `/zh/`. Astro 7, static output, served from Cloudflare Workers
+static assets.
 
 > **A push to `main` deploys.** Cloudflare Workers Builds is wired to this
 > repository from the dashboard, not from a file in the repo, so nothing here
@@ -16,7 +17,7 @@ served from Cloudflare Workers static assets.
 
 | Command         | What it does                                    |
 | --------------- | ----------------------------------------------- |
-| `npm run dev`   | Dev server at `localhost:4321`                    |
+| `npm run dev`   | Dev server — open `localhost:4321/en/` (`/` only redirects on Cloudflare) |
 | `npm run build` | Static build into `dist/`                        |
 | `npm run check` | `astro check` — types and template diagnostics   |
 | `npm run preview` | Build, then serve through `wrangler dev`       |
@@ -24,7 +25,7 @@ served from Cloudflare Workers static assets.
 
 ## Content
 
-All of it lives in `src/content/`, as Markdown. See
+All of it lives in `src/content/`, as Markdown, once per language. See
 [`src/content/README.md`](src/content/README.md) for how to add a note or a
 project, what the three project statuses mean, and what is still missing.
 
@@ -33,28 +34,38 @@ project, what the three project statuses mean, and what is still missing.
 ```
 src/
   content.config.ts     collection schemas (projects, notes, now)
-  content/              the Markdown itself
-  lib/content.ts        collection queries and year grouping
-  lib/date.ts           the one date dialect — Jul 2026, 2026, closed Feb 2024
+  content/              the Markdown itself, under en/ and zh/
+  i18n/locales.ts       the two languages, their tags, and URL helpers
+  i18n/ui.ts            every word the chrome uses, in both languages
+  lib/content.ts        collection queries, year grouping, the pairing check
+  lib/date.ts           one date dialect per language — Jul 2026 / 2026 年 7 月
   layouts/BaseLayout.astro
-  components/           header, footer, theme toggle, rows, empty state
-  pages/                /, /projects, /notes, /about, /404
+  components/           header, footer, theme toggle, rows, empty state, 404
+  pages/[lang]/         /, /projects, /notes, /about, /404 — each built for en and zh
+  pages/404.astro       for paths under neither language
   styles/global.css     every design token, in one file
 ```
 
 ## What the build emits besides pages
 
 - `sitemap-index.xml` + `sitemap-0.xml` — every built page, absolute and https,
-  `/404` excluded. `lastmod` is deliberately absent: a build-date stamp on every
-  URL is worse than none, and per-page dates would mean hand-rolling the sitemap.
+  the 404s excluded, each URL paired with its other-language twin. `lastmod` is
+  deliberately absent: a build-date stamp on every URL is worse than none, and
+  per-page dates would mean hand-rolling the sitemap.
+- `_redirects` — parsed by Cloudflare Workers static assets. `/` answers with a
+  302 to `/en/`, and the addresses from before the site had languages answer
+  with a 301 to their `/en/` equivalents.
+- `404.html`, `en/404.html`, `zh/404.html` — Cloudflare serves the one nearest
+  the missing path. Astro writes the two language ones as `404/index.html`; a
+  small build step in `astro.config.mjs` moves them to where they are looked for.
 - `robots.txt` — points at the sitemap.
 - `_headers` — parsed by Cloudflare Workers static assets. Security headers and
   immutable caching for the content-hashed files in `/_astro/`.
-- `og.png` — the 1200×630 social card in `public/`. It is a screenshot of
-  `scripts/og-card.html`, which is built from the site's own tokens and webfonts;
-  the command is at the top of that file. Re-render it if the name, the
-  one-liner, or the light-theme colours change. It is static, so nothing in the
-  build touches it.
+- `og.png`, `og-zh.png` — the 1200×630 social cards in `public/`, one per
+  language. Each is a screenshot of `scripts/og-card.html`, which is built from
+  the site's own tokens and webfonts; the command is at the top of that file.
+  Re-render both if the name, the one-liner, or the light-theme colours change.
+  They are static, so nothing in the build touches them.
 
 There is deliberately no Content Security Policy. CSP mitigates injected script,
 and this site has no injection surface: no user content, no query parameters read
@@ -101,9 +112,30 @@ A few things worth knowing before changing anything:
   number. `--breakpoint-sm` is the one breakpoint, and it exists to turn the
   sticky year label on at exactly that moment: 472 content px is about 528
   viewport px once the frame's 5vw padding is counted, so the two agree.
-- **Fonts are self-hosted.** Astro's font pipeline pulls the latin subsets of
-  Newsreader, IBM Plex Sans and IBM Plex Mono into `dist/_astro/fonts/` with
-  preload links. The site is English, so the latin subset is the whole of it.
+- **Fonts are self-hosted, for Latin only.** Astro's font pipeline pulls the
+  latin subsets of Newsreader, IBM Plex Sans and IBM Plex Mono into
+  `dist/_astro/fonts/` with preload links. Chinese is not downloaded: a CJK
+  webfont runs to megabytes, so each stack names the system's own Chinese faces
+  (Songti, PingFang, Noto CJK) after its Latin one, in the `fallbacks` in
+  `astro.config.mjs`.
+- **Every page exists in both languages, and shows only one.** English lives at
+  `/en/`, Chinese at `/zh/`, and the header's switch goes to the same page in the
+  other language. Nothing on a page mixes the two — not even the switch, which
+  names only the language it leads to. Because every page has a twin, nothing
+  ever has to ask whether a translation exists: no fallbacks, no "not available
+  in Chinese" state, a switch that always has somewhere to go, and `hreflang`
+  pairs that are always complete. The cost is that nothing is published until
+  both halves are written, and the build enforces that — `pairs` in
+  `src/lib/content.ts` fails on an entry missing its other half, or on two halves
+  that disagree about anything but wording.
+- **Both languages carry a prefix, and `/` redirects.** `/en/` and `/zh/` are
+  symmetric, so every page is one route file under `src/pages/[lang]/` with no
+  special case for a default. `/` itself is a 302 to `/en/`, answered by
+  Cloudflare from `public/_redirects` before any page is involved. It does not
+  guess from the browser's language and does not remember a choice: the bare
+  domain is the link on a resume, and it should open the same page for everyone.
+  Astro's built-in redirect for `/` is off on purpose — in a static build it is a
+  page that waits two seconds and then navigates.
 - **`border-radius: 0` everywhere** except the avatar. No shadows, and nothing
   transitions or animates — the `prefers-reduced-motion` block has no motion of
   its own to switch off, only smooth scrolling. A 1px underline appears on link

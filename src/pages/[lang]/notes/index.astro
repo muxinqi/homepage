@@ -1,0 +1,54 @@
+---
+import BaseLayout from "@layouts/BaseLayout.astro";
+import NoteRow from "@components/NoteRow.astro";
+import EmptyState from "@components/EmptyState.astro";
+import { getNotes, groupByYear } from "@lib/content";
+import { localeParams, type Locale } from "@i18n/locales";
+import { useTranslations } from "@i18n/ui";
+
+export const getStaticPaths = localeParams;
+
+const lang = Astro.params.lang as Locale;
+const t = useTranslations(lang);
+const groups = groupByYear(await getNotes(lang));
+
+const copy = {
+  en: {
+    description: "Short pieces by Xinqi Mu on the decisions behind the things he builds. No schedule.",
+    intro: "Short pieces on the decisions behind the things I build. No schedule.",
+  },
+  zh: {
+    description: "Xinqi Mu 写的短文，讲做东西时背后的那些决定。不定期。",
+    intro: "关于我做东西时那些决定的短文。不定期。",
+  },
+}[lang];
+
+// Nothing links here while the section is empty, so the only way in is a search
+// result — and an empty page is a bad one. The route still answers, for anyone
+// holding the URL.
+const empty = groups.length === 0;
+---
+
+<BaseLayout {lang} title={t("notes")} description={copy.description} noindex={empty}>
+  <h1 class="mt-[clamp(2rem,9vw,3.25rem)] mb-2 font-display text-h1 text-ink">{t("notes")}</h1>
+  <p class="mb-[34px] max-w-[48ch] text-intro text-ink-soft text-pretty">{copy.intro}</p>
+
+  {
+    groups.length > 0 ? (
+      groups.map(({ year, rows }) => (
+        <div class="rail-row pb-6">
+          <div class="rail-year pt-[15px] font-mono text-meta font-medium tracking-[0.06em] text-ink">
+            {year}
+          </div>
+          <div class="column measure-row row-list border-t border-line">
+            {rows.map((note) => (
+              <NoteRow {note} />
+            ))}
+          </div>
+        </div>
+      ))
+    ) : (
+      <EmptyState section="notes" {lang} />
+    )
+  }
+</BaseLayout>

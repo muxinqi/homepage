@@ -1,0 +1,50 @@
+---
+import BaseLayout from "@layouts/BaseLayout.astro";
+import ProjectRow from "@components/ProjectRow.astro";
+import EmptyState from "@components/EmptyState.astro";
+import { getProjects, groupByYear } from "@lib/content";
+import { localeParams, type Locale } from "@i18n/locales";
+import { useTranslations } from "@i18n/ui";
+
+export const getStaticPaths = localeParams;
+
+const lang = Astro.params.lang as Locale;
+const t = useTranslations(lang);
+const groups = groupByYear(await getProjects(lang));
+
+const copy = {
+  en: {
+    description:
+      "Small tools Xinqi Mu built because he wanted to use them, and whether each one still works.",
+    intro: "Small tools I built because I wanted to use them. The status says whether you can use it today.",
+  },
+  zh: {
+    description: "Xinqi Mu 因为自己想用而做的小工具，以及每一个现在还能不能用。",
+    intro: "我自己想用才做的小工具。状态标的是你今天还能不能用。",
+  },
+}[lang];
+---
+
+<BaseLayout {lang} title={t("projects")} description={copy.description}>
+  <h1 class="mt-[clamp(2rem,9vw,3.25rem)] mb-2 font-display text-h1 text-ink">{t("projects")}</h1>
+  <p class="mb-[34px] max-w-[48ch] text-intro text-ink-soft text-pretty">{copy.intro}</p>
+
+  {
+    groups.length > 0 ? (
+      groups.map(({ year, rows }) => (
+        <div class="rail-row pb-6">
+          <div class="rail-year pt-[15px] font-mono text-meta font-medium tracking-[0.06em] text-ink">
+            {year}
+          </div>
+          <div class="column measure-row row-list border-t border-line">
+            {rows.map((project) => (
+              <ProjectRow {project} showYear={false} />
+            ))}
+          </div>
+        </div>
+      ))
+    ) : (
+      <EmptyState section="projects" {lang} />
+    )
+  }
+</BaseLayout>

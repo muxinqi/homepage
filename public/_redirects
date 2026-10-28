@@ -1,0 +1,16 @@
+# Parsed by Cloudflare Workers static assets; the file itself is never served.
+# These run at the edge, before any page, so `/` answers with a real 302 rather
+# than a page that navigates itself.
+
+# The bare domain goes to English, every time. There is no guessing from the
+# browser's language: a resume link should open the same page for everyone, and
+# the switch in the header is one click away.
+/              /en/                  302
+
+# Addresses from before the site had languages.
+/about         /en/about/            301
+/about/        /en/about/            301
+/projects      /en/projects/         301
+/projects/*    /en/projects/:splat   301
+/notes         /en/notes/            301
+/notes/*       /en/notes/:splat      301
