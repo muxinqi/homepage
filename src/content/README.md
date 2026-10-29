@@ -1,7 +1,8 @@
 # Writing content
 
-Everything on the site comes from the Markdown files in this folder. There is no
-CMS and no database — you edit a file, commit, and push.
+Everything on the site comes from the files in this folder — Markdown for notes,
+projects, and Now, YAML for dishes. There is no CMS and no database — you edit a
+file, commit, and push.
 
 > **A push to `main` deploys.** Cloudflare Workers Builds is connected to this
 > repository from the dashboard side, so there is no CI file in the repo that

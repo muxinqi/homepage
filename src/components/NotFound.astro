@@ -1,5 +1,6 @@
 ---
 import BaseLayout from "@layouts/BaseLayout.astro";
+import { hasNotes } from "@lib/content";
 import { localePath, otherLocale, type Locale } from "@i18n/locales";
 import { useTranslations } from "@i18n/ui";
 
@@ -31,6 +32,10 @@ const copy = {
 // Chinese. Cloudflare serves the 404.html nearest the missing path; the build
 // step in astro.config.mjs is what puts each one there. The language switch has
 // no matching page to go to, so it goes to the other language's home.
+//
+// Notes is offered only once there is one, the same rule the header follows: a
+// way out should not lead into an empty room.
+const notes = await hasNotes();
 ---
 
 <BaseLayout
@@ -54,7 +59,7 @@ const copy = {
         class="mt-[22px] flex flex-wrap gap-x-4 gap-y-2 font-mono text-meta text-accent uppercase"
       >
         <a href={localePath(lang, "/projects/")} class="meta-link">{t("projects")} →</a>
-        <a href={localePath(lang, "/notes/")} class="meta-link">{t("notes")} →</a>
+        {notes && <a href={localePath(lang, "/notes/")} class="meta-link">{t("notes")} →</a>}
         <a href={localePath(lang)} class="meta-link">{copy.home}</a>
       </nav>
     </div>
