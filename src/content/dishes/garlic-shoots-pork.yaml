@@ -3,9 +3,9 @@ spice: 0
 order: 1
 photo: ./garlic-shoots-pork.jpg
 en:
-  name: "Stir-fried Shredded Pork with Garlic Scapes"
-  description: "Crisp, sweet garlic scapes and shredded pork, stir-fried fast over high heat. Everyday home cooking."
-  ingredients: ["Garlic scapes", "pork", "ginger", "garlic"]
+  name: "Stir-fried Shredded Pork with Garlic Sprouts"
+  description: "Crisp, sweet garlic sprouts and shredded pork, stir-fried fast over high heat. Everyday home cooking."
+  ingredients: ["Garlic sprouts", "pork", "ginger", "garlic"]
 zh:
   name: "蒜苔炒肉丝"
   description: "脆爽清甜的蒜苔与鲜香肉丝猛火快炒，浓郁的家常美味。"
