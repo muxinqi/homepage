@@ -4,9 +4,9 @@ order: 5
 photo: ./chili-fried-pork.jpg
 en:
   name: "Stir-fried Pork with Chili Peppers"
-  description: "Fresh, fragrant, spicy, and appetizing, the meat slices are fatty but not greasy, a genuine and classic Hunan-style dish that is perfect for rice."
-  ingredients: ["Pork", "chili", "fermented black beans", "ginger and garlic"]
+  description: "A Hunan classic of sliced pork and fresh chilies: hot, fragrant, rich without being greasy, and made for rice."
+  ingredients: ["Pork", "chili peppers", "fermented black beans", "ginger", "garlic"]
 zh:
   name: "辣椒炒肉"
-  description: "鲜香热辣开胃，肉片肥而不腻，地道且经典的湘式下饭神器"
-  ingredients: ["猪肉", "辣椒", "豆豉", "姜蒜"]
+  description: "鲜香热辣开胃，肉片肥而不腻，地道且经典的湘式下饭神器。"
+  ingredients: ["猪肉", "辣椒", "豆豉", "姜", "蒜"]

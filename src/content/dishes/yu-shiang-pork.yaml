@@ -1,12 +1,12 @@
 category: meat
-spice: 0
+spice: 1
 order: 3
 photo: ./yu-shiang-pork.jpg
 en:
   name: "Yu-Shiang Shredded Pork"
-  description: "The perfect blend of salty, sweet, sour, and spicy, with tender and smooth shredded meat, a traditional dish that pairs wonderfully with rice."
+  description: "Tender shredded pork in a Sichuan sauce that is salty, sweet, sour, and spicy at once. A classic with rice."
   ingredients: ["Pork", "carrot", "green pepper", "black fungus", "scallion", "garlic", "ginger", "doubanjiang"]
 zh:
   name: "鱼香肉丝"
-  description: "咸甜酸辣完美交融，肉丝嫩滑爽口，极致下饭的传统名菜"
+  description: "咸甜酸辣完美交融，肉丝嫩滑爽口，极致下饭的传统名菜。"
   ingredients: ["猪肉", "胡萝卜", "青椒", "黑木耳", "葱", "蒜", "姜", "豆瓣酱"]
