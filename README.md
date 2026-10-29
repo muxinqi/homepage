@@ -1,7 +1,7 @@
 # muxinqi.com
 
-Personal site — projects, notes, and a short Now block, in English at `/en/`
-and Chinese at `/zh/`. Astro 7, static output, served from Cloudflare Workers
+Personal site — projects, notes, a short Now block, and a menu of dishes, in
+English at `/en/` and Chinese at `/zh/`. Astro 7, static output, served from Cloudflare Workers
 static assets.
 
 > **A push to `main` deploys.** Cloudflare Workers Builds is wired to this
@@ -26,26 +26,33 @@ static assets.
 
 ## Content
 
-All of it lives in `src/content/`, as Markdown, once per language. See
-[`src/content/README.md`](src/content/README.md) for how to add a note or a
-project, what the three project statuses mean, and what is still missing.
+All of it lives in `src/content/`: notes, projects, and Now as Markdown, once
+per language; dishes as one YAML file each, both languages inside, with the
+photo beside it. See [`src/content/README.md`](src/content/README.md) for how to
+add a note, a project, or a dish, what the three project statuses mean, and what
+is still missing.
 
 ## Structure
 
 ```
 src/
-  content.config.ts     collection schemas (projects, notes, now)
+  content.config.ts     collection schemas (projects, notes, now, dishes)
   content/              the Markdown itself, under en/ and zh/; dishes/ holds
                         one YAML file and one photo per dish
   i18n/locales.ts       the two languages, their tags, and URL helpers
   i18n/ui.ts            every word the chrome uses, in both languages
   lib/content.ts        collection queries, year grouping, the pairing check
   lib/date.ts           one date dialect per language — Jul 2026 / 2026 年 7 月
+  lib/dish-categories.ts  the menu's categories, in the order they are listed
   layouts/BaseLayout.astro
   components/           header, footer, theme toggle, rows, empty state, 404
-  pages/[lang]/         /, /projects, /notes, /about, /404 — each built for en and zh
+  pages/[lang]/         /, /projects, /notes, /about, /menu, /404 — each built
+                        for en and zh
   pages/404.astro       for paths under neither language
   styles/global.css     every design token, in one file
+scripts/
+  photos.mjs            `npm run photos`, and the photo check in `npm run check`
+  og-card.html          the source of the two social cards in public/
 ```
 
 ## What the build emits besides pages
@@ -56,7 +63,7 @@ src/
   per-page dates would mean hand-rolling the sitemap.
 - `_redirects` — parsed by Cloudflare Workers static assets. `/` answers with a
   302 to `/en/`, and the addresses from before the site had languages answer
-  with a 301 to their `/en/` equivalents.
+  with a 301 to their `/en/` equivalents, as does `/menu`.
 - `404.html`, `en/404.html`, `zh/404.html` — Cloudflare serves the one nearest
   the missing path. Astro writes the two language ones as `404/index.html`; a
   small build step in `astro.config.mjs` moves them to where they are looked for.
