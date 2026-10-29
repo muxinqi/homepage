@@ -14,3 +14,8 @@
 /projects/*    /en/projects/:splat   301
 /notes         /en/notes/            301
 /notes/*       /en/notes/:splat      301
+
+# The menu never had an address here — it lived on its own subdomain, which
+# Cloudflare sends on from the dashboard — but /menu is the one people type.
+/menu          /en/menu/             301
+/menu/         /en/menu/             301
