@@ -38,6 +38,13 @@ const localized404 = {
 export default defineConfig({
   site: 'https://muxinqi.com',
 
+  // What Astro recommends alongside its default `directory` build format. It
+  // changes nothing in the build — in production, the trailing slash is
+  // Cloudflare's job (`html_handling` in wrangler.jsonc). It is here as a lint:
+  // `astro dev` refuses a link written without the slash, which would otherwise
+  // ship and cost a redirect on every click.
+  trailingSlash: 'always',
+
   // English at /en/, Chinese at /zh/, and nothing at /: Cloudflare redirects it
   // to /en/ (public/_redirects). Astro's own redirect for `/` would be a page
   // that waits two seconds and then navigates, so it is switched off.

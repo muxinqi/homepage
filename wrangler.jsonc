@@ -4,6 +4,12 @@
 	"compatibility_date": "2026-06-23",
 	"assets": {
 		"directory": "./dist",
+		// The default, written down because the site depends on it. Every page
+		// is built as a folder with an index.html, so /about answers with a
+		// redirect to /about/ — the form every link, canonical tag and sitemap
+		// entry uses. Cloudflare sends that redirect as a 307, and nothing here
+		// can change the code; the canonical tags are what search engines keep.
+		"html_handling": "auto-trailing-slash",
 		// Without this, an unknown path returns a bare 404 and the designed
 		// 404 page is never reached.
 		"not_found_handling": "404-page"
