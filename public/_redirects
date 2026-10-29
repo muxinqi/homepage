@@ -1,6 +1,10 @@
 # Parsed by Cloudflare Workers static assets; the file itself is never served.
 # These run at the edge, before any page, so `/` answers with a real 302 rather
 # than a page that navigates itself.
+#
+# Exact paths come first and splats last. Cloudflare looks exact paths up
+# directly, but only while no splat has appeared above them; after the first
+# one, every rule is matched in turn.
 
 # The bare domain goes to English, every time. There is no guessing from the
 # browser's language: a resume link should open the same page for everyone, and
@@ -10,17 +14,16 @@
 # Addresses from before the site had languages.
 /about         /en/about/            301
 /about/        /en/about/            301
-# A single entry is sent straight to its slash-ended URL; the splat after it
-# would keep a missing slash, and the asset server would then add it as a
-# second hop. The first matching rule wins.
 /projects      /en/projects/         301
-/projects/:slug  /en/projects/:slug/ 301
-/projects/*    /en/projects/:splat   301
 /notes         /en/notes/            301
-/notes/:slug   /en/notes/:slug/      301
-/notes/*       /en/notes/:splat      301
 
 # The menu never had an address here — it lived on its own subdomain, which
 # Cloudflare sends on from the dashboard — but /menu is the one people type.
 /menu          /en/menu/             301
 /menu/         /en/menu/             301
+
+# Everything under the old sections. The path is kept as it came, so an old
+# link — which ended in a slash, like every link the site has written — lands
+# in one hop. One typed without the slash takes a second, from html_handling.
+/projects/*    /en/projects/:splat   301
+/notes/*       /en/notes/:splat      301
