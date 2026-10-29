@@ -3,10 +3,10 @@ spice: 0
 order: 1
 photo: ./garlic-shoots-pork.jpg
 en:
-  name: "Stir-fried Shredded Pork with Garlic Shoots"
-  description: "Crisp and sweet garlic shoots stir-fried quickly with fragrant shredded meat, a rich and homely delicacy."
-  ingredients: ["Garlic sprouts", "pork", "ginger and garlic"]
+  name: "Stir-fried Shredded Pork with Garlic Sprouts"
+  description: "Crisp, sweet garlic sprouts and shredded pork, stir-fried fast over high heat. Everyday home cooking."
+  ingredients: ["Garlic sprouts", "pork", "ginger", "garlic"]
 zh:
   name: "蒜苔炒肉丝"
-  description: "脆爽清甜的蒜苔与鲜香肉丝猛火快炒，浓郁的家常美味"
-  ingredients: ["蒜苔", "猪肉", "姜蒜"]
+  description: "脆爽清甜的蒜苔与鲜香肉丝猛火快炒，浓郁的家常美味。"
+  ingredients: ["蒜苔", "猪肉", "姜", "蒜"]
