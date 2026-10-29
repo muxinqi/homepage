@@ -10,9 +10,14 @@
 # Addresses from before the site had languages.
 /about         /en/about/            301
 /about/        /en/about/            301
+# A single entry is sent straight to its slash-ended URL; the splat after it
+# would keep a missing slash, and the asset server would then add it as a
+# second hop. The first matching rule wins.
 /projects      /en/projects/         301
+/projects/:slug  /en/projects/:slug/ 301
 /projects/*    /en/projects/:splat   301
 /notes         /en/notes/            301
+/notes/:slug   /en/notes/:slug/      301
 /notes/*       /en/notes/:splat      301
 
 # The menu never had an address here — it lived on its own subdomain, which
